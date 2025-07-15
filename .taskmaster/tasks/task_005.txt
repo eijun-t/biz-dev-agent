@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Develop Multi-Agent Workflow with LangChain & LangGraph
+# Status: pending
+# Dependencies: 1, 2, 4
+# Priority: high
+# Description: Implement the autonomous agent loop using LangChain 0.2 and LangGraph, orchestrating Planner, Researcher, Ideator, Analyst, Critic, and Writer roles.
+# Details:
+Set up LangGraph.js in the Next.js API layer. Implement each agent as a node: Planner (task breakdown), Researcher (Serper.dev + BS4 for web search/summary), Ideator (business model generation), Analyst (market sizing, risk), Critic (scoring/continue/stop), Writer (HTML report via Jinja2). Configure state transitions and stopping conditions as per PRD. Use environment variables for LLM model selection.
+
+# Test Strategy:
+Run end-to-end agent loop with sample input. Validate correct state transitions, retries on LLM errors, and stopping conditions. Check output at each agent stage.

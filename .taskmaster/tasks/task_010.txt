@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Implement Report and Score History Listing
+# Status: pending
+# Dependencies: 8, 9
+# Priority: medium
+# Description: Provide a UI for users to view their past reports and associated scores/comments.
+# Details:
+Create a history page listing all reports with summary info and links to full view. Display associated scores and comments. Use Supabase queries for data retrieval.
+
+# Test Strategy:
+Generate multiple reports, score them, and verify all appear in history with correct data.

@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Production Deployment and Security Hardening
+# Status: pending
+# Dependencies: 1, 3, 11
+# Priority: high
+# Description: Deploy to Vercel with SSL. Enable CSRF protection and verify Supabase RLS. Finalize environment variables and secrets management.
+# Details:
+Configure Vercel deployment pipeline. Ensure all endpoints are protected against CSRF. Double-check Supabase RLS and environment variable usage. Document deployment steps.
+
+# Test Strategy:
+Run security scans, attempt unauthorized access, and verify SSL/CSRF protections. Confirm production deployment is stable.

@@ -1,0 +1,11 @@
+# Task ID: 1
+# Title: Initialize Next.js 15 Project with TypeScript
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Set up a new Next.js 15 project using TypeScript, TailwindCSS, and shadcn/ui as the UI library.
+# Details:
+Use the official Next.js 15 App Router template. Install TailwindCSS and shadcn/ui following their documentation. Initialize a GitHub private repository and configure GitHub Actions for CI. Prepare the project for deployment on Vercel.
+
+# Test Strategy:
+Verify project builds and runs locally. Confirm Tailwind and shadcn/ui components render correctly. Ensure CI pipeline passes on push.

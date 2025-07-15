@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Integrate LLM Provider and Model Selection Logic
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Connect to OpenAI GPT-4o (or other LLMs) via environment variables. Ensure critical agents use the correct model as specified in env config.
+# Details:
+Use LangChain's ChatOpenAI wrapper. Read model names from .env (LLM_MODEL_CRITICAL for Analyst, Critic; default for others). Avoid hardcoding model names. Allow easy switching for development/testing.
+
+# Test Strategy:
+Switch model names in .env and verify correct models are used for each agent. Test fallback to default if critical model is not set.

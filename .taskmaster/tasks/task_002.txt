@@ -1,0 +1,11 @@
+# Task ID: 2
+# Title: Configure Supabase Integration (Auth, Postgres, Storage)
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Integrate Supabase for authentication, database, and storage. Enable passwordless email authentication and set up required tables.
+# Details:
+Connect Supabase to the Next.js project. Enable Row-Level Security (RLS). Create tables: 'reports', 'scores', 'logs'. Configure Supabase Auth for passwordless email (Magic Link).
+
+# Test Strategy:
+Test user signup/login via Magic Link. Validate RLS by attempting unauthorized access. Confirm data can be read/written to all tables.

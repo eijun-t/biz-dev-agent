@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Implement HTML Report Generation (A3 Landscape)
+# Status: pending
+# Dependencies: 5
+# Priority: high
+# Description: Generate a single-page HTML report per PRD spec, styled with TailwindCSS, using Jinja2 templating via LangChain.
+# Details:
+Define Jinja2 template for all report sections (summary, business model, market size, synergy, risk, roadmap, scoring). Ensure layout fits A3 landscape and is responsive. Render in-browser using Next.js.
+
+# Test Strategy:
+Generate reports with varied data. Visually inspect layout and content. Confirm all sections render as specified.

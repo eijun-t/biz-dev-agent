@@ -1,0 +1,11 @@
+# Task ID: 9
+# Title: Implement Scoring and Feedback Mechanism
+# Status: pending
+# Dependencies: 4, 8
+# Priority: medium
+# Description: Enable users to score reports on each evaluation criterion (1-5) and leave comments. Save to 'scores' table and update agent memory for future loops.
+# Details:
+Add scoring UI to report view. On submit, store scores/comments in Supabase. Implement backend batch job to compute averages/variance and update LangGraph memory/prompts (no ML, just statistical updates).
+
+# Test Strategy:
+Submit scores/comments, verify persistence. Check that new agent runs reflect updated prompt examples/statistics.
