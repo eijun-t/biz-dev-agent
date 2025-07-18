@@ -1,11 +1,11 @@
 # Task ID: 3
 # Title: Implement Passwordless Authentication Flow
-# Status: pending
+# Status: cancelled
 # Dependencies: 2
 # Priority: high
-# Description: Build frontend and backend logic for passwordless email authentication using Supabase Auth.
+# Description: Build frontend and backend logic for standard email/password authentication using Supabase Auth.
 # Details:
-Create login/signup UI with shadcn/ui. Use Supabase client SDK to handle Magic Link requests and session management. Protect all app routes except login.
+Create login and signup UI with shadcn/ui, supporting email and password fields. Signup must include email, password, and password confirmation. Use the Supabase client SDK to handle email/password authentication requests and session management. Leverage existing authentication-related files. Protect all app routes except login/signup, ensuring only authenticated users can access protected content.
 
 # Test Strategy:
-Attempt login/signup with valid and invalid emails. Confirm session persistence and route protection.
+Attempt login and signup with valid and invalid email/password combinations, including mismatched password confirmation. Confirm session persistence and route protection. Verify that only authenticated users can access protected routes.

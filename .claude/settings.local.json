@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(pkill:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(npx:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm run lint)",
+      "Bash(rm:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(node test-agents.js)",
+      "Bash(true)",
+      "Bash(curl:*)",
+      "Bash(npm uninstall:*)"
+    ],
+    "deny": []
+  }
+}

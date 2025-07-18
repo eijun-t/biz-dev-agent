@@ -1,0 +1,11 @@
+# Task ID: 16
+# Title: Add Observability, Error Handling, and Cost Guardrails
+# Status: pending
+# Dependencies: 5, 4
+# Priority: medium
+# Description: Log token usage and failure counts to 'logs' table. Implement retry logic for LLM errors (up to 3 times) and enforce monthly API token cap.
+# Details:
+Instrument agent workflow to log token counts and errors. On LLM failure, retry up to 3 times, then mark as 'failed'. Implement backend check to halt generation if token cap is exceeded.
+
+# Test Strategy:
+Simulate LLM errors and high token usage. Verify retries, logging, and cap enforcement work as intended.

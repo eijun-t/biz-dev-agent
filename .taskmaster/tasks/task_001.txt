@@ -1,6 +1,6 @@
 # Task ID: 1
 # Title: Initialize Next.js 15 Project with TypeScript
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Set up a new Next.js 15 project using TypeScript, TailwindCSS, and shadcn/ui as the UI library.
@@ -9,3 +9,35 @@ Use the official Next.js 15 App Router template. Install TailwindCSS and shadcn/
 
 # Test Strategy:
 Verify project builds and runs locally. Confirm Tailwind and shadcn/ui components render correctly. Ensure CI pipeline passes on push.
+
+# Subtasks:
+## 1. Upgrade and Configure Next.js 15 with App Router and TypeScript [done]
+### Dependencies: None
+### Description: Update the existing project to Next.js 15, ensuring the App Router is enabled and all routes/components are compatible with the latest features. Confirm TypeScript is fully configured.
+### Details:
+Follow the official Next.js 15 migration and setup guides. Refactor any legacy routing or incompatible code to use the /app directory and new routing conventions. Ensure tsconfig.json and next.config.ts are up to date.
+
+## 2. Install and Configure TailwindCSS [done]
+### Dependencies: 1.1
+### Description: Integrate TailwindCSS into the Next.js 15 project, ensuring styles are applied globally and utility classes are available.
+### Details:
+Install TailwindCSS and its peer dependencies. Generate and configure tailwind.config.js and postcss.config.js. Add Tailwind directives to the global CSS file.
+
+## 3. Integrate shadcn/ui with Required Components [done]
+### Dependencies: 1.2
+### Description: Set up shadcn/ui in the project, importing both basic and advanced components needed for report display and scoring features.
+### Details:
+Install shadcn/ui following official documentation. Add and configure base components (Button, Input, etc.) and advanced components required for report viewing and scoring (e.g., Table, Card, Progress, etc.).
+
+## 4. Set Up GitHub Repository and Configure CI with GitHub Actions [done]
+### Dependencies: 1.3
+### Description: Initialize a private GitHub repository and set up GitHub Actions for CI, including build, test, lint, TypeScript type check, ESLint, and Prettier.
+### Details:
+Push the project to a new private GitHub repository. Create a GitHub Actions workflow file that runs on push/pull request, executing build, test, lint, type check, and formatting checks.
+
+## 5. Prepare for Vercel Deployment and Install Core AI Libraries [done]
+### Dependencies: 1.4
+### Description: Configure the project for Vercel deployment, including environment variables, vercel.json, and preview deployments. Install LangChain, LangGraph, and other required AI libraries for future tasks.
+### Details:
+Set up vercel.json and environment variable management. Enable preview deployments. Install LangChain, LangGraph, and any other foundational AI libraries needed for downstream agent workflows.
+

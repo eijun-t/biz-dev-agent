@@ -1,0 +1,11 @@
+# Task ID: 13
+# Title: Build Report Generation and Viewing UI
+# Status: pending
+# Dependencies: 12
+# Priority: high
+# Description: Create frontend flows for theme input, report generation trigger, and report viewing. Display reports in a single-page HTML view.
+# Details:
+Use shadcn/ui components for input forms and report display. Implement loading/progress indicators. Fetch and render generated reports from Supabase.
+
+# Test Strategy:
+Submit theme, trigger generation, and view resulting report. Test with multiple reports and edge cases (long/short content).

@@ -1,11 +1,11 @@
 # Task ID: 7
-# Title: Implement HTML Report Generation (A3 Landscape)
+# Title: Implement Ideation and Initial Evaluation Agents
 # Status: pending
-# Dependencies: 5
+# Dependencies: 6
 # Priority: high
-# Description: Generate a single-page HTML report per PRD spec, styled with TailwindCSS, using Jinja2 templating via LangChain.
+# Description: Create Ideator and Critic agents for business idea generation and initial quality assessment, with autonomous iteration capability.
 # Details:
-Define Jinja2 template for all report sections (summary, business model, market size, synergy, risk, roadmap, scoring). Ensure layout fits A3 landscape and is responsive. Render in-browser using Next.js.
+Develop Ideator agent for business model generation based on research findings. Create Critic agent for initial idea evaluation and quality scoring. Implement autonomous iteration - Critic can request Ideator to refine ideas or Researcher to gather more information. Define evaluation criteria and scoring thresholds for progression to next phase.
 
 # Test Strategy:
-Generate reports with varied data. Visually inspect layout and content. Confirm all sections render as specified.
+Generate multiple business ideas from research data. Test Critic evaluation accuracy and consistency. Verify autonomous iteration and quality improvement loops.

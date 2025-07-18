@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Configure Supabase Integration (Auth, Postgres, Storage)
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Integrate Supabase for authentication, database, and storage. Enable passwordless email authentication and set up required tables.
@@ -9,3 +9,35 @@ Connect Supabase to the Next.js project. Enable Row-Level Security (RLS). Create
 
 # Test Strategy:
 Test user signup/login via Magic Link. Validate RLS by attempting unauthorized access. Confirm data can be read/written to all tables.
+
+# Subtasks:
+## 1. Review and Update Supabase Project Settings [done]
+### Dependencies: None
+### Description: Audit the existing Supabase project configuration and update only the necessary settings for integration with the Next.js project, ensuring no redundant changes.
+### Details:
+Leverage the current Supabase setup, making minimal adjustments to connect with the Next.js app and enable required features.
+
+## 2. Design and Create Required Database Tables [done]
+### Dependencies: 2.1
+### Description: Define and create the 'reports', 'scores', and 'logs' tables in Supabase, using placeholder columns where detailed schema is pending.
+### Details:
+Implement initial table structures: 'reports' (columns TBD), 'scores' (1-5 score and comment), 'logs' (fields for AI agent logs, API usage, errors, performance).
+
+## 3. Enable and Configure Row-Level Security (RLS) [done]
+### Dependencies: 2.2
+### Description: Activate RLS on the new tables with simple, permissive policies to start, ensuring basic data protection.
+### Details:
+Enable RLS for each table and add initial policies (e.g., allow authenticated users to read/write their own data).
+
+## 4. Configure Supabase Storage (Initial Setup Only) [done]
+### Dependencies: 2.1
+### Description: Set up Supabase Storage buckets as placeholders for future use, without detailed configuration or integration at this stage.
+### Details:
+Create storage buckets in Supabase for later use, ensuring they are ready for future file uploads.
+
+## 5. Integrate Supabase Auth and Environment Variables [done]
+### Dependencies: 2.1
+### Description: Ensure passwordless email authentication (Magic Link) is enabled and connect the Next.js app using environment variables managed via .env files.
+### Details:
+Verify that passwordless auth is active in Supabase, and configure the Next.js app to use Supabase credentials and endpoints from .env files.
+

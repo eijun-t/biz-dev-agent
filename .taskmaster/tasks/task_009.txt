@@ -1,11 +1,11 @@
 # Task ID: 9
-# Title: Implement Scoring and Feedback Mechanism
+# Title: Implement Report Generation and Quality Assurance System
 # Status: pending
-# Dependencies: 4, 8
-# Priority: medium
-# Description: Enable users to score reports on each evaluation criterion (1-5) and leave comments. Save to 'scores' table and update agent memory for future loops.
+# Dependencies: 8
+# Priority: high
+# Description: Create Writer agent for comprehensive report generation and enhanced Critic for final quality assurance, with autonomous revision capabilities.
 # Details:
-Add scoring UI to report view. On submit, store scores/comments in Supabase. Implement backend batch job to compute averages/variance and update LangGraph memory/prompts (no ML, just statistical updates).
+Develop Writer agent for HTML report generation using structured templates. Include all required sections: idea summary, target market, competitive landscape, financial projections, risks, implementation roadmap. Enhance Critic agent for final quality assessment and revision requests. Implement autonomous revision loops - Writer can request additional research or analysis if needed.
 
 # Test Strategy:
-Submit scores/comments, verify persistence. Check that new agent runs reflect updated prompt examples/statistics.
+Generate complete reports from analysis data. Test report quality and completeness. Verify autonomous revision and improvement processes.

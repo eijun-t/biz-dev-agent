@@ -1,11 +1,43 @@
 # Task ID: 5
-# Title: Develop Multi-Agent Workflow with LangChain & LangGraph
+# Title: Set Up LangGraph.js Foundation and Next.js API Integration
 # Status: pending
 # Dependencies: 1, 2, 4
 # Priority: high
-# Description: Implement the autonomous agent loop using LangChain 0.2 and LangGraph, orchestrating Planner, Researcher, Ideator, Analyst, Critic, and Writer roles.
+# Description: Initialize LangGraph.js within the Next.js API layer, creating the foundation for multi-agent orchestration with environment-based LLM model selection.
 # Details:
-Set up LangGraph.js in the Next.js API layer. Implement each agent as a node: Planner (task breakdown), Researcher (Serper.dev + BS4 for web search/summary), Ideator (business model generation), Analyst (market sizing, risk), Critic (scoring/continue/stop), Writer (HTML report via Jinja2). Configure state transitions and stopping conditions as per PRD. Use environment variables for LLM model selection.
+Install LangGraph.js and configure it to work with Next.js API routes. Set up environment variable handling for LLM model selection (OpenAI, Anthropic, etc.). Create the basic API structure for agent node integration. Implement shared state management and agent communication interfaces. Set up error handling foundation and logging infrastructure.
 
 # Test Strategy:
-Run end-to-end agent loop with sample input. Validate correct state transitions, retries on LLM errors, and stopping conditions. Check output at each agent stage.
+Verify Next.js API can initialize LangGraph workflows. Test environment variable-based LLM selection. Confirm shared state management works correctly.
+
+# Subtasks:
+## 1. Install and Configure LangGraph.js in Next.js API Layer [pending]
+### Dependencies: None
+### Description: Install the latest @langchain/langgraph package and set up its initial configuration within the Next.js API routes to enable multi-agent orchestration.
+### Details:
+Add @langchain/langgraph as a dependency. Initialize LangGraph.js in a dedicated module (e.g., /lib/langgraph.ts). Ensure compatibility with Next.js API route handlers.
+
+## 2. Implement Environment-Based LLM Model Selection [pending]
+### Dependencies: 5.1
+### Description: Set up environment variable handling to select the LLM provider and model (OpenAI GPT-4o) dynamically within the API layer.
+### Details:
+Read LLM provider and model configuration from environment variables. Default to OpenAI GPT-4o for development. Ensure the configuration can be easily switched for future providers.
+
+## 3. Create Basic API Structure for Agent Node Integration [pending]
+### Dependencies: 5.2
+### Description: Design and implement the foundational API endpoints for agent orchestration, including POST /api/agents/run and GET /api/agents/status, using JSON request/response formats.
+### Details:
+Define API route handlers in Next.js for running agent workflows and checking status. Ensure endpoints accept and return JSON. Prepare for future agent node integration.
+
+## 4. Implement In-Memory Shared State and Session Management [pending]
+### Dependencies: 5.3
+### Description: Develop a shared state management system using in-memory storage and basic session handling to enable agent communication and workflow continuity.
+### Details:
+Use a JavaScript object or Map for in-memory state. Implement session tracking (e.g., via session IDs in requests). Prepare interfaces for agent nodes to read/write shared state.
+
+## 5. Set Up Basic Error Handling and Logging Infrastructure [pending]
+### Dependencies: 5.4
+### Description: Establish foundational error handling with retry logic and implement logging for API requests, agent execution, and errors.
+### Details:
+Add try/catch blocks to API handlers and agent execution logic. Implement a simple retry mechanism for transient errors. Log key events and errors to the console or a logging service.
+

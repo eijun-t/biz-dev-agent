@@ -1,11 +1,11 @@
 # Task ID: 8
-# Title: Build Report Generation and Viewing UI
+# Title: Implement Detailed Analysis and Market Research Agents
 # Status: pending
-# Dependencies: 3, 7
+# Dependencies: 7
 # Priority: high
-# Description: Create frontend flows for theme input, report generation trigger, and report viewing. Display reports in a single-page HTML view.
+# Description: Develop Analyst and enhanced Researcher capabilities for deep-dive market analysis, competitive assessment, and feasibility evaluation.
 # Details:
-Use shadcn/ui components for input forms and report display. Implement loading/progress indicators. Fetch and render generated reports from Supabase.
+Create Analyst agent for market sizing (TAM), competitive analysis, risk assessment, and financial projections. Enhance Researcher agent for targeted market research based on selected ideas. Implement autonomous coordination - Analyst can request specific research from Researcher. Include integration with financial data sources and calculation tools.
 
 # Test Strategy:
-Submit theme, trigger generation, and view resulting report. Test with multiple reports and edge cases (long/short content).
+Analyze market size and competition for various business ideas. Test Analyst-Researcher coordination for targeted research. Verify accuracy of financial projections and risk assessments.

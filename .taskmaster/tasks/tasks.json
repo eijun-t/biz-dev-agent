@@ -9,8 +9,62 @@
         "testStrategy": "Verify project builds and runs locally. Confirm Tailwind and shadcn/ui components render correctly. Ensure CI pipeline passes on push.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Upgrade and Configure Next.js 15 with App Router and TypeScript",
+            "description": "Update the existing project to Next.js 15, ensuring the App Router is enabled and all routes/components are compatible with the latest features. Confirm TypeScript is fully configured.",
+            "dependencies": [],
+            "details": "Follow the official Next.js 15 migration and setup guides. Refactor any legacy routing or incompatible code to use the /app directory and new routing conventions. Ensure tsconfig.json and next.config.ts are up to date.",
+            "status": "done",
+            "testStrategy": "Run the development server and verify all routes render correctly. Check for TypeScript errors and ensure type checking passes."
+          },
+          {
+            "id": 2,
+            "title": "Install and Configure TailwindCSS",
+            "description": "Integrate TailwindCSS into the Next.js 15 project, ensuring styles are applied globally and utility classes are available.",
+            "dependencies": [
+              1
+            ],
+            "details": "Install TailwindCSS and its peer dependencies. Generate and configure tailwind.config.js and postcss.config.js. Add Tailwind directives to the global CSS file.",
+            "status": "done",
+            "testStrategy": "Verify Tailwind utility classes render as expected in sample components and pages."
+          },
+          {
+            "id": 3,
+            "title": "Integrate shadcn/ui with Required Components",
+            "description": "Set up shadcn/ui in the project, importing both basic and advanced components needed for report display and scoring features.",
+            "dependencies": [
+              2
+            ],
+            "details": "Install shadcn/ui following official documentation. Add and configure base components (Button, Input, etc.) and advanced components required for report viewing and scoring (e.g., Table, Card, Progress, etc.).",
+            "status": "done",
+            "testStrategy": "Render each shadcn/ui component in a test page to confirm correct appearance and interactivity."
+          },
+          {
+            "id": 4,
+            "title": "Set Up GitHub Repository and Configure CI with GitHub Actions",
+            "description": "Initialize a private GitHub repository and set up GitHub Actions for CI, including build, test, lint, TypeScript type check, ESLint, and Prettier.",
+            "dependencies": [
+              3
+            ],
+            "details": "Push the project to a new private GitHub repository. Create a GitHub Actions workflow file that runs on push/pull request, executing build, test, lint, type check, and formatting checks.",
+            "status": "done",
+            "testStrategy": "Push a commit and verify all CI checks pass in GitHub Actions."
+          },
+          {
+            "id": 5,
+            "title": "Prepare for Vercel Deployment and Install Core AI Libraries",
+            "description": "Configure the project for Vercel deployment, including environment variables, vercel.json, and preview deployments. Install LangChain, LangGraph, and other required AI libraries for future tasks.",
+            "dependencies": [
+              4
+            ],
+            "details": "Set up vercel.json and environment variable management. Enable preview deployments. Install LangChain, LangGraph, and any other foundational AI libraries needed for downstream agent workflows.",
+            "status": "done",
+            "testStrategy": "Deploy to Vercel and confirm successful build and preview deployment. Verify environment variables are accessible. Check that AI libraries are installed and importable."
+          }
+        ]
       },
       {
         "id": 2,
@@ -22,20 +76,74 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Review and Update Supabase Project Settings",
+            "description": "Audit the existing Supabase project configuration and update only the necessary settings for integration with the Next.js project, ensuring no redundant changes.",
+            "dependencies": [],
+            "details": "Leverage the current Supabase setup, making minimal adjustments to connect with the Next.js app and enable required features.",
+            "status": "done",
+            "testStrategy": "Verify Supabase project connectivity from the Next.js app and confirm that existing settings remain functional."
+          },
+          {
+            "id": 2,
+            "title": "Design and Create Required Database Tables",
+            "description": "Define and create the 'reports', 'scores', and 'logs' tables in Supabase, using placeholder columns where detailed schema is pending.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement initial table structures: 'reports' (columns TBD), 'scores' (1-5 score and comment), 'logs' (fields for AI agent logs, API usage, errors, performance).",
+            "status": "done",
+            "testStrategy": "Check that all tables are created and accessible via Supabase Table Editor and that test data can be inserted and queried."
+          },
+          {
+            "id": 3,
+            "title": "Enable and Configure Row-Level Security (RLS)",
+            "description": "Activate RLS on the new tables with simple, permissive policies to start, ensuring basic data protection.",
+            "dependencies": [
+              2
+            ],
+            "details": "Enable RLS for each table and add initial policies (e.g., allow authenticated users to read/write their own data).",
+            "status": "done",
+            "testStrategy": "Attempt unauthorized and authorized access to each table to confirm RLS is enforced as intended."
+          },
+          {
+            "id": 4,
+            "title": "Configure Supabase Storage (Initial Setup Only)",
+            "description": "Set up Supabase Storage buckets as placeholders for future use, without detailed configuration or integration at this stage.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create storage buckets in Supabase for later use, ensuring they are ready for future file uploads.",
+            "status": "done",
+            "testStrategy": "Confirm storage buckets exist in the Supabase dashboard and are accessible for future configuration."
+          },
+          {
+            "id": 5,
+            "title": "Integrate Supabase Auth and Environment Variables",
+            "description": "Ensure passwordless email authentication (Magic Link) is enabled and connect the Next.js app using environment variables managed via .env files.",
+            "dependencies": [
+              1
+            ],
+            "details": "Verify that passwordless auth is active in Supabase, and configure the Next.js app to use Supabase credentials and endpoints from .env files.",
+            "status": "done",
+            "testStrategy": "Test user signup/login via Magic Link and confirm that environment variables are loaded correctly in both development and production."
+          }
+        ]
       },
       {
         "id": 3,
         "title": "Implement Passwordless Authentication Flow",
-        "description": "Build frontend and backend logic for passwordless email authentication using Supabase Auth.",
-        "details": "Create login/signup UI with shadcn/ui. Use Supabase client SDK to handle Magic Link requests and session management. Protect all app routes except login.",
-        "testStrategy": "Attempt login/signup with valid and invalid emails. Confirm session persistence and route protection.",
-        "priority": "high",
+        "description": "Build frontend and backend logic for standard email/password authentication using Supabase Auth.",
+        "status": "cancelled",
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Create login and signup UI with shadcn/ui, supporting email and password fields. Signup must include email, password, and password confirmation. Use the Supabase client SDK to handle email/password authentication requests and session management. Leverage existing authentication-related files. Protect all app routes except login/signup, ensuring only authenticated users can access protected content.",
+        "testStrategy": "Attempt login and signup with valid and invalid email/password combinations, including mismatched password confirmation. Confirm session persistence and route protection. Verify that only authenticated users can access protected routes.",
         "subtasks": []
       },
       {
@@ -49,14 +157,71 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design reports table schema",
+            "description": "Define the structure of the 'reports' table with required columns and report content fields, considering storage format (HTML, JSONB, or both).",
+            "dependencies": [],
+            "details": "Include columns: id (primary key), user_id (foreign key to auth.users), title, created_at, updated_at, status. Store report content fields (e.g., idea title, target, challenges, monetization, TAM, competitors, Mitsubishi Jisho's capability, risks, roadmap) in either HTML, JSONB, or both, based on technical assessment. Ensure the schema supports efficient querying and future extensibility.",
+            "status": "pending",
+            "testStrategy": "Insert sample reports with varied content formats. Verify all columns and content fields are correctly stored and retrievable."
+          },
+          {
+            "id": 2,
+            "title": "Design scores table schema",
+            "description": "Define the 'scores' table to store user evaluations linked 1:1 to reports, with flexible criteria for future changes.",
+            "dependencies": [
+              1
+            ],
+            "details": "Include columns: id (primary key), report_id (foreign key to reports, enforcing 1:1 relationship), user_id (foreign key to auth.users), and fields for each evaluation criterion (market size/competition, Mitsubishi Jisho's advantage, target/problem validity). Allow for comments and potential future criterion additions. Use appropriate data types for scores and text.",
+            "status": "pending",
+            "testStrategy": "Insert scores for multiple reports. Validate 1:1 relationship enforcement. Test updates to criteria and comments."
+          },
+          {
+            "id": 3,
+            "title": "Design logs table schema",
+            "description": "Define a minimal, efficient 'logs' table for observability data such as API usage, errors, performance, and agent execution logs.",
+            "dependencies": [],
+            "details": "Include columns: id (primary key), user_id (foreign key to auth.users), timestamp, event_type (e.g., api_usage, error, performance, agent_execution), and details (JSONB for flexible log payload). Optimize for small-scale observability with fast writes and simple queries.",
+            "status": "pending",
+            "testStrategy": "Log sample events of each type. Verify logs are correctly stored and queryable by user and event type."
+          },
+          {
+            "id": 4,
+            "title": "Define table relationships and constraints",
+            "description": "Establish and enforce relationships between tables, especially the 1:1 link between reports and scores, and user references.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Set up foreign key constraints: reports.user_id → auth.users.id, scores.report_id → reports.id (unique), scores.user_id → auth.users.id, logs.user_id → auth.users.id. Ensure referential integrity and consider cascade rules for updates/deletes. Document relationships clearly in the schema.",
+            "status": "pending",
+            "testStrategy": "Attempt to insert orphaned records to test constraint enforcement. Validate cascade behavior if applicable."
+          },
+          {
+            "id": 5,
+            "title": "Implement and version schema migrations",
+            "description": "Create and apply SQL migration scripts to deploy the schema to Supabase Postgres, using a versioned, declarative approach.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Write idempotent SQL migration files for each table and relationship. Use a declarative schema tool or Supabase CLI for version control and easy rebasing[2]. Test migrations in a staging environment before production. Document the migration process for team reproducibility.",
+            "status": "pending",
+            "testStrategy": "Apply migrations to a fresh database. Verify tables, columns, constraints, and relationships are correctly created. Roll back and reapply migrations to test idempotency."
+          }
+        ]
       },
       {
         "id": 5,
-        "title": "Develop Multi-Agent Workflow with LangChain & LangGraph",
-        "description": "Implement the autonomous agent loop using LangChain 0.2 and LangGraph, orchestrating Planner, Researcher, Ideator, Analyst, Critic, and Writer roles.",
-        "details": "Set up LangGraph.js in the Next.js API layer. Implement each agent as a node: Planner (task breakdown), Researcher (Serper.dev + BS4 for web search/summary), Ideator (business model generation), Analyst (market sizing, risk), Critic (scoring/continue/stop), Writer (HTML report via Jinja2). Configure state transitions and stopping conditions as per PRD. Use environment variables for LLM model selection.",
-        "testStrategy": "Run end-to-end agent loop with sample input. Validate correct state transitions, retries on LLM errors, and stopping conditions. Check output at each agent stage.",
+        "title": "Set Up LangGraph.js Foundation and Next.js API Integration",
+        "description": "Initialize LangGraph.js within the Next.js API layer, creating the foundation for multi-agent orchestration with environment-based LLM model selection.",
+        "details": "Install LangGraph.js and configure it to work with Next.js API routes. Set up environment variable handling for LLM model selection (OpenAI, Anthropic, etc.). Create the basic API structure for agent node integration. Implement shared state management and agent communication interfaces. Set up error handling foundation and logging infrastructure.",
+        "testStrategy": "Verify Next.js API can initialize LangGraph workflows. Test environment variable-based LLM selection. Confirm shared state management works correctly.",
         "priority": "high",
         "dependencies": [
           1,
@@ -64,10 +229,129 @@
           4
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and Configure LangGraph.js in Next.js API Layer",
+            "description": "Install the latest @langchain/langgraph package and set up its initial configuration within the Next.js API routes to enable multi-agent orchestration.",
+            "dependencies": [],
+            "details": "Add @langchain/langgraph as a dependency. Initialize LangGraph.js in a dedicated module (e.g., /lib/langgraph.ts). Ensure compatibility with Next.js API route handlers.",
+            "status": "pending",
+            "testStrategy": "Verify that LangGraph.js can be imported and initialized without errors in a basic API route."
+          },
+          {
+            "id": 2,
+            "title": "Implement Environment-Based LLM Model Selection",
+            "description": "Set up environment variable handling to select the LLM provider and model (OpenAI GPT-4o) dynamically within the API layer.",
+            "dependencies": [
+              1
+            ],
+            "details": "Read LLM provider and model configuration from environment variables. Default to OpenAI GPT-4o for development. Ensure the configuration can be easily switched for future providers.",
+            "status": "pending",
+            "testStrategy": "Change environment variables and confirm the correct model/provider is selected during API execution."
+          },
+          {
+            "id": 3,
+            "title": "Create Basic API Structure for Agent Node Integration",
+            "description": "Design and implement the foundational API endpoints for agent orchestration, including POST /api/agents/run and GET /api/agents/status, using JSON request/response formats.",
+            "dependencies": [
+              2
+            ],
+            "details": "Define API route handlers in Next.js for running agent workflows and checking status. Ensure endpoints accept and return JSON. Prepare for future agent node integration.",
+            "status": "pending",
+            "testStrategy": "Send test requests to each endpoint and verify correct structure and response format."
+          },
+          {
+            "id": 4,
+            "title": "Implement In-Memory Shared State and Session Management",
+            "description": "Develop a shared state management system using in-memory storage and basic session handling to enable agent communication and workflow continuity.",
+            "dependencies": [
+              3
+            ],
+            "details": "Use a JavaScript object or Map for in-memory state. Implement session tracking (e.g., via session IDs in requests). Prepare interfaces for agent nodes to read/write shared state.",
+            "status": "pending",
+            "testStrategy": "Run multiple workflow sessions and confirm state is isolated and persists correctly per session."
+          },
+          {
+            "id": 5,
+            "title": "Set Up Basic Error Handling and Logging Infrastructure",
+            "description": "Establish foundational error handling with retry logic and implement logging for API requests, agent execution, and errors.",
+            "dependencies": [
+              4
+            ],
+            "details": "Add try/catch blocks to API handlers and agent execution logic. Implement a simple retry mechanism for transient errors. Log key events and errors to the console or a logging service.",
+            "status": "pending",
+            "testStrategy": "Simulate errors and verify retries and logs are triggered as expected."
+          }
+        ]
       },
       {
         "id": 6,
+        "title": "Implement Ideation Research Phase Agents",
+        "description": "Develop Planner and Researcher agents for the initial ideation research phase, enabling dynamic investigation planning and information gathering.",
+        "details": "Create Planner agent for dynamic research planning based on user input (from broad to specific). Implement Researcher agent with Serper.dev + BS4 integration for web search and summarization. Focus on: startup trends, industry challenges, technology developments, investment patterns. Enable autonomous decision-making for additional research rounds.",
+        "testStrategy": "Test Planner with various input types (broad vs specific). Verify Researcher can gather and summarize relevant information. Validate autonomous re-planning capability.",
+        "priority": "high",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Ideation and Initial Evaluation Agents",
+        "description": "Create Ideator and Critic agents for business idea generation and initial quality assessment, with autonomous iteration capability.",
+        "details": "Develop Ideator agent for business model generation based on research findings. Create Critic agent for initial idea evaluation and quality scoring. Implement autonomous iteration - Critic can request Ideator to refine ideas or Researcher to gather more information. Define evaluation criteria and scoring thresholds for progression to next phase.",
+        "testStrategy": "Generate multiple business ideas from research data. Test Critic evaluation accuracy and consistency. Verify autonomous iteration and quality improvement loops.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Detailed Analysis and Market Research Agents",
+        "description": "Develop Analyst and enhanced Researcher capabilities for deep-dive market analysis, competitive assessment, and feasibility evaluation.",
+        "details": "Create Analyst agent for market sizing (TAM), competitive analysis, risk assessment, and financial projections. Enhance Researcher agent for targeted market research based on selected ideas. Implement autonomous coordination - Analyst can request specific research from Researcher. Include integration with financial data sources and calculation tools.",
+        "testStrategy": "Analyze market size and competition for various business ideas. Test Analyst-Researcher coordination for targeted research. Verify accuracy of financial projections and risk assessments.",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement Report Generation and Quality Assurance System",
+        "description": "Create Writer agent for comprehensive report generation and enhanced Critic for final quality assurance, with autonomous revision capabilities.",
+        "details": "Develop Writer agent for HTML report generation using structured templates. Include all required sections: idea summary, target market, competitive landscape, financial projections, risks, implementation roadmap. Enhance Critic agent for final quality assessment and revision requests. Implement autonomous revision loops - Writer can request additional research or analysis if needed.",
+        "testStrategy": "Generate complete reports from analysis data. Test report quality and completeness. Verify autonomous revision and improvement processes.",
+        "priority": "high",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Integrate Multi-Agent Orchestration and Workflow Management",
+        "description": "Implement the complete multi-agent workflow orchestration system with dynamic routing, state management, and autonomous agent coordination.",
+        "details": "Integrate all agents into a cohesive workflow system. Implement dynamic routing logic allowing agents to autonomously decide next actions and coordinate with other agents. Create robust state management for information sharing across agents. Implement workflow progression logic (ideation research → ideation → evaluation → detailed research → report generation). Add comprehensive error handling and recovery mechanisms.",
+        "testStrategy": "Execute end-to-end workflows with various input scenarios. Test autonomous agent coordination and decision-making. Verify workflow progression and error recovery.",
+        "priority": "high",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
         "title": "Integrate LLM Provider and Model Selection Logic",
         "description": "Connect to OpenAI GPT-4o (or other LLMs) via environment variables. Ensure critical agents use the correct model as specified in env config.",
         "details": "Use LangChain's ChatOpenAI wrapper. Read model names from .env (LLM_MODEL_CRITICAL for Analyst, Critic; default for others). Avoid hardcoding model names. Allow easy switching for development/testing.",
@@ -80,7 +364,7 @@
         "subtasks": []
       },
       {
-        "id": 7,
+        "id": 12,
         "title": "Implement HTML Report Generation (A3 Landscape)",
         "description": "Generate a single-page HTML report per PRD spec, styled with TailwindCSS, using Jinja2 templating via LangChain.",
         "details": "Define Jinja2 template for all report sections (summary, business model, market size, synergy, risk, roadmap, scoring). Ensure layout fits A3 landscape and is responsive. Render in-browser using Next.js.",
@@ -93,21 +377,20 @@
         "subtasks": []
       },
       {
-        "id": 8,
+        "id": 13,
         "title": "Build Report Generation and Viewing UI",
         "description": "Create frontend flows for theme input, report generation trigger, and report viewing. Display reports in a single-page HTML view.",
         "details": "Use shadcn/ui components for input forms and report display. Implement loading/progress indicators. Fetch and render generated reports from Supabase.",
         "testStrategy": "Submit theme, trigger generation, and view resulting report. Test with multiple reports and edge cases (long/short content).",
         "priority": "high",
         "dependencies": [
-          3,
-          7
+          12
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 9,
+        "id": 14,
         "title": "Implement Scoring and Feedback Mechanism",
         "description": "Enable users to score reports on each evaluation criterion (1-5) and leave comments. Save to 'scores' table and update agent memory for future loops.",
         "details": "Add scoring UI to report view. On submit, store scores/comments in Supabase. Implement backend batch job to compute averages/variance and update LangGraph memory/prompts (no ML, just statistical updates).",
@@ -115,27 +398,27 @@
         "priority": "medium",
         "dependencies": [
           4,
-          8
+          13
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 10,
+        "id": 15,
         "title": "Implement Report and Score History Listing",
         "description": "Provide a UI for users to view their past reports and associated scores/comments.",
         "details": "Create a history page listing all reports with summary info and links to full view. Display associated scores and comments. Use Supabase queries for data retrieval.",
         "testStrategy": "Generate multiple reports, score them, and verify all appear in history with correct data.",
         "priority": "medium",
         "dependencies": [
-          8,
-          9
+          13,
+          14
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 11,
+        "id": 16,
         "title": "Add Observability, Error Handling, and Cost Guardrails",
         "description": "Log token usage and failure counts to 'logs' table. Implement retry logic for LLM errors (up to 3 times) and enforce monthly API token cap.",
         "details": "Instrument agent workflow to log token counts and errors. On LLM failure, retry up to 3 times, then mark as 'failed'. Implement backend check to halt generation if token cap is exceeded.",
@@ -149,7 +432,7 @@
         "subtasks": []
       },
       {
-        "id": 12,
+        "id": 17,
         "title": "Production Deployment and Security Hardening",
         "description": "Deploy to Vercel with SSL. Enable CSRF protection and verify Supabase RLS. Finalize environment variables and secrets management.",
         "details": "Configure Vercel deployment pipeline. Ensure all endpoints are protected against CSRF. Double-check Supabase RLS and environment variable usage. Document deployment steps.",
@@ -157,8 +440,7 @@
         "priority": "high",
         "dependencies": [
           1,
-          3,
-          11
+          16
         ],
         "status": "pending",
         "subtasks": []
@@ -166,7 +448,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T14:25:14.652Z",
-      "updated": "2025-07-15T14:25:14.652Z",
+      "updated": "2025-07-18T11:25:22.299Z",
       "description": "Tasks for master context"
     }
   }
