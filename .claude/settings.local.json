@@ -16,7 +16,9 @@
       "Bash(node test-agents.js)",
       "Bash(true)",
       "Bash(curl:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(node:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

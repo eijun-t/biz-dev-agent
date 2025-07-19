@@ -9,3 +9,35 @@ Create Planner agent for dynamic research planning based on user input (from bro
 
 # Test Strategy:
 Test Planner with various input types (broad vs specific). Verify Researcher can gather and summarize relevant information. Validate autonomous re-planning capability.
+
+# Subtasks:
+## 1. Design and Implement Planner Agent for Dynamic Research Planning [pending]
+### Dependencies: None
+### Description: Develop a Planner agent capable of initiating research planning with or without user input, generating 20-30 balanced research items across specified categories using pre-prepared keyword combinations.
+### Details:
+Ensure the Planner agent can start from a blank state, generate diverse and balanced research topics (startup trends, industry challenges, technology developments, investment patterns), and exclude Mitsubishi Estate strengths from search queries.
+
+## 2. Integrate Serper.dev API and BeautifulSoup4 for Researcher Agent [pending]
+### Dependencies: 6.1
+### Description: Implement the Researcher agent to perform web searches using Serper.dev API (Japanese for domestic, English for overseas cases) and scrape detailed information with BeautifulSoup4 as needed.
+### Details:
+Configure API keys, handle language selection, and determine when to use BS4 for deeper scraping. Ensure structured JSON output for all gathered data.
+
+## 3. Develop Autonomous Decision-Making System for Research Iteration [pending]
+### Dependencies: 6.2
+### Description: Create a system that autonomously evaluates research sufficiency, determines Mitsubishi Estate fit, business scale potential, and decides whether to trigger additional research or proceed to ideation.
+### Details:
+Implement criteria for sufficiency (information volume, business scale, fit to urban development/real estate/customer network), and automate the feedback loop between Researcher and Planner or progression to Ideator.
+
+## 4. Implement Parallel Processing and Performance Optimization [pending]
+### Dependencies: 6.2
+### Description: Enable parallel execution of research tasks to accelerate information gathering, ensuring total processing time for the phase is within 2 minutes.
+### Details:
+Utilize concurrency frameworks to run multiple research queries simultaneously; monitor and optimize for speed and resource usage.
+
+## 5. Add Robust Error Handling and Retry Mechanisms [pending]
+### Dependencies: 6.1, 6.2
+### Description: Implement comprehensive error handling and automatic retry logic for both Planner and Researcher agents to ensure reliability and resilience.
+### Details:
+Detect and handle API failures, scraping errors, and data inconsistencies; implement configurable retry policies and fallback strategies.
+
