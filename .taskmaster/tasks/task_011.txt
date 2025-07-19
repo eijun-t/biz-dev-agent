@@ -3,9 +3,41 @@
 # Status: pending
 # Dependencies: 5
 # Priority: medium
-# Description: Connect to OpenAI GPT-4o (or other LLMs) via environment variables. Ensure critical agents use the correct model as specified in env config.
+# Description: Connect to OpenAI GPT-4o via environment variables. Ensure critical agents use the correct model as specified in env config. Implement agent-specific temperature settings and centralize configuration for maintainability.
 # Details:
-Use LangChain's ChatOpenAI wrapper. Read model names from .env (LLM_MODEL_CRITICAL for Analyst, Critic; default for others). Avoid hardcoding model names. Allow easy switching for development/testing.
+Use LangChain's ChatOpenAI wrapper. Read model names from .env (LLM_MODEL_CRITICAL for Analyst, Critic; LLM_MODEL_DEFAULT for others), but unify both to 'gpt-4o' as the standard and fallback. Implement agent-specific temperature settings: Analyst/Critic: 0.2, Researcher/Planner: 0.7, Ideator: 0.8, Writer: 0.6. Centralize all LLM configuration in a new file at lib/config/llm-config.ts for maintainability. Avoid hardcoding model names or temperatures elsewhere. Ensure switching and management are easy for development and testing.
 
 # Test Strategy:
-Switch model names in .env and verify correct models are used for each agent. Test fallback to default if critical model is not set.
+Switch model names and temperature values in .env and verify correct models and temperatures are used for each agent. Test fallback to 'gpt-4o' if critical/default model is not set. Confirm that agent-specific temperature settings are respected.
+
+# Subtasks:
+## 1. Centralize LLM Model Configuration in Environment Variables [pending]
+### Dependencies: None
+### Description: Consolidate all LLM model and provider configuration into environment variables, ensuring clear separation for critical and default agent models.
+### Details:
+Define environment variables LLM_MODEL_CRITICAL and LLM_MODEL_DEFAULT in the .env file, both defaulting to 'gpt-4o'. Document their intended use (LLM_MODEL_CRITICAL for Analyst and Critic agents, LLM_MODEL_DEFAULT for others). Remove any hardcoded model names from the codebase. Ensure all relevant settings (temperature, provider, etc.) are also configurable via environment variables for flexibility. Centralize all configuration logic in lib/config/llm-config.ts for maintainability.
+
+## 2. Refactor Agent Initialization to Use Centralized Config [pending]
+### Dependencies: 11.1
+### Description: Update agent instantiation logic to dynamically select the correct model and temperature based on the centralized environment configuration.
+### Details:
+Modify the code where agents (Analyst, Critic, Researcher, Planner, Ideator, Writer) are initialized to read model names and temperature from lib/config/llm-config.ts. Use LangChain's ChatOpenAI wrapper and pass the model and temperature parameters programmatically. Ensure that Analyst and Critic use LLM_MODEL_CRITICAL and temperature 0.2, Researcher/Planner use LLM_MODEL_DEFAULT and temperature 0.7, Ideator uses temperature 0.8, Writer uses temperature 0.6. Avoid any hardcoded model or temperature values.
+
+## 3. Implement Fallback Logic for Missing or Invalid Configurations [pending]
+### Dependencies: 11.2
+### Description: Ensure robust fallback mechanisms if critical environment variables are missing or invalid, defaulting to 'gpt-4o' and logging warnings.
+### Details:
+Add logic in lib/config/llm-config.ts to check for the presence and validity of LLM_MODEL_CRITICAL and LLM_MODEL_DEFAULT. If a variable is missing or invalid, fallback to 'gpt-4o'. Log a warning or error for observability. Ensure the application does not crash due to misconfiguration. Apply the same fallback for temperature settings if needed.
+
+## 4. Unify and Document Model Selection Logic Across All Agents [pending]
+### Dependencies: 11.3
+### Description: Standardize the model selection and initialization logic for all agents, ensuring consistent usage and maintainability.
+### Details:
+Refactor any duplicated or inconsistent model selection code into a shared utility or factory function in lib/config/llm-config.ts. Ensure all agents use this unified logic for model and temperature selection. Update internal documentation and code comments to explain the configuration flow, agent-specific temperature settings, and how to add new agents or models in the future.
+
+## 5. Validate Model Switching and Cost Optimization in Development and Testing [pending]
+### Dependencies: 11.4
+### Description: Test the ability to switch models and temperature settings via environment variables, and verify cost optimization strategies are respected.
+### Details:
+Change model and temperature values in the .env file to simulate development and production scenarios. Ensure that switching to lower-cost models for non-critical agents works as intended (even though 'gpt-4o' is the default/fallback). Monitor token usage and model assignment in logs to confirm cost optimization. Document recommended settings for different environments.
+

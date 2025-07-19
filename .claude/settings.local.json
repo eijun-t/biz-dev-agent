@@ -18,7 +18,8 @@
       "Bash(curl:*)",
       "Bash(npm uninstall:*)",
       "Bash(node:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(psql:*)"
     ],
     "deny": []
   }

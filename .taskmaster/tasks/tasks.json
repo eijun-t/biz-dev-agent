@@ -497,7 +497,7 @@
         "dependencies": [
           8
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -505,7 +505,7 @@
             "description": "Design the Writer agent's user interface with a modern gradient background and tab-based layout, implementing 7 fixed tabs as specified. Define the HTML/React template structure for detailed report content in each tab.",
             "dependencies": [],
             "details": "Ensure the UI uses Next.js 15, React, TailwindCSS, and shadcn/ui components. Each tab must correspond to a required report section and support detailed content entry. Include a right sidebar for chatbot Q&A based on report content.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify UI renders all tabs with correct styling and structure. Confirm sidebar chatbot is present and responsive."
           },
           {
@@ -516,7 +516,7 @@
               1
             ],
             "details": "Ensure each tab's content is rendered in HTML/React format only. Integrate template logic to support dynamic data population and formatting. Support saving and loading reports from Supabase.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Generate sample reports and verify correct HTML structure, data population, and template adherence."
           },
           {
@@ -527,7 +527,7 @@
               1
             ],
             "details": "Ensure the chatbot can access and reference all report sections. UI must remain responsive and context-aware.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test chatbot with various queries to confirm accurate, context-based responses."
           },
           {
@@ -538,7 +538,7 @@
               2
             ],
             "details": "Implement evaluation logic focusing on logical coherence and concrete details. Critic must provide actionable feedback and trigger revision requests as needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Submit reports of varying quality and verify Critic's scoring accuracy and feedback relevance."
           },
           {
@@ -549,7 +549,7 @@
               4
             ],
             "details": "Track revision count and enforce a maximum of two cycles. Ensure Writer can trigger targeted research or analysis requests and update the report accordingly.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test revision loop with reports requiring multiple improvements, confirming correct handling and stopping after two cycles."
           },
           {
@@ -561,7 +561,7 @@
               5
             ],
             "details": "Balance processing time and output quality. Handle incomplete data gracefully. Confirm all report data is stored and retrievable from Supabase in HTML/React format.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate slow or incomplete data scenarios, verify error handling, and confirm data persistence and retrieval."
           }
         ]
@@ -576,7 +576,7 @@
         "dependencies": [
           9
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -584,7 +584,7 @@
             "description": "Define the overall architecture for orchestrating multiple autonomous agents, including workflow phases, agent roles, communication protocols, and dynamic routing logic.",
             "dependencies": [],
             "details": "Establish the workflow progression (Planner→Researcher→Ideator→Critic→Analyst→Enhanced Researcher→Writer→Enhanced Critic), agent responsibilities, and how agents will communicate and coordinate autonomously using LangGraph.js. Specify dynamic routing rules and fallback mechanisms for error handling and workflow reversions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Review architecture diagrams and flowcharts for completeness. Simulate agent interactions and routing decisions using mock data."
           },
           {
@@ -595,7 +595,7 @@
               1
             ],
             "details": "Utilize LangGraph.js SharedState interfaces and Supabase for persistent state. Ensure agents can read/write shared context, track workflow progression, and access necessary data for decision-making.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test state updates and retrievals across all workflow phases. Simulate concurrent agent access and verify data consistency."
           },
           {
@@ -606,7 +606,7 @@
               2
             ],
             "details": "Configure LangGraph.js to support flexible agent-to-agent routing, including parallel and conditional flows. Integrate quality checks to trigger phase reversions or alternate paths as needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run end-to-end workflow tests with varying input scenarios and quality thresholds. Verify correct routing, coordination, and phase transitions."
           },
           {
@@ -617,7 +617,7 @@
               3
             ],
             "details": "Implement WebSocket/SSE-based updates for agent status, error locations, and progress. Display quality scores, estimated completion times, and allow user interruption or correction.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate workflow execution with injected errors and delays. Verify real-time updates, error displays, and user control features."
           },
           {
@@ -628,7 +628,7 @@
               3
             ],
             "details": "Add mechanisms for retrying failed tasks, rolling back to previous workflow phases, and escalating persistent issues. Ensure all errors are logged with detailed context for debugging.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Inject various failure scenarios (API errors, timeouts, data corruption) and verify recovery, rollback, and logging behaviors."
           },
           {
@@ -640,7 +640,7 @@
               5
             ],
             "details": "Implement UI components for user feedback, correction input, and workflow control. Ensure user actions are reflected in agent coordination and workflow state.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test user-initiated corrections, workflow interruptions, and resumption. Verify that agent behaviors and workflow state update accordingly."
           }
         ]
@@ -648,15 +648,69 @@
       {
         "id": 11,
         "title": "Integrate LLM Provider and Model Selection Logic",
-        "description": "Connect to OpenAI GPT-4o (or other LLMs) via environment variables. Ensure critical agents use the correct model as specified in env config.",
-        "details": "Use LangChain's ChatOpenAI wrapper. Read model names from .env (LLM_MODEL_CRITICAL for Analyst, Critic; default for others). Avoid hardcoding model names. Allow easy switching for development/testing.",
-        "testStrategy": "Switch model names in .env and verify correct models are used for each agent. Test fallback to default if critical model is not set.",
-        "priority": "medium",
+        "description": "Connect to OpenAI GPT-4o via environment variables. Ensure critical agents use the correct model as specified in env config. Implement agent-specific temperature settings and centralize configuration for maintainability.",
+        "status": "pending",
         "dependencies": [
           5
         ],
-        "status": "pending",
-        "subtasks": []
+        "priority": "medium",
+        "details": "Use LangChain's ChatOpenAI wrapper. Read model names from .env (LLM_MODEL_CRITICAL for Analyst, Critic; LLM_MODEL_DEFAULT for others), but unify both to 'gpt-4o' as the standard and fallback. Implement agent-specific temperature settings: Analyst/Critic: 0.2, Researcher/Planner: 0.7, Ideator: 0.8, Writer: 0.6. Centralize all LLM configuration in a new file at lib/config/llm-config.ts for maintainability. Avoid hardcoding model names or temperatures elsewhere. Ensure switching and management are easy for development and testing.",
+        "testStrategy": "Switch model names and temperature values in .env and verify correct models and temperatures are used for each agent. Test fallback to 'gpt-4o' if critical/default model is not set. Confirm that agent-specific temperature settings are respected.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Centralize LLM Model Configuration in Environment Variables",
+            "description": "Consolidate all LLM model and provider configuration into environment variables, ensuring clear separation for critical and default agent models.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Define environment variables LLM_MODEL_CRITICAL and LLM_MODEL_DEFAULT in the .env file, both defaulting to 'gpt-4o'. Document their intended use (LLM_MODEL_CRITICAL for Analyst and Critic agents, LLM_MODEL_DEFAULT for others). Remove any hardcoded model names from the codebase. Ensure all relevant settings (temperature, provider, etc.) are also configurable via environment variables for flexibility. Centralize all configuration logic in lib/config/llm-config.ts for maintainability.",
+            "testStrategy": "Manually edit .env values and verify that changes are reflected in the application configuration at runtime. Confirm that lib/config/llm-config.ts is the single source of truth."
+          },
+          {
+            "id": 2,
+            "title": "Refactor Agent Initialization to Use Centralized Config",
+            "description": "Update agent instantiation logic to dynamically select the correct model and temperature based on the centralized environment configuration.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "details": "Modify the code where agents (Analyst, Critic, Researcher, Planner, Ideator, Writer) are initialized to read model names and temperature from lib/config/llm-config.ts. Use LangChain's ChatOpenAI wrapper and pass the model and temperature parameters programmatically. Ensure that Analyst and Critic use LLM_MODEL_CRITICAL and temperature 0.2, Researcher/Planner use LLM_MODEL_DEFAULT and temperature 0.7, Ideator uses temperature 0.8, Writer uses temperature 0.6. Avoid any hardcoded model or temperature values.",
+            "testStrategy": "Instantiate each agent and log the model and temperature used to confirm correct assignment per agent type. Confirm all values are sourced from lib/config/llm-config.ts."
+          },
+          {
+            "id": 3,
+            "title": "Implement Fallback Logic for Missing or Invalid Configurations",
+            "description": "Ensure robust fallback mechanisms if critical environment variables are missing or invalid, defaulting to 'gpt-4o' and logging warnings.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "details": "Add logic in lib/config/llm-config.ts to check for the presence and validity of LLM_MODEL_CRITICAL and LLM_MODEL_DEFAULT. If a variable is missing or invalid, fallback to 'gpt-4o'. Log a warning or error for observability. Ensure the application does not crash due to misconfiguration. Apply the same fallback for temperature settings if needed.",
+            "testStrategy": "Temporarily remove or corrupt environment variables and verify that the system falls back gracefully to 'gpt-4o' and logs appropriate messages. Test fallback for temperature as well."
+          },
+          {
+            "id": 4,
+            "title": "Unify and Document Model Selection Logic Across All Agents",
+            "description": "Standardize the model selection and initialization logic for all agents, ensuring consistent usage and maintainability.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "details": "Refactor any duplicated or inconsistent model selection code into a shared utility or factory function in lib/config/llm-config.ts. Ensure all agents use this unified logic for model and temperature selection. Update internal documentation and code comments to explain the configuration flow, agent-specific temperature settings, and how to add new agents or models in the future.",
+            "testStrategy": "Review codebase for any remaining direct model or temperature assignments. Confirm all agents use the shared logic and that documentation is clear."
+          },
+          {
+            "id": 5,
+            "title": "Validate Model Switching and Cost Optimization in Development and Testing",
+            "description": "Test the ability to switch models and temperature settings via environment variables, and verify cost optimization strategies are respected.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Change model and temperature values in the .env file to simulate development and production scenarios. Ensure that switching to lower-cost models for non-critical agents works as intended (even though 'gpt-4o' is the default/fallback). Monitor token usage and model assignment in logs to confirm cost optimization. Document recommended settings for different environments.",
+            "testStrategy": "Run test workflows with various .env configurations, verify correct models and temperatures are used for each agent, and check logs for cost-related metrics."
+          }
+        ]
       },
       {
         "id": 12,
@@ -743,7 +797,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T14:25:14.652Z",
-      "updated": "2025-07-19T05:28:42.215Z",
+      "updated": "2025-07-19T08:11:56.759Z",
       "description": "Tasks for master context"
     }
   }
