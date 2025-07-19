@@ -1,6 +1,6 @@
 # Task ID: 4
 # Title: Design Database Schema for Reports, Scores, and Logs
-# Status: pending
+# Status: done
 # Dependencies: 2
 # Priority: high
 # Description: Define and migrate the schema for 'reports', 'scores', and 'logs' tables in Supabase Postgres.
@@ -11,31 +11,31 @@ Design 'reports' to store generated report data, 'scores' for user evaluations (
 Insert, update, and query sample data for each table. Validate schema constraints and relationships.
 
 # Subtasks:
-## 1. Design reports table schema [pending]
+## 1. Design reports table schema [done]
 ### Dependencies: None
 ### Description: Define the structure of the 'reports' table with required columns and report content fields, considering storage format (HTML, JSONB, or both).
 ### Details:
 Include columns: id (primary key), user_id (foreign key to auth.users), title, created_at, updated_at, status. Store report content fields (e.g., idea title, target, challenges, monetization, TAM, competitors, Mitsubishi Jisho's capability, risks, roadmap) in either HTML, JSONB, or both, based on technical assessment. Ensure the schema supports efficient querying and future extensibility.
 
-## 2. Design scores table schema [pending]
+## 2. Design scores table schema [done]
 ### Dependencies: 4.1
 ### Description: Define the 'scores' table to store user evaluations linked 1:1 to reports, with flexible criteria for future changes.
 ### Details:
 Include columns: id (primary key), report_id (foreign key to reports, enforcing 1:1 relationship), user_id (foreign key to auth.users), and fields for each evaluation criterion (market size/competition, Mitsubishi Jisho's advantage, target/problem validity). Allow for comments and potential future criterion additions. Use appropriate data types for scores and text.
 
-## 3. Design logs table schema [pending]
+## 3. Design logs table schema [done]
 ### Dependencies: None
 ### Description: Define a minimal, efficient 'logs' table for observability data such as API usage, errors, performance, and agent execution logs.
 ### Details:
 Include columns: id (primary key), user_id (foreign key to auth.users), timestamp, event_type (e.g., api_usage, error, performance, agent_execution), and details (JSONB for flexible log payload). Optimize for small-scale observability with fast writes and simple queries.
 
-## 4. Define table relationships and constraints [pending]
+## 4. Define table relationships and constraints [done]
 ### Dependencies: 4.1, 4.2, 4.3
 ### Description: Establish and enforce relationships between tables, especially the 1:1 link between reports and scores, and user references.
 ### Details:
 Set up foreign key constraints: reports.user_id → auth.users.id, scores.report_id → reports.id (unique), scores.user_id → auth.users.id, logs.user_id → auth.users.id. Ensure referential integrity and consider cascade rules for updates/deletes. Document relationships clearly in the schema.
 
-## 5. Implement and version schema migrations [pending]
+## 5. Implement and version schema migrations [done]
 ### Dependencies: 4.1, 4.2, 4.3, 4.4
 ### Description: Create and apply SQL migration scripts to deploy the schema to Supabase Postgres, using a versioned, declarative approach.
 ### Details:

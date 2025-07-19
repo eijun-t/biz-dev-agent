@@ -1,6 +1,6 @@
 # Task ID: 3
 # Title: Implement Passwordless Authentication Flow
-# Status: cancelled
+# Status: done
 # Dependencies: 2
 # Priority: high
 # Description: Build frontend and backend logic for standard email/password authentication using Supabase Auth.

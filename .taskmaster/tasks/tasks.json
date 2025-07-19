@@ -137,7 +137,7 @@
         "id": 3,
         "title": "Implement Passwordless Authentication Flow",
         "description": "Build frontend and backend logic for standard email/password authentication using Supabase Auth.",
-        "status": "cancelled",
+        "status": "done",
         "dependencies": [
           2
         ],
@@ -156,7 +156,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -164,7 +164,7 @@
             "description": "Define the structure of the 'reports' table with required columns and report content fields, considering storage format (HTML, JSONB, or both).",
             "dependencies": [],
             "details": "Include columns: id (primary key), user_id (foreign key to auth.users), title, created_at, updated_at, status. Store report content fields (e.g., idea title, target, challenges, monetization, TAM, competitors, Mitsubishi Jisho's capability, risks, roadmap) in either HTML, JSONB, or both, based on technical assessment. Ensure the schema supports efficient querying and future extensibility.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Insert sample reports with varied content formats. Verify all columns and content fields are correctly stored and retrievable."
           },
           {
@@ -175,7 +175,7 @@
               1
             ],
             "details": "Include columns: id (primary key), report_id (foreign key to reports, enforcing 1:1 relationship), user_id (foreign key to auth.users), and fields for each evaluation criterion (market size/competition, Mitsubishi Jisho's advantage, target/problem validity). Allow for comments and potential future criterion additions. Use appropriate data types for scores and text.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Insert scores for multiple reports. Validate 1:1 relationship enforcement. Test updates to criteria and comments."
           },
           {
@@ -184,7 +184,7 @@
             "description": "Define a minimal, efficient 'logs' table for observability data such as API usage, errors, performance, and agent execution logs.",
             "dependencies": [],
             "details": "Include columns: id (primary key), user_id (foreign key to auth.users), timestamp, event_type (e.g., api_usage, error, performance, agent_execution), and details (JSONB for flexible log payload). Optimize for small-scale observability with fast writes and simple queries.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Log sample events of each type. Verify logs are correctly stored and queryable by user and event type."
           },
           {
@@ -197,7 +197,7 @@
               3
             ],
             "details": "Set up foreign key constraints: reports.user_id → auth.users.id, scores.report_id → reports.id (unique), scores.user_id → auth.users.id, logs.user_id → auth.users.id. Ensure referential integrity and consider cascade rules for updates/deletes. Document relationships clearly in the schema.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Attempt to insert orphaned records to test constraint enforcement. Validate cascade behavior if applicable."
           },
           {
@@ -211,7 +211,7 @@
               4
             ],
             "details": "Write idempotent SQL migration files for each table and relationship. Use a declarative schema tool or Supabase CLI for version control and easy rebasing[2]. Test migrations in a staging environment before production. Document the migration process for team reproducibility.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Apply migrations to a fresh database. Verify tables, columns, constraints, and relationships are correctly created. Roll back and reapply migrations to test idempotency."
           }
         ]
@@ -228,7 +228,7 @@
           2,
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -236,7 +236,7 @@
             "description": "Install the latest @langchain/langgraph package and set up its initial configuration within the Next.js API routes to enable multi-agent orchestration.",
             "dependencies": [],
             "details": "Add @langchain/langgraph as a dependency. Initialize LangGraph.js in a dedicated module (e.g., /lib/langgraph.ts). Ensure compatibility with Next.js API route handlers.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that LangGraph.js can be imported and initialized without errors in a basic API route."
           },
           {
@@ -247,7 +247,7 @@
               1
             ],
             "details": "Read LLM provider and model configuration from environment variables. Default to OpenAI GPT-4o for development. Ensure the configuration can be easily switched for future providers.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Change environment variables and confirm the correct model/provider is selected during API execution."
           },
           {
@@ -258,7 +258,7 @@
               2
             ],
             "details": "Define API route handlers in Next.js for running agent workflows and checking status. Ensure endpoints accept and return JSON. Prepare for future agent node integration.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Send test requests to each endpoint and verify correct structure and response format."
           },
           {
@@ -269,7 +269,7 @@
               3
             ],
             "details": "Use a JavaScript object or Map for in-memory state. Implement session tracking (e.g., via session IDs in requests). Prepare interfaces for agent nodes to read/write shared state.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run multiple workflow sessions and confirm state is isolated and persists correctly per session."
           },
           {
@@ -280,7 +280,7 @@
               4
             ],
             "details": "Add try/catch blocks to API handlers and agent execution logic. Implement a simple retry mechanism for transient errors. Log key events and errors to the console or a logging service.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate errors and verify retries and logs are triggered as expected."
           }
         ]
@@ -295,7 +295,7 @@
         "dependencies": [
           10
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -303,7 +303,7 @@
             "description": "Develop a Planner agent capable of initiating research planning with or without user input, generating 20-30 balanced research items across specified categories using pre-prepared keyword combinations.",
             "dependencies": [],
             "details": "Ensure the Planner agent can start from a blank state, generate diverse and balanced research topics (startup trends, industry challenges, technology developments, investment patterns), and exclude Mitsubishi Estate strengths from search queries.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test Planner agent with both no input and various user inputs; verify generation of 20-30 balanced research items and correct keyword usage."
           },
           {
@@ -314,7 +314,7 @@
               1
             ],
             "details": "Configure API keys, handle language selection, and determine when to use BS4 for deeper scraping. Ensure structured JSON output for all gathered data.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify Researcher agent can retrieve and parse relevant information in both Japanese and English, and outputs structured JSON summaries."
           },
           {
@@ -325,7 +325,7 @@
               2
             ],
             "details": "Implement criteria for sufficiency (information volume, business scale, fit to urban development/real estate/customer network), and automate the feedback loop between Researcher and Planner or progression to Ideator.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate scenarios with varying research completeness and business fit; confirm correct autonomous routing (re-research or ideation)."
           },
           {
@@ -336,7 +336,7 @@
               2
             ],
             "details": "Utilize concurrency frameworks to run multiple research queries simultaneously; monitor and optimize for speed and resource usage.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Benchmark research phase with full workload; confirm completion within 2 minutes and validate correctness of parallelized outputs."
           },
           {
@@ -348,7 +348,7 @@
               2
             ],
             "details": "Detect and handle API failures, scraping errors, and data inconsistencies; implement configurable retry policies and fallback strategies.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Induce various error scenarios (API failure, network issues, parsing errors) and verify system recovers gracefully with successful retries or appropriate fallback."
           }
         ]
@@ -363,7 +363,7 @@
         "dependencies": [
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -371,7 +371,7 @@
             "description": "Define the Ideator agent's structure, including required outputs (title, target, problem, solution, business model), number of ideas to generate, and alignment criteria with Mitsubishi Estate's strengths and existing businesses.",
             "dependencies": [],
             "details": "Specify the JSON output format, ensure the agent generates 3-5 business ideas, and incorporate evaluation for acceleration potential via Mitsubishi Estate's assets.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that the Ideator agent consistently produces 3-5 ideas in the correct format, each including all required fields and explicit consideration of Mitsubishi Estate fit."
           },
           {
@@ -382,7 +382,7 @@
               1
             ],
             "details": "Establish a 0-100 scoring system, set a 70-point threshold for progression, and enable selection of the top idea from multiple candidates.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test Critic agent with sample ideas to ensure accurate, consistent scoring and correct selection of the highest-scoring idea."
           },
           {
@@ -393,7 +393,7 @@
               2
             ],
             "details": "Design the workflow to track iteration count, enforce the three-attempt limit, and terminate the process if no idea meets the threshold after three rounds.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate low-scoring idea scenarios to confirm the system requests improvements up to three times and terminates correctly if the threshold is not met."
           },
           {
@@ -404,7 +404,7 @@
               3
             ],
             "details": "Set up LangGraph.js for agent orchestration, support asynchronous calls, and implement error handling to retry failed operations as needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test agent interactions under normal and error conditions, verifying correct state transitions, retries, and overall system stability."
           },
           {
@@ -415,7 +415,7 @@
               4
             ],
             "details": "Measure total processing time from initial idea generation to final output, and validate that all outputs strictly match the required JSON schema.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run full workflow tests with timing checks and schema validation to confirm compliance with performance and output requirements."
           }
         ]
@@ -430,7 +430,7 @@
         "dependencies": [
           7
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -438,7 +438,7 @@
             "description": "Develop the Analyst agent to perform comprehensive market sizing (TAM/SAM/SOM) using both top-down and bottom-up approaches, and generate high-level financial projections based on market data and assumptions.",
             "dependencies": [],
             "details": "Implement logic for TAM/SAM/SOM calculation, integrating statistical sources and fallback estimation methods. Include modules for revenue, profit margin, investment, and payback period projections. Ensure adaptability for various industries and business models.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Validate market sizing and financial outputs against known industry benchmarks and sample business cases. Test both calculation approaches for accuracy and consistency."
           },
           {
@@ -449,7 +449,7 @@
               1
             ],
             "details": "Implement modules to analyze direct and indirect competitors, their strengths/weaknesses, pricing, customer base, and technology. Integrate risk assessment frameworks covering demand, regulation, technical feasibility, new entrants, and investment risks.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test competitive and risk analysis outputs using real-world company data and hypothetical scenarios. Ensure comprehensive coverage and actionable insights."
           },
           {
@@ -460,7 +460,7 @@
               2
             ],
             "details": "Integrate access to financial databases, industry reports, patent/technology sources, and regulatory information. Enable focused research tasks based on Analyst requests, supporting structured data extraction and summarization.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test targeted research tasks for accuracy, relevance, and completeness across multiple industry verticals and information types."
           },
           {
@@ -471,7 +471,7 @@
               3
             ],
             "details": "Define protocols for research request generation, task handoff, and result integration. Ensure requests are granular (e.g., market size for X, competitor Y's pricing, segment Z's needs) and responses are structured for downstream analysis.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate scenarios with incomplete data and verify that the Analyst agent autonomously requests and incorporates targeted research from the Researcher agent."
           },
           {
@@ -482,7 +482,7 @@
               4
             ],
             "details": "Integrate APIs and databases for real-time financial and market data. Implement calculation engines for market sizing and projections. Add error detection, handling, and retry mechanisms to ensure reliability.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test data integration and calculation modules under normal and failure conditions. Verify error handling and recovery processes maintain data integrity and workflow continuity."
           }
         ]
@@ -577,7 +577,73 @@
           9
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Multi-Agent Workflow Architecture",
+            "description": "Define the overall architecture for orchestrating multiple autonomous agents, including workflow phases, agent roles, communication protocols, and dynamic routing logic.",
+            "dependencies": [],
+            "details": "Establish the workflow progression (Planner→Researcher→Ideator→Critic→Analyst→Enhanced Researcher→Writer→Enhanced Critic), agent responsibilities, and how agents will communicate and coordinate autonomously using LangGraph.js. Specify dynamic routing rules and fallback mechanisms for error handling and workflow reversions.",
+            "status": "pending",
+            "testStrategy": "Review architecture diagrams and flowcharts for completeness. Simulate agent interactions and routing decisions using mock data."
+          },
+          {
+            "id": 2,
+            "title": "Implement Shared State Management and Information Exchange",
+            "description": "Develop robust shared state management to enable seamless information sharing and coordination among agents throughout the workflow.",
+            "dependencies": [
+              1
+            ],
+            "details": "Utilize LangGraph.js SharedState interfaces and Supabase for persistent state. Ensure agents can read/write shared context, track workflow progression, and access necessary data for decision-making.",
+            "status": "pending",
+            "testStrategy": "Test state updates and retrievals across all workflow phases. Simulate concurrent agent access and verify data consistency."
+          },
+          {
+            "id": 3,
+            "title": "Develop Dynamic Routing and Autonomous Coordination Logic",
+            "description": "Implement logic that allows agents to autonomously decide next actions, coordinate with other agents, and dynamically route tasks based on workflow state and quality criteria.",
+            "dependencies": [
+              2
+            ],
+            "details": "Configure LangGraph.js to support flexible agent-to-agent routing, including parallel and conditional flows. Integrate quality checks to trigger phase reversions or alternate paths as needed.",
+            "status": "pending",
+            "testStrategy": "Run end-to-end workflow tests with varying input scenarios and quality thresholds. Verify correct routing, coordination, and phase transitions."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Real-Time Monitoring, Progress, and Error Reporting",
+            "description": "Build real-time monitoring and logging features to display agent progress, workflow state, and detailed error information to users.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement WebSocket/SSE-based updates for agent status, error locations, and progress. Display quality scores, estimated completion times, and allow user interruption or correction.",
+            "status": "pending",
+            "testStrategy": "Simulate workflow execution with injected errors and delays. Verify real-time updates, error displays, and user control features."
+          },
+          {
+            "id": 5,
+            "title": "Implement Comprehensive Error Handling and Recovery Mechanisms",
+            "description": "Develop robust error detection, handling, and recovery logic to ensure workflow resilience against agent/API failures and timeouts.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add mechanisms for retrying failed tasks, rolling back to previous workflow phases, and escalating persistent issues. Ensure all errors are logged with detailed context for debugging.",
+            "status": "pending",
+            "testStrategy": "Inject various failure scenarios (API errors, timeouts, data corruption) and verify recovery, rollback, and logging behaviors."
+          },
+          {
+            "id": 6,
+            "title": "Integrate User Interaction and Feedback Controls",
+            "description": "Enable user-driven workflow controls, including the ability to issue correction instructions, pause/resume workflows, and view quality assessments.",
+            "dependencies": [
+              4,
+              5
+            ],
+            "details": "Implement UI components for user feedback, correction input, and workflow control. Ensure user actions are reflected in agent coordination and workflow state.",
+            "status": "pending",
+            "testStrategy": "Test user-initiated corrections, workflow interruptions, and resumption. Verify that agent behaviors and workflow state update accordingly."
+          }
+        ]
       },
       {
         "id": 11,
@@ -677,7 +743,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T14:25:14.652Z",
-      "updated": "2025-07-18T11:25:22.299Z",
+      "updated": "2025-07-19T05:28:42.215Z",
       "description": "Tasks for master context"
     }
   }

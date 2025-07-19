@@ -1,6 +1,6 @@
 # Task ID: 5
 # Title: Set Up LangGraph.js Foundation and Next.js API Integration
-# Status: pending
+# Status: done
 # Dependencies: 1, 2, 4
 # Priority: high
 # Description: Initialize LangGraph.js within the Next.js API layer, creating the foundation for multi-agent orchestration with environment-based LLM model selection.
@@ -11,31 +11,31 @@ Install LangGraph.js and configure it to work with Next.js API routes. Set up en
 Verify Next.js API can initialize LangGraph workflows. Test environment variable-based LLM selection. Confirm shared state management works correctly.
 
 # Subtasks:
-## 1. Install and Configure LangGraph.js in Next.js API Layer [pending]
+## 1. Install and Configure LangGraph.js in Next.js API Layer [done]
 ### Dependencies: None
 ### Description: Install the latest @langchain/langgraph package and set up its initial configuration within the Next.js API routes to enable multi-agent orchestration.
 ### Details:
 Add @langchain/langgraph as a dependency. Initialize LangGraph.js in a dedicated module (e.g., /lib/langgraph.ts). Ensure compatibility with Next.js API route handlers.
 
-## 2. Implement Environment-Based LLM Model Selection [pending]
+## 2. Implement Environment-Based LLM Model Selection [done]
 ### Dependencies: 5.1
 ### Description: Set up environment variable handling to select the LLM provider and model (OpenAI GPT-4o) dynamically within the API layer.
 ### Details:
 Read LLM provider and model configuration from environment variables. Default to OpenAI GPT-4o for development. Ensure the configuration can be easily switched for future providers.
 
-## 3. Create Basic API Structure for Agent Node Integration [pending]
+## 3. Create Basic API Structure for Agent Node Integration [done]
 ### Dependencies: 5.2
 ### Description: Design and implement the foundational API endpoints for agent orchestration, including POST /api/agents/run and GET /api/agents/status, using JSON request/response formats.
 ### Details:
 Define API route handlers in Next.js for running agent workflows and checking status. Ensure endpoints accept and return JSON. Prepare for future agent node integration.
 
-## 4. Implement In-Memory Shared State and Session Management [pending]
+## 4. Implement In-Memory Shared State and Session Management [done]
 ### Dependencies: 5.3
 ### Description: Develop a shared state management system using in-memory storage and basic session handling to enable agent communication and workflow continuity.
 ### Details:
 Use a JavaScript object or Map for in-memory state. Implement session tracking (e.g., via session IDs in requests). Prepare interfaces for agent nodes to read/write shared state.
 
-## 5. Set Up Basic Error Handling and Logging Infrastructure [pending]
+## 5. Set Up Basic Error Handling and Logging Infrastructure [done]
 ### Dependencies: 5.4
 ### Description: Establish foundational error handling with retry logic and implement logging for API requests, agent execution, and errors.
 ### Details:
