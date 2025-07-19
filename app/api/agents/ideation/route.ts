@@ -1,6 +1,6 @@
 /**
- * Research Phase API Endpoint
- * 研究フェーズのAPI統合
+ * Ideation Phase API Endpoint
+ * アイディエーションフェーズのAPI統合
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { loadConfig } from '@/lib/langgraph/config';
 import { StateManager } from '@/lib/langgraph/state-manager';
 import { ErrorHandler } from '@/lib/langgraph/error-handler';
-import { ResearchCoordinator } from '@/lib/agents/research';
+import { IdeationCoordinator } from '@/lib/agents/ideation';
 import { ChatOpenAI } from '@langchain/openai';
 
 // グローバル状態管理
@@ -25,7 +25,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { user_input, session_id } = body;
+    const { research_summaries, user_requirements, session_id } = body;
+
+    // 必須パラメータのチェック
+    if (!research_summaries || !Array.isArray(research_summaries) || research_summaries.length === 0) {
+      return NextResponse.json({ 
+        error: 'Research summaries are required' 
+      }, { status: 400 });
+    }
 
     // 設定を読み込み
     const config = loadConfig();
@@ -36,59 +43,57 @@ export async function POST(request: NextRequest) {
       maxTokens: 4000
     });
 
-    // 環境変数の確認
-    const serperApiKey = process.env.SERPER_API_KEY;
-    if (!serperApiKey) {
-      return NextResponse.json({ 
-        error: 'Serper API key not configured' 
-      }, { status: 500 });
-    }
-
-    // 研究コーディネーターを初期化
-    const coordinator = new ResearchCoordinator(
+    // アイディエーションコーディネーターを初期化
+    const coordinator = new IdeationCoordinator(
       llm,
-      serperApiKey,
-      parseInt(process.env.RESEARCH_PARALLEL_LIMIT || '5'),
-      parseInt(process.env.MAX_EXECUTION_TIME || '600000'),
-      parseInt(process.env.MAX_RETRIES || '3')
+      parseInt(process.env.IDEATION_MAX_ITERATIONS || '2'),
+      parseInt(process.env.IDEATION_PASSING_SCORE || '70')
     );
 
     // セッションを作成または取得
-    const actualSessionId = session_id || stateManager.createSession(user.id, user_input);
+    const actualSessionId = session_id || stateManager.createSession(user.id, user_requirements || '');
 
-    // 研究フェーズを実行
+    // アイディエーションフェーズを実行
     const result = await errorHandler.executeWithRetry(
       async () => {
-        return await coordinator.executeResearchPhase(user_input, actualSessionId);
+        return await coordinator.executeIdeationPhase(
+          research_summaries,
+          user_requirements,
+          actualSessionId
+        );
       },
       { 
-        operation: 'research_phase', 
- 
-        sessionId: actualSessionId 
+        operation: 'ideation_phase', 
+        sessionId: actualSessionId,
+        agent: 'ideator',
+        attempt: 0,
+        timestamp: new Date().toISOString()
       }
     );
 
     // 結果を状態管理に保存
     stateManager.updateSession(actualSessionId, {
-      research_phase_result: result,
+      ideation_phase_result: result,
       last_updated: new Date().toISOString()
     });
 
     // 統計情報を取得
-    const statistics = coordinator.getPhaseStatistics(result);
+    const statistics = coordinator.getIdeationStatistics(result);
+    const summary = coordinator.formatResultSummary(result);
 
     return NextResponse.json({
       success: true,
       session_id: actualSessionId,
       result,
       statistics,
-      next_actions: result.next_action === 'proceed_to_ideation' ? 
-        ['proceed_to_ideation'] : 
-        ['continue_research', 'modify_plan']
+      summary,
+      next_actions: result.final_score >= 70 ? 
+        ['proceed_to_analysis'] : 
+        ['review_ideas', 'modify_requirements', 'gather_more_research']
     });
 
   } catch (error) {
-    console.error('Research phase error:', error);
+    console.error('Ideation phase error:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
@@ -119,34 +124,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    // 研究フェーズの結果を取得
-    const researchResult = sessionInfo.sharedState.research_phase_result;
+    // アイディエーションフェーズの結果を取得
+    const ideationResult = (sessionInfo as any).ideation_phase_result;
     
-    if (!researchResult) {
+    if (!ideationResult) {
       return NextResponse.json({ 
-        message: 'Research phase not started',
+        message: 'Ideation phase not started',
         session: sessionInfo
       });
     }
 
     // 統計情報を計算
-    const coordinator = new ResearchCoordinator(
+    const coordinator = new IdeationCoordinator(
       new ChatOpenAI(), // ダミーのLLM
-      process.env.SERPER_API_KEY || '',
-      5
+      2
     );
-    const statistics = coordinator.getPhaseStatistics(researchResult);
+    const statistics = coordinator.getIdeationStatistics(ideationResult);
+    const summary = coordinator.formatResultSummary(ideationResult);
 
     return NextResponse.json({
       success: true,
       session_id: sessionId,
-      result: researchResult,
+      result: ideationResult,
       statistics,
+      summary,
       session_info: sessionInfo
     });
 
   } catch (error) {
-    console.error('Get research phase error:', error);
+    console.error('Get ideation phase error:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
@@ -188,38 +194,38 @@ export async function PUT(request: NextRequest) {
       maxTokens: 4000
     });
 
-    const coordinator = new ResearchCoordinator(
-      llm,
-      process.env.SERPER_API_KEY || '',
-      parseInt(process.env.RESEARCH_PARALLEL_LIMIT || '5'),
-      parseInt(process.env.MAX_EXECUTION_TIME || '600000'),
-      parseInt(process.env.MAX_RETRIES || '3')
-    );
+    const coordinator = new IdeationCoordinator(llm, 2);
 
     let result;
 
     switch (action) {
-      case 'continue_research':
-        // 追加研究を実行
-        const currentState = sessionInfo.sharedState.research_phase_result;
+      case 'regenerate_ideas':
+        // 新しい要件でアイデアを再生成
+        const currentState = (sessionInfo as any).ideation_phase_result;
         if (currentState) {
-          result = await coordinator.executeResearchPhase(
-            parameters?.additional_input || '',
+          result = await coordinator.executeIdeationPhase(
+            parameters?.research_summaries || currentState.research_summaries,
+            parameters?.modified_requirements || (sessionInfo as any).userInput || '',
             session_id
           );
         } else {
           return NextResponse.json({ 
-            error: 'No existing research state found' 
+            error: 'No existing ideation state found' 
           }, { status: 400 });
         }
         break;
 
-      case 'modify_plan':
-        // 研究計画を修正
-        result = await coordinator.executeResearchPhase(
-          parameters?.modified_input || sessionInfo.userInput,
-          session_id
-        );
+      case 'evaluate_custom_idea':
+        // カスタムアイデアの評価
+        if (!parameters?.custom_idea) {
+          return NextResponse.json({ 
+            error: 'Custom idea required' 
+          }, { status: 400 });
+        }
+        
+        const critic = coordinator['critic']; // プライベートメンバーアクセス
+        const evaluations = await critic.evaluateIdeas([parameters.custom_idea]);
+        result = { custom_evaluation: evaluations[0] };
         break;
 
       default:
@@ -229,23 +235,22 @@ export async function PUT(request: NextRequest) {
     }
 
     // 結果を状態管理に保存
-    stateManager.updateSession(session_id, {
-      research_phase_result: result,
-      last_updated: new Date().toISOString()
-    });
-
-    const statistics = coordinator.getPhaseStatistics(result);
+    if (action === 'regenerate_ideas') {
+      stateManager.updateSession(session_id, {
+        ideation_phase_result: result,
+        last_updated: new Date().toISOString()
+      });
+    }
 
     return NextResponse.json({
       success: true,
       session_id,
       result,
-      statistics,
       action_performed: action
     });
 
   } catch (error) {
-    console.error('Update research phase error:', error);
+    console.error('Update ideation phase error:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'

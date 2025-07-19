@@ -9,3 +9,35 @@ Create Analyst agent for market sizing (TAM), competitive analysis, risk assessm
 
 # Test Strategy:
 Analyze market size and competition for various business ideas. Test Analyst-Researcher coordination for targeted research. Verify accuracy of financial projections and risk assessments.
+
+# Subtasks:
+## 1. Design Analyst Agent for Market Sizing and Financial Projections [pending]
+### Dependencies: None
+### Description: Develop the Analyst agent to perform comprehensive market sizing (TAM/SAM/SOM) using both top-down and bottom-up approaches, and generate high-level financial projections based on market data and assumptions.
+### Details:
+Implement logic for TAM/SAM/SOM calculation, integrating statistical sources and fallback estimation methods. Include modules for revenue, profit margin, investment, and payback period projections. Ensure adaptability for various industries and business models.
+
+## 2. Develop Analyst Agent for Competitive and Risk Analysis [pending]
+### Dependencies: 8.1
+### Description: Enable the Analyst agent to conduct detailed competitive landscape assessments and multi-dimensional risk evaluations, including market, technology, competition, and financial risks.
+### Details:
+Implement modules to analyze direct and indirect competitors, their strengths/weaknesses, pricing, customer base, and technology. Integrate risk assessment frameworks covering demand, regulation, technical feasibility, new entrants, and investment risks.
+
+## 3. Enhance Researcher Agent for Targeted Market and Industry Research [pending]
+### Dependencies: 8.2
+### Description: Upgrade the Researcher agent to perform deep-dive research on selected industries, competitors, customer needs, and regulatory requirements, leveraging expanded data sources.
+### Details:
+Integrate access to financial databases, industry reports, patent/technology sources, and regulatory information. Enable focused research tasks based on Analyst requests, supporting structured data extraction and summarization.
+
+## 4. Implement Autonomous Analyst-Researcher Coordination [pending]
+### Dependencies: 8.3
+### Description: Establish autonomous workflows where the Analyst agent can trigger specific research requests to the Researcher agent when data gaps or validation needs are detected.
+### Details:
+Define protocols for research request generation, task handoff, and result integration. Ensure requests are granular (e.g., market size for X, competitor Y's pricing, segment Z's needs) and responses are structured for downstream analysis.
+
+## 5. Integrate Financial Data Sources and Calculation Tools with Error Handling [pending]
+### Dependencies: 8.4
+### Description: Connect both agents to external financial/statistical data sources and implement robust calculation modules with error handling and retry logic.
+### Details:
+Integrate APIs and databases for real-time financial and market data. Implement calculation engines for market sizing and projections. Add error detection, handling, and retry mechanisms to ensure reliability.
+
