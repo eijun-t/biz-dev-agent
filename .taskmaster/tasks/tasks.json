@@ -296,7 +296,62 @@
           10
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Planner Agent for Dynamic Research Planning",
+            "description": "Develop a Planner agent capable of initiating research planning with or without user input, generating 20-30 balanced research items across specified categories using pre-prepared keyword combinations.",
+            "dependencies": [],
+            "details": "Ensure the Planner agent can start from a blank state, generate diverse and balanced research topics (startup trends, industry challenges, technology developments, investment patterns), and exclude Mitsubishi Estate strengths from search queries.",
+            "status": "pending",
+            "testStrategy": "Test Planner agent with both no input and various user inputs; verify generation of 20-30 balanced research items and correct keyword usage."
+          },
+          {
+            "id": 2,
+            "title": "Integrate Serper.dev API and BeautifulSoup4 for Researcher Agent",
+            "description": "Implement the Researcher agent to perform web searches using Serper.dev API (Japanese for domestic, English for overseas cases) and scrape detailed information with BeautifulSoup4 as needed.",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure API keys, handle language selection, and determine when to use BS4 for deeper scraping. Ensure structured JSON output for all gathered data.",
+            "status": "pending",
+            "testStrategy": "Verify Researcher agent can retrieve and parse relevant information in both Japanese and English, and outputs structured JSON summaries."
+          },
+          {
+            "id": 3,
+            "title": "Develop Autonomous Decision-Making System for Research Iteration",
+            "description": "Create a system that autonomously evaluates research sufficiency, determines Mitsubishi Estate fit, business scale potential, and decides whether to trigger additional research or proceed to ideation.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement criteria for sufficiency (information volume, business scale, fit to urban development/real estate/customer network), and automate the feedback loop between Researcher and Planner or progression to Ideator.",
+            "status": "pending",
+            "testStrategy": "Simulate scenarios with varying research completeness and business fit; confirm correct autonomous routing (re-research or ideation)."
+          },
+          {
+            "id": 4,
+            "title": "Implement Parallel Processing and Performance Optimization",
+            "description": "Enable parallel execution of research tasks to accelerate information gathering, ensuring total processing time for the phase is within 2 minutes.",
+            "dependencies": [
+              2
+            ],
+            "details": "Utilize concurrency frameworks to run multiple research queries simultaneously; monitor and optimize for speed and resource usage.",
+            "status": "pending",
+            "testStrategy": "Benchmark research phase with full workload; confirm completion within 2 minutes and validate correctness of parallelized outputs."
+          },
+          {
+            "id": 5,
+            "title": "Add Robust Error Handling and Retry Mechanisms",
+            "description": "Implement comprehensive error handling and automatic retry logic for both Planner and Researcher agents to ensure reliability and resilience.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Detect and handle API failures, scraping errors, and data inconsistencies; implement configurable retry policies and fallback strategies.",
+            "status": "pending",
+            "testStrategy": "Induce various error scenarios (API failure, network issues, parsing errors) and verify system recovers gracefully with successful retries or appropriate fallback."
+          }
+        ]
       },
       {
         "id": 7,
