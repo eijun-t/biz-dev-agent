@@ -1,15 +1,12 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { AgentState, AgentExecutionResult } from "./types";
 
 export class CriticAgent {
   private llm: ChatOpenAI;
   
   constructor() {
-    this.llm = new ChatOpenAI({
-      modelName: process.env.LLM_MODEL_CRITICAL || "gpt-4o",
-      temperature: 0.3, // 評価の一貫性を重視
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
+    this.llm = createChatOpenAI('critic');
   }
 
   /**

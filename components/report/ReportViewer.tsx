@@ -22,13 +22,23 @@ interface ReportViewerProps {
 
 const TAB_NAMES = [
   '概要',
-  '想定ターゲットと課題', 
-  'ソリューション仮説・ビジネスモデル',
-  '市場規模・競合',
-  '三菱地所が取り組む意義',
-  '検証アクション',
-  'リスク'
+  'ターゲット・課題', 
+  'ソリューション',
+  '市場・競合',
+  '三菱地所の意義',
+  '検証計画',
+  'リスク分析'
 ] as const;
+
+const TAB_MAPPING = {
+  '概要': '概要',
+  'ターゲット・課題': '想定ターゲットと課題',
+  'ソリューション': 'ソリューション仮説・ビジネスモデル',
+  '市場・競合': '市場規模・競合',
+  '三菱地所の意義': '三菱地所が取り組む意義',
+  '検証計画': '検証アクション',
+  'リスク分析': 'リスク'
+} as const;
 
 export default function ReportViewer({
   reportData,
@@ -47,17 +57,17 @@ export default function ReportViewer({
     setShowProcesses(isGenerating);
   }, [isGenerating]);
 
-  const currentSection = sections.find(s => s.tab_name === activeTab);
+  const currentSection = sections.find(s => s.tab_name === TAB_MAPPING[activeTab as keyof typeof TAB_MAPPING]);
 
   const getTabIcon = (tabName: string) => {
     const icons = {
       '概要': '📋',
-      '想定ターゲットと課題': '🎯',
-      'ソリューション仮説・ビジネスモデル': '💡',
-      '市場規模・競合': '📊',
-      '三菱地所が取り組む意義': '🏢',
-      '検証アクション': '✅',
-      'リスク': '⚠️'
+      'ターゲット・課題': '🎯',
+      'ソリューション': '💡',
+      '市場・競合': '📊',
+      '三菱地所の意義': '🏢',
+      '検証計画': '✅',
+      'リスク分析': '⚠️'
     };
     return icons[tabName as keyof typeof icons] || '📄';
   };
@@ -84,12 +94,12 @@ export default function ReportViewer({
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-lg font-semibold text-gray-700 mb-2">
                 ビジネスアイデア分析レポート
               </h1>
-              <p className="text-gray-600 mt-1">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight">
                 {reportData.selected_business_idea.title}
-              </p>
+              </h2>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -156,10 +166,11 @@ export default function ReportViewer({
 
             {/* タブナビゲーション */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="border-b bg-gray-50">
-                <nav className="flex overflow-x-auto">
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+                <nav className="grid grid-cols-4 gap-1 p-2">
                   {TAB_NAMES.map((tabName) => {
-                    const section = sections.find(s => s.tab_name === tabName);
+                    const originalTabName = TAB_MAPPING[tabName as keyof typeof TAB_MAPPING];
+                    const section = sections.find(s => s.tab_name === originalTabName);
                     const isActive = activeTab === tabName;
                     const hasContent = section && section.content;
                     
@@ -168,20 +179,21 @@ export default function ReportViewer({
                         key={tabName}
                         onClick={() => setActiveTab(tabName)}
                         className={`
-                          flex items-center space-x-2 px-4 py-3 border-b-2 whitespace-nowrap text-sm font-medium transition-colors
+                          flex items-center justify-center px-2 py-2 rounded text-xs font-medium transition-all duration-200 min-h-[36px] relative
                           ${isActive 
-                            ? 'border-purple-500 text-purple-600 bg-white' 
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md' 
+                            : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-800 hover:shadow-sm border border-gray-200'
                           }
                         `}
                       >
-                        <span>{getTabIcon(tabName)}</span>
-                        <span>{tabName}</span>
+                        <span className="text-base mr-1">{getTabIcon(tabName)}</span>
+                        <span className="font-medium text-xs leading-tight">{tabName}</span>
                         {hasContent && (
                           <div className={`
-                            w-2 h-2 rounded-full
-                            ${section.confidence_level === 'high' ? 'bg-green-400' : 
-                              section.confidence_level === 'medium' ? 'bg-yellow-400' : 'bg-red-400'}
+                            w-1 h-1 rounded-full absolute top-1 right-1
+                            ${isActive ? 'bg-white' : 
+                              (section?.confidence_level || 'medium') === 'high' ? 'bg-green-400' : 
+                              (section?.confidence_level || 'medium') === 'medium' ? 'bg-yellow-400' : 'bg-red-400'}
                           `} />
                         )}
                       </button>
@@ -200,7 +212,7 @@ export default function ReportViewer({
                         <h2 className="text-xl font-semibold text-gray-900">
                           {currentSection.title || activeTab}
                         </h2>
-                        {currentSection.data_sources.length > 0 && (
+                        {currentSection.data_sources && currentSection.data_sources.length > 0 && (
                           <p className="text-sm text-gray-500 mt-1">
                             データソース: {currentSection.data_sources.join(', ')}
                           </p>
@@ -210,19 +222,19 @@ export default function ReportViewer({
                       <div className="flex items-center space-x-3">
                         <div className={`
                           px-3 py-1 rounded-full text-xs font-medium
-                          ${getConfidenceColor(currentSection.confidence_level)}
+                          ${getConfidenceColor(currentSection.confidence_level || 'medium')}
                         `}>
-                          信頼度: {currentSection.confidence_level === 'high' ? '高' : 
-                                  currentSection.confidence_level === 'medium' ? '中' : '低'}
+                          信頼度: {(currentSection.confidence_level || 'medium') === 'high' ? '高' : 
+                                  (currentSection.confidence_level || 'medium') === 'medium' ? '中' : '低'}
                         </div>
                         
                         <div className="text-xs text-gray-500">
-                          完成度: {currentSection.completeness_score}%
+                          完成度: {currentSection.completeness_score || 0}%
                         </div>
 
                         {onRegenerateSection && (
                           <button
-                            onClick={() => onRegenerateSection(activeTab)}
+                            onClick={() => onRegenerateSection(TAB_MAPPING[activeTab as keyof typeof TAB_MAPPING])}
                             className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
                             disabled={isGenerating}
                           >
@@ -245,7 +257,7 @@ export default function ReportViewer({
                           <p>このセクションはまだ生成されていません</p>
                           {onRegenerateSection && (
                             <button
-                              onClick={() => onRegenerateSection(activeTab)}
+                              onClick={() => onRegenerateSection(TAB_MAPPING[activeTab as keyof typeof TAB_MAPPING])}
                               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                               disabled={isGenerating}
                             >
@@ -274,9 +286,11 @@ export default function ReportViewer({
                     )}
 
                     {/* 更新情報 */}
-                    <div className="border-t pt-4 text-xs text-gray-500">
-                      最終更新: {new Date(currentSection.last_updated).toLocaleString('ja-JP')}
-                    </div>
+                    {currentSection.last_updated && (
+                      <div className="border-t pt-4 text-xs text-gray-500">
+                        最終更新: {new Date(currentSection.last_updated).toLocaleString('ja-JP')}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-12 text-gray-500">

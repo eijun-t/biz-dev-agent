@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Play, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, Play, CheckCircle, XCircle, FileText, BarChart3 } from 'lucide-react';
+import Link from 'next/link';
 
 interface GenerationState {
   status: 'idle' | 'running' | 'completed' | 'error';
@@ -171,14 +172,30 @@ export function GenerateReportForm() {
           <Alert className="mt-4">
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              <div className="space-y-2">
-                <p>{generationState.message}</p>
-                <p className="text-sm text-muted-foreground">
-                  セッションID: {generationState.sessionId}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  次のステップ: エージェントノードの実装でワークフローが自動実行されます
-                </p>
+              <div className="space-y-4">
+                <div>
+                  <p>{generationState.message}</p>
+                  <p className="text-sm text-muted-foreground">
+                    セッションID: {generationState.sessionId}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    次のステップ: エージェントノードの実装でワークフローが自動実行されます
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/dashboard">
+                      <FileText className="h-4 w-4 mr-2" />
+                      ダッシュボードで確認
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/business-generator">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      ワークフロー進行状況
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </AlertDescription>
           </Alert>

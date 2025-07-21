@@ -9,6 +9,7 @@ import { loadConfig } from '@/lib/langgraph/config';
 import { StateManager } from '@/lib/langgraph/state-manager';
 import { ErrorHandler } from '@/lib/langgraph/error-handler';
 import { AnalysisCoordinator } from '@/lib/agents/analysis';
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { ChatOpenAI } from '@langchain/openai';
 
 // グローバル状態管理
@@ -34,14 +35,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // 設定を読み込み
-    const config = loadConfig();
-    const llm = new ChatOpenAI({
-      apiKey: config.llm.apiKey,
-      model: config.llm.model,
-      temperature: 0.2, // Lower temperature for analytical tasks
-      maxTokens: 4000
-    });
+    // LLMインスタンス作成（分析エージェント用）
+    const llm = createChatOpenAI('analyst');
 
     // 環境変数の確認
     const serperApiKey = process.env.SERPER_API_KEY;
@@ -149,7 +144,7 @@ export async function GET(request: NextRequest) {
 
     // 統計情報を計算
     const coordinator = new AnalysisCoordinator(
-      new ChatOpenAI(), // ダミーのLLM
+      createChatOpenAI('analyst'), // ダミーのLLM
       process.env.SERPER_API_KEY || ''
     );
     const statistics = coordinator.getAnalysisStatistics(analysisResult);

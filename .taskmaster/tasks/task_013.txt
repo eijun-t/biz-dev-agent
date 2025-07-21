@@ -1,6 +1,6 @@
 # Task ID: 13
 # Title: Build Report Generation and Viewing UI
-# Status: pending
+# Status: done
 # Dependencies: 12
 # Priority: high
 # Description: Create frontend flows for theme input, report generation trigger, and report viewing. Display reports in a single-page HTML view.

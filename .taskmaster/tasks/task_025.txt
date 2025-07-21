@@ -1,0 +1,31 @@
+# Task ID: 25
+# Title: Implement Advanced Workflow Orchestration and State Management
+# Status: pending
+# Dependencies: 18, 19, 20, 21, 22, 23, 24
+# Priority: high
+# Description: 18-24のタスクで実装される高度なマルチエージェントシステムを統合し、効率的で信頼性の高いワークフロー実行を管理するオーケストレーションシステムを実装。
+# Details:
+Enhanced Researcher → Enhanced Ideator → Enhanced Critic → Advanced Planner → Specialized Researcher → Advanced Writer → Final QA の完全なワークフローを実行。各段階での品質チェック、エラー処理、前段階への戻り処理、並列実行可能部分の最適化、プログレス追跡、ユーザーへのリアルタイム更新を実装。全体実行時間15-25分での高品質レポート生成を目標。
+
+# Test Strategy:
+エンドツーエンドワークフローの実行安定性と効率性を評価。エラー処理と回復機能を検証。品質と実行時間のバランスを確認。
+
+# Subtasks:
+## 1. ワークフロー実行エンジンの構築 [pending]
+### Dependencies: None
+### Description: 複雑なマルチエージェントワークフローを効率的に実行・管理するエンジンを構築し、段階間の依存関係と品質ゲートを実装
+### Details:
+ワークフロー定義、段階間依存管理、品質ゲート実装、並列実行制御、リソース管理、実行状態追跡機能。
+
+## 2. 高度なエラー処理・回復システム [pending]
+### Dependencies: 25.1
+### Description: 各段階でのエラー検出、分類、回復処理を行い、ワークフロー全体の信頼性を確保するシステムを実装
+### Details:
+エラー分類、自動回復、前段階戻り、代替処理、エスカレーション、ログ記録、障害分析機能。
+
+## 3. リアルタイム監視・フィードバックシステム [pending]
+### Dependencies: 25.2
+### Description: ワークフロー実行状況をリアルタイムで監視し、ユーザーに進捗とクオリティ情報を提供するシステムを実装
+### Details:
+進捗追跡、品質メトリクス、推定完了時間、段階別ステータス、パフォーマンス監視、ユーザーダッシュボード機能。
+

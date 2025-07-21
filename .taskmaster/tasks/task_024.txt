@@ -1,0 +1,31 @@
+# Task ID: 24
+# Title: Implement Final Quality Assurance and Enhancement System
+# Status: pending
+# Dependencies: 23
+# Priority: high
+# Description: 最終的な品質保証として、完成レポートの包括的評価と必要に応じた改善を行う最終QAシステムを実装。Executive Critic Agentと改善プロセスを含む。
+# Details:
+完成レポートに対して最高レベルの品質評価を実行。論理的一貫性、事実の正確性、表現の適切性、意思決定への有用性を多面的に評価。品質スコアが基準（85点）を下回る場合は、具体的な改善指示を生成してWriterAgentに修正を依頼。最大2回の改善サイクルを実行し、最終的に経営陣プレゼンテーション品質を保証。
+
+# Test Strategy:
+QA評価の厳密性と改善指示の具体性を確認。改善サイクルによる品質向上効果を検証。最終品質の一貫性を評価。
+
+# Subtasks:
+## 1. Executive-Level評価基準システム [pending]
+### Dependencies: None
+### Description: 経営陣プレゼンテーション品質の詳細評価基準を設計し、客観的で厳密な品質評価システムを構築
+### Details:
+論理性（30%）、事実性（25%）、実行可能性（25%）、説得力（20%）の重み付け評価。各基準の詳細サブ指標と測定方法。85点品質基準の明確化。
+
+## 2. 具体的改善指示生成システム [pending]
+### Dependencies: 24.1
+### Description: 品質評価結果から具体的で実行可能な改善指示を生成し、WriterAgentが効果的に修正を行えるシステムを実装
+### Details:
+問題箇所の特定、改善方向性の提示、具体的修正提案、追加必要情報の特定機能。改善優先順位付け。
+
+## 3. 改善サイクル管理・最終承認システム [pending]
+### Dependencies: 24.2
+### Description: 最大2回の改善サイクルを管理し、最終的な品質承認と配信準備を行うシステムを実装
+### Details:
+改善サイクル追跡、品質向上測定、最終承認ロジック、配信フォーマット準備、品質保証証明書生成機能。
+

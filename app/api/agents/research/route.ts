@@ -9,6 +9,7 @@ import { loadConfig } from '@/lib/langgraph/config';
 import { StateManager } from '@/lib/langgraph/state-manager';
 import { ErrorHandler } from '@/lib/langgraph/error-handler';
 import { ResearchCoordinator } from '@/lib/agents/research';
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { ChatOpenAI } from '@langchain/openai';
 
 // グローバル状態管理
@@ -27,14 +28,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { user_input, session_id } = body;
 
-    // 設定を読み込み
-    const config = loadConfig();
-    const llm = new ChatOpenAI({
-      apiKey: config.llm.apiKey,
-      model: config.llm.model,
-      temperature: 0.7,
-      maxTokens: 4000
-    });
+    // LLMインスタンス作成（研究エージェント用）
+    const llm = createChatOpenAI('researcher');
 
     // 環境変数の確認
     const serperApiKey = process.env.SERPER_API_KEY;
@@ -131,7 +126,7 @@ export async function GET(request: NextRequest) {
 
     // 統計情報を計算
     const coordinator = new ResearchCoordinator(
-      new ChatOpenAI(), // ダミーのLLM
+      createChatOpenAI('default'), // ダミーのLLM
       process.env.SERPER_API_KEY || '',
       5
     );

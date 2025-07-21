@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { AgentState, AgentExecutionResult } from "./types";
 import axios from "axios";
 
@@ -7,12 +8,7 @@ export class ResearcherAgent {
   private serperApiKey: string;
   
   constructor() {
-    this.llm = new ChatOpenAI({
-      modelName: process.env.LLM_MODEL_DEFAULT || "gpt-4o",
-      temperature: 0.7,
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
-    
+    this.llm = createChatOpenAI('researcher');
     this.serperApiKey = process.env.SERPER_API_KEY || "";
   }
 
