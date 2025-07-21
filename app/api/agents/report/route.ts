@@ -9,6 +9,7 @@ import { loadConfig } from '@/lib/langgraph/config';
 import { StateManager } from '@/lib/langgraph/state-manager';
 import { ErrorHandler } from '@/lib/langgraph/error-handler';
 import { ReportCoordinator } from '@/lib/agents/report';
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { ChatOpenAI } from '@langchain/openai';
 import { ComprehensiveBusinessReport } from '@/lib/agents/report/types';
 
@@ -40,14 +41,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // 設定を読み込み
-    const config = loadConfig();
-    const llm = new ChatOpenAI({
-      apiKey: config.llm.apiKey,
-      model: config.llm.model,
-      temperature: 0.3, // レポート生成には低めの温度
-      maxTokens: 4000
-    });
+    // LLMインスタンス作成（レポート生成用）
+    const llm = createChatOpenAI('writer');
 
     // レポートコーディネーターを初期化
     const coordinator = new ReportCoordinator(llm, max_revisions);
@@ -163,7 +158,7 @@ export async function GET(request: NextRequest) {
       }
 
       const reportData = JSON.parse(report.content_json);
-      const coordinator = new ReportCoordinator(new ChatOpenAI());
+      const coordinator = new ReportCoordinator(createChatOpenAI('default'));
       const statistics = coordinator.getReportStatistics(reportData);
       const summary = coordinator.formatReportSummary(reportData);
 
@@ -199,7 +194,7 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      const coordinator = new ReportCoordinator(new ChatOpenAI());
+      const coordinator = new ReportCoordinator(createChatOpenAI('default'));
       const statistics = coordinator.getReportStatistics(reportResult);
       const summary = coordinator.formatReportSummary(reportResult);
 

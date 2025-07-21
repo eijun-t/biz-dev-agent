@@ -703,7 +703,7 @@
             "id": 5,
             "title": "Validate Model Switching and Cost Optimization in Development and Testing",
             "description": "Test the ability to switch models and temperature settings via environment variables, and verify cost optimization strategies are respected.",
-            "status": "pending",
+        "status": "pending",
             "dependencies": [
               4
             ],
@@ -722,7 +722,7 @@
         "dependencies": [
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -735,7 +735,7 @@
         "dependencies": [
           12
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -793,11 +793,323 @@
         ],
         "status": "pending",
         "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement Enhanced Researcher Agent for Comprehensive Information Gathering",
+        "description": "大幅に強化されたResearcherAgentを実装し、初期段階で広範囲かつ詳細な情報収集を行う。市場トレンド、技術動向、投資パターン、規制環境、顧客ニーズなど多面的な調査を実行する。",
+        "details": "Researcherエージェントを拡張し、以下の情報を体系的に収集：1)市場動向・規模データ、2)新興技術・イノベーション、3)投資・資金調達トレンド、4)規制・政策変化、5)消費者行動・ニーズ変化、6)競合動向・M&A活動、7)マクロ経済要因。複数のデータソース（ニュース、統計、レポート、学術論文）から情報を収集し、構造化されたナレッジベースを構築する。",
+        "testStrategy": "様々なビジネス領域で情報収集をテストし、収集データの網羅性、品質、構造化度を評価。情報の重複排除と要約品質を確認。",
+        "priority": "high",
+        "dependencies": [11],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "多元的データソース統合システムの構築",
+            "description": "ニュースAPI、統計データベース、学術論文、業界レポート、特許データベースなど複数のデータソースからの情報収集機能を実装",
+            "dependencies": [],
+            "details": "Google News API、統計局API、arXiv、業界データベース、特許庁データなどの統合。APIレート制限とコスト管理を含む。",
+            "status": "pending",
+            "testStrategy": "各データソースからの情報取得と品質検証。レート制限遵守の確認。"
+          },
+          {
+            "id": 2,
+            "title": "情報カテゴリ分類と優先度付けシステム",
+            "description": "収集した情報を7つのカテゴリに自動分類し、ビジネス関連性に基づいて優先度を設定するシステムを構築",
+            "dependencies": [1],
+            "details": "LLMベースの分類器で市場動向、技術、投資、規制、消費者、競合、マクロ経済に分類。関連性スコアリング機能付き。",
+            "status": "pending",
+            "testStrategy": "分類精度とスコアリングの妥当性を評価。異なる業界での分類結果を検証。"
+          },
+          {
+            "id": 3,
+            "title": "階層的情報要約と構造化システム",
+            "description": "大量の生情報を段階的に要約し、構造化されたナレッジベースとして保存するシステムを実装",
+            "dependencies": [2],
+            "details": "エグゼクティブサマリー、詳細要約、生データの3階層構造。重要度に基づく自動要約とキーインサイト抽出。",
+            "status": "pending",
+            "testStrategy": "要約の品質と情報損失を評価。階層間の一貫性確認。"
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "title": "Implement Enhanced Ideator Agent for Multiple High-Quality Business Ideas",
+        "description": "強化されたIdeatorAgentを実装し、包括的な調査結果を基に複数の高品質なビジネスアイデアを生成する。三菱地所の強みとシナジー効果を最大化するアイデア創出を行う。",
+        "details": "Enhanced Researcherからのリッチなデータセットを活用し、5-8個の多様なビジネスアイデアを生成。各アイデアは詳細なビジネスモデル、価値提案、市場ポジショニング、技術要件、実装ロードマップを含む。三菱地所の既存アセット（不動産、テナントネットワーク、ブランド力）との具体的なシナジーを明示。",
+        "testStrategy": "生成されたアイデアの独創性、実現可能性、シナジー効果を評価。異なる調査データセットでの一貫性を確認。",
+        "priority": "high",
+        "dependencies": [18],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "三菱地所アセット・シナジー分析エンジン",
+            "description": "三菱地所の既存アセット（物件、テナント、ネットワーク）と潜在的ビジネス機会のシナジー効果を分析するエンジンを構築",
+            "dependencies": [],
+            "details": "丸の内・大手町・有楽町エリアの物件データ、主要テナント情報、保有資産リストと新規事業アイデアのマッチング分析。シナジー効果の定量化機能。",
+            "status": "pending",
+            "testStrategy": "既存物件との具体的シナジー提案の妥当性と実現可能性を評価。"
+          },
+          {
+            "id": 2,
+            "title": "多様性保証付きアイデア生成システム",
+            "description": "市場セグメント、技術領域、ビジネスモデルの多様性を保証しながら、高品質なビジネスアイデアを生成するシステムを実装",
+            "dependencies": [1],
+            "details": "制約充足アルゴリズムで多様性を確保。B2B/B2C、ハード/ソフト、短期/長期の組み合わせでバランス取り。各アイデアに独自性スコア付与。",
+            "status": "pending",
+            "testStrategy": "生成アイデアの多様性指標と独創性スコアを評価。重複や類似性の排除確認。"
+          },
+          {
+            "id": 3,
+            "title": "詳細ビジネスモデル設計システム",
+            "description": "各ビジネスアイデアに対して詳細なビジネスモデル（価値提案、収益構造、コスト構造、パートナーシップ）を自動設計するシステムを構築",
+            "dependencies": [2],
+            "details": "Business Model Canvasベースの詳細設計。市場調査データから導出される価値提案とマネタイゼーション戦略。実装難易度と投資要件の算出。",
+            "status": "pending",
+            "testStrategy": "ビジネスモデルの論理的整合性と市場データとの整合性を評価。"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "Implement Enhanced Critic Agent for Comprehensive Idea Evaluation",
+        "description": "Enhanced CriticAgentを実装し、複数のビジネスアイデアを多面的に評価して最優秀案を選定する。市場性、実現可能性、シナジー効果、リスクなど包括的な評価基準を使用。",
+        "details": "5-8個のビジネスアイデアを15-20の詳細な評価基準で分析。市場魅力度（規模、成長率、競合強度）、実現可能性（技術、規制、資金）、三菱地所適合性（シナジー、戦略整合性）、リスク要因（市場、技術、財務、規制）を定量評価。重み付けスコアリングで最優秀案を選定し、改善提案も生成。",
+        "testStrategy": "評価基準の妥当性と一貫性を確認。人間の判断との相関性を検証。選定理由の論理性を評価。",
+        "priority": "high",
+        "dependencies": [19],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "多次元評価フレームワークの設計",
+            "description": "市場性、実現可能性、シナジー効果、リスクの4大領域15-20基準からなる包括的評価フレームワークを設計・実装",
+            "dependencies": [],
+            "details": "各基準の定義、測定方法、重み付けロジックを設計。業界別・事業規模別の重み調整機能。評価基準間の相関分析と重複排除。",
+            "status": "pending",
+            "testStrategy": "評価基準の網羅性と独立性を確認。重み付けの妥当性を検証。"
+          },
+          {
+            "id": 2,
+            "title": "定量的スコアリングと比較分析システム",
+            "description": "複数アイデアの定量的比較とランキング生成、強み・弱み分析、改善提案生成を行うシステムを実装",
+            "dependencies": [1],
+            "details": "正規化スコアリング、相対比較マトリクス、強み・弱み・機会・脅威（SWOT）分析の自動生成。改善提案ロジックの実装。",
+            "status": "pending",
+            "testStrategy": "スコアリングの安定性と比較結果の妥当性を評価。改善提案の具体性と実行可能性を確認。"
+          },
+          {
+            "id": 3,
+            "title": "説明可能AI（XAI）機能による透明性確保",
+            "description": "評価結果と選定理由を詳細に説明し、意思決定プロセスの透明性を確保するシステムを実装",
+            "dependencies": [2],
+            "details": "各評価基準のスコア根拠、選定理由の詳細説明、代替案との比較ポイント、リスク・機会の明確化機能。",
+            "status": "pending",
+            "testStrategy": "説明の理解しやすさと論理性を評価。評価プロセスの再現可能性を確認。"
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "title": "Implement Advanced Planner Agent for Detailed Research Planning",
+        "description": "選定されたビジネスアイデアに特化した詳細調査計画を立案するAdvanced PlannerAgentを実装。市場詳細、技術仕様、競合分析、規制要件など、実行に必要な具体的情報の調査計画を策定。",
+        "details": "選定されたビジネスアイデアの実行に必要な詳細情報を特定し、優先順位付きの調査計画を策定。市場セグメント詳細、技術仕様・特許状況、競合企業分析、規制・法的要件、パートナー候補、リスク要因、財務・投資情報など、実装段階で必要となる具体的情報項目を整理。調査方法と情報源も指定。",
+        "testStrategy": "計画の網羅性と実行可能性を評価。調査項目の漏れや重複を確認。優先順位付けの妥当性を検証。",
+        "priority": "high",
+        "dependencies": [20],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "事業実行要件分析システム",
+            "description": "選定されたビジネスアイデアの実行に必要な詳細要件（技術、市場、規制、財務、パートナー）を体系的に分析するシステムを構築",
+            "dependencies": [],
+            "details": "ビジネスモデル別の要件テンプレート、必要情報の網羅的チェックリスト、実行段階別の情報ニーズマッピング機能。",
+            "status": "pending",
+            "testStrategy": "要件分析の網羅性と精度を評価。異なるビジネスモデルでの適用性を確認。"
+          },
+          {
+            "id": 2,
+            "title": "優先順位付き調査計画生成システム",
+            "description": "情報の重要度、取得難易度、実行への影響度を考慮して、最適化された調査計画を生成するシステムを実装",
+            "dependencies": [1],
+            "details": "重要度マトリクス、調査コスト・時間推定、依存関係分析による調査順序最適化。クリティカルパス分析機能。",
+            "status": "pending",
+            "testStrategy": "計画の実行効率と情報価値最大化を評価。調査順序の論理性を確認。"
+          },
+          {
+            "id": 3,
+            "title": "動的計画調整・更新システム",
+            "description": "調査進行中に得られた新情報に基づいて、調査計画を動的に調整・更新するシステムを実装",
+            "dependencies": [2],
+            "details": "新情報による計画見直しトリガー、調査項目の追加・削除・変更ロジック、リソース再配分機能。適応的計画管理。",
+            "status": "pending",
+            "testStrategy": "計画調整の適切性と効率性を評価。動的更新による計画改善効果を確認。"
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "Implement Specialized Researcher Agent for Deep-Dive Investigation",
+        "description": "Advanced Plannerの計画に基づき、選定されたビジネスアイデアに関する詳細で専門的な調査を実行するSpecialized ResearcherAgentを実装。技術詳細、市場セグメント、競合企業、規制環境などの深掘り調査を実行。",
+        "details": "計画された調査項目について、専門的で詳細な情報収集を実行。技術仕様・特許調査、市場セグメント詳細分析、個別競合企業の深掘り調査、規制・法的要件の詳細確認、潜在的パートナー企業の調査、詳細リスク分析、財務・投資情報の収集。各調査項目に対して複数の一次・二次情報源を使用し、信頼性の高い詳細情報を収集。",
+        "testStrategy": "収集情報の詳細度と信頼性を評価。専門的情報の正確性を確認。情報源の多様性と質を検証。",
+        "priority": "high",
+        "dependencies": [21],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "専門領域別調査モジュールの構築",
+            "description": "技術、市場、競合、規制、財務など専門領域別に最適化された調査モジュールを構築し、領域特有の情報源と調査手法を実装",
+            "dependencies": [],
+            "details": "特許データベース、技術論文、市場調査レポート、企業財務情報、規制文書など領域別データソースの統合。専門用語辞書と文脈理解機能。",
+            "status": "pending",
+            "testStrategy": "各専門領域での調査精度と情報品質を評価。領域間の情報統合度を確認。"
+          },
+          {
+            "id": 2,
+            "title": "多段階検証・クロスチェック機能",
+            "description": "収集した情報の信頼性を確保するため、複数情報源での検証とクロスチェック機能を実装",
+            "dependencies": [1],
+            "details": "情報源信頼性評価、矛盾検出機能、複数ソースでの事実確認、不確実性・信頼度スコアリング機能。",
+            "status": "pending",
+            "testStrategy": "情報検証の精度と信頼性評価の妥当性を確認。矛盾検出機能の性能を評価。"
+          },
+          {
+            "id": 3,
+            "title": "構造化レポート生成・統合システム",
+            "description": "収集した詳細情報を構造化されたレポート形式に整理し、意思決定に活用可能な形式で統合するシステムを実装",
+            "dependencies": [2],
+            "details": "調査結果の自動構造化、キーファインディング抽出、実行への示唆導出、不足情報の特定機能。エグゼクティブサマリー生成。",
+            "status": "pending",
+            "testStrategy": "レポート構造の論理性と完成度を評価。キーファインディングの重要性と実行可能性を確認。"
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "Implement Advanced Writer Agent for Comprehensive Report Generation",
+        "description": "詳細調査結果を基に、経営陣の意思決定に十分な質と深度を持つ包括的なビジネスレポートを生成するAdvanced WriterAgentを実装。7つのセクション全てに詳細で説得力のある内容を含む。",
+        "details": "Specialized Researcherからの詳細情報を統合し、経営陣向けの高品質レポートを生成。各セクション（概要、ターゲット・課題、ソリューション、市場・競合、三菱地所の意義、検証計画、リスク）に1000-2000文字の詳細内容。データ視覚化、財務モデル、実装ロードマップ、リスク軽減策など具体的で実行可能な内容を含む。論理的一貫性と説得力を重視。",
+        "testStrategy": "レポート品質と詳細度を評価。各セクション間の論理的整合性を確認。経営陣による理解しやすさと説得力を検証。",
+        "priority": "high",
+        "dependencies": [22],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "セクション別専門コンテンツ生成エンジン",
+            "description": "7つの各セクションに特化した専門的コンテンツ生成エンジンを構築し、領域別の詳細要件と品質基準を満たす内容を生成",
+            "dependencies": [],
+            "details": "セクション別テンプレート、必要情報チェックリスト、品質基準（文字数、詳細度、論拠の強さ）、セクション間リンク機能。",
+            "status": "pending",
+            "testStrategy": "各セクションの専門性と詳細度を評価。テンプレート適用による品質向上を確認。"
+          },
+          {
+            "id": 2,
+            "title": "データ視覚化・モデル統合システム",
+            "description": "収集データを効果的な図表、財務モデル、ロードマップとして視覚化し、レポートに統合するシステムを実装",
+            "dependencies": [1],
+            "details": "市場データのグラフ化、財務予測モデル、競合比較表、リスクマトリクス、実装タイムライン等の自動生成機能。",
+            "status": "pending",
+            "testStrategy": "視覚化の効果性と正確性を評価。財務モデルの論理性と実現可能性を確認。"
+          },
+          {
+            "id": 3,
+            "title": "論理一貫性・品質保証システム",
+            "description": "レポート全体の論理的整合性、事実の一貫性、表現の品質を自動チェックし、経営陣レベルの品質を保証するシステムを実装",
+            "dependencies": [2],
+            "details": "論理整合性チェック、数値の一貫性確認、文章品質評価、セクション間の矛盾検出、改善提案生成機能。",
+            "status": "pending",
+            "testStrategy": "品質チェック機能の精度と効果性を評価。改善提案の具体性と実行可能性を確認。"
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "title": "Implement Final Quality Assurance and Enhancement System",
+        "description": "最終的な品質保証として、完成レポートの包括的評価と必要に応じた改善を行う最終QAシステムを実装。Executive Critic Agentと改善プロセスを含む。",
+        "details": "完成レポートに対して最高レベルの品質評価を実行。論理的一貫性、事実の正確性、表現の適切性、意思決定への有用性を多面的に評価。品質スコアが基準（85点）を下回る場合は、具体的な改善指示を生成してWriterAgentに修正を依頼。最大2回の改善サイクルを実行し、最終的に経営陣プレゼンテーション品質を保証。",
+        "testStrategy": "QA評価の厳密性と改善指示の具体性を確認。改善サイクルによる品質向上効果を検証。最終品質の一貫性を評価。",
+        "priority": "high",
+        "dependencies": [23],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Executive-Level評価基準システム",
+            "description": "経営陣プレゼンテーション品質の詳細評価基準を設計し、客観的で厳密な品質評価システムを構築",
+            "dependencies": [],
+            "details": "論理性（30%）、事実性（25%）、実行可能性（25%）、説得力（20%）の重み付け評価。各基準の詳細サブ指標と測定方法。85点品質基準の明確化。",
+            "status": "pending",
+            "testStrategy": "評価基準の妥当性と測定精度を確認。Executive-levelレビューとの相関性を検証。"
+          },
+          {
+            "id": 2,
+            "title": "具体的改善指示生成システム",
+            "description": "品質評価結果から具体的で実行可能な改善指示を生成し、WriterAgentが効果的に修正を行えるシステムを実装",
+            "dependencies": [1],
+            "details": "問題箇所の特定、改善方向性の提示、具体的修正提案、追加必要情報の特定機能。改善優先順位付け。",
+            "status": "pending",
+            "testStrategy": "改善指示の具体性と実行可能性を評価。修正後の品質向上効果を確認。"
+          },
+          {
+            "id": 3,
+            "title": "改善サイクル管理・最終承認システム",
+            "description": "最大2回の改善サイクルを管理し、最終的な品質承認と配信準備を行うシステムを実装",
+            "dependencies": [2],
+            "details": "改善サイクル追跡、品質向上測定、最終承認ロジック、配信フォーマット準備、品質保証証明書生成機能。",
+            "status": "pending",
+            "testStrategy": "改善サイクルの効率性と最終品質の一貫性を評価。承認プロセスの信頼性を確認。"
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "title": "Implement Advanced Workflow Orchestration and State Management",
+        "description": "18-24のタスクで実装される高度なマルチエージェントシステムを統合し、効率的で信頼性の高いワークフロー実行を管理するオーケストレーションシステムを実装。",
+        "details": "Enhanced Researcher → Enhanced Ideator → Enhanced Critic → Advanced Planner → Specialized Researcher → Advanced Writer → Final QA の完全なワークフローを実行。各段階での品質チェック、エラー処理、前段階への戻り処理、並列実行可能部分の最適化、プログレス追跡、ユーザーへのリアルタイム更新を実装。全体実行時間15-25分での高品質レポート生成を目標。",
+        "testStrategy": "エンドツーエンドワークフローの実行安定性と効率性を評価。エラー処理と回復機能を検証。品質と実行時間のバランスを確認。",
+        "priority": "high",
+        "dependencies": [18, 19, 20, 21, 22, 23, 24],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "ワークフロー実行エンジンの構築",
+            "description": "複雑なマルチエージェントワークフローを効率的に実行・管理するエンジンを構築し、段階間の依存関係と品質ゲートを実装",
+            "dependencies": [],
+            "details": "ワークフロー定義、段階間依存管理、品質ゲート実装、並列実行制御、リソース管理、実行状態追跡機能。",
+            "status": "pending",
+            "testStrategy": "ワークフロー実行の正確性と効率性を評価。依存関係処理と品質ゲート機能を確認。"
+          },
+          {
+            "id": 2,
+            "title": "高度なエラー処理・回復システム",
+            "description": "各段階でのエラー検出、分類、回復処理を行い、ワークフロー全体の信頼性を確保するシステムを実装",
+            "dependencies": [1],
+            "details": "エラー分類、自動回復、前段階戻り、代替処理、エスカレーション、ログ記録、障害分析機能。",
+            "status": "pending",
+            "testStrategy": "エラー処理の網羅性と回復効果を評価。システム全体の安定性を確認。"
+          },
+          {
+            "id": 3,
+            "title": "リアルタイム監視・フィードバックシステム",
+            "description": "ワークフロー実行状況をリアルタイムで監視し、ユーザーに進捗とクオリティ情報を提供するシステムを実装",
+            "dependencies": [2],
+            "details": "進捗追跡、品質メトリクス、推定完了時間、段階別ステータス、パフォーマンス監視、ユーザーダッシュボード機能。",
+            "status": "pending",
+            "testStrategy": "監視精度とユーザー体験の向上効果を評価。リアルタイム更新の正確性を確認。"
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-07-15T14:25:14.652Z",
-      "updated": "2025-07-19T08:11:56.759Z",
+      "updated": "2025-07-20T17:45:00.000Z",
       "description": "Tasks for master context"
     }
   }

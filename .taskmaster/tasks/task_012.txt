@@ -1,6 +1,6 @@
 # Task ID: 12
 # Title: Implement HTML Report Generation (A3 Landscape)
-# Status: pending
+# Status: done
 # Dependencies: 5
 # Priority: high
 # Description: Generate a single-page HTML report per PRD spec, styled with TailwindCSS, using Jinja2 templating via LangChain.

@@ -9,6 +9,7 @@ import { loadConfig } from '@/lib/langgraph/config';
 import { StateManager } from '@/lib/langgraph/state-manager';
 import { ErrorHandler } from '@/lib/langgraph/error-handler';
 import { IdeationCoordinator } from '@/lib/agents/ideation';
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { ChatOpenAI } from '@langchain/openai';
 
 // グローバル状態管理
@@ -34,14 +35,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // 設定を読み込み
-    const config = loadConfig();
-    const llm = new ChatOpenAI({
-      apiKey: config.llm.apiKey,
-      model: config.llm.model,
-      temperature: 0.7,
-      maxTokens: 4000
-    });
+    // LLMインスタンス作成（アイデア生成用）
+    const llm = createChatOpenAI('ideator');
 
     // アイディエーションコーディネーターを初期化
     const coordinator = new IdeationCoordinator(
@@ -136,7 +131,7 @@ export async function GET(request: NextRequest) {
 
     // 統計情報を計算
     const coordinator = new IdeationCoordinator(
-      new ChatOpenAI(), // ダミーのLLM
+      createChatOpenAI('default'), // ダミーのLLM
       2
     );
     const statistics = coordinator.getIdeationStatistics(ideationResult);

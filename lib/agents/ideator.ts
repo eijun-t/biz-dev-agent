@@ -1,15 +1,12 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { createChatOpenAI } from '@/lib/config/llm-config';
 import { AgentState, AgentExecutionResult } from "./types";
 
 export class IdeatorAgent {
   private llm: ChatOpenAI;
   
   constructor() {
-    this.llm = new ChatOpenAI({
-      modelName: process.env.LLM_MODEL_DEFAULT || "gpt-4o",
-      temperature: 0.8, // 創造性を高めるため温度を上げる
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
+    this.llm = createChatOpenAI('ideator');
   }
 
   /**

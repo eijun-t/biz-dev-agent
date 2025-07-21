@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">ダッシュボード</h1>
         <Button asChild>
-          <Link href="/generate">新規レポート作成</Link>
+          <Link href="/">新規レポート作成</Link>
         </Button>
       </div>
 

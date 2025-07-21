@@ -4,6 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { createReport } from '@/lib/database/queries';
+import { CreateReportInput } from '@/lib/database/types';
 
 interface WorkflowStep {
   id: string;
@@ -23,6 +26,8 @@ interface WorkflowState {
   progress_percentage: number;
   status: 'running' | 'completed' | 'failed';
   error?: string;
+  userInput?: string;
+  final_report?: any;
 }
 
 // In-memory storage for demo (in production, use Supabase)
@@ -84,7 +89,8 @@ function startWorkflow(sessionId: string, userInput: string) {
     steps: [],
     session_id: sessionId,
     progress_percentage: 5,
-    status: 'running'
+    status: 'running',
+    userInput: userInput
   };
 
   workflowStates.set(sessionId, workflowState);
@@ -109,11 +115,6 @@ function getWorkflowStatus(sessionId: string) {
     }, { status: 404 });
   }
 
-  let finalReport = null;
-  if (state.phase === 'completed') {
-    finalReport = generateMockFinalReport(sessionId);
-  }
-
   return NextResponse.json({
     success: true,
     phase: state.phase,
@@ -121,7 +122,7 @@ function getWorkflowStatus(sessionId: string) {
     progress_percentage: state.progress_percentage,
     status: state.status,
     steps: state.steps,
-    final_report: finalReport,
+    final_report: state.final_report || null,
     error: state.error
   });
 }
@@ -248,6 +249,47 @@ async function completeWorkflow(sessionId: string) {
   const state = workflowStates.get(sessionId);
   if (!state) return;
 
+  // レポートデータを生成
+  const businessIdea = generateBusinessIdeaFromInput(state.userInput || '');
+  const finalReport = generateMockFinalReport(sessionId, state.userInput);
+
+  try {
+    // 認証されたユーザーがいる場合のみデータベースに保存
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      // データベースにレポートを保存
+      const reportInput: CreateReportInput = {
+        user_id: user.id,
+        title: businessIdea.title,
+        content: {
+          idea_title: businessIdea.title,
+          target: businessIdea.target,
+          challenges: businessIdea.problem,
+          monetization: businessIdea.businessModel,
+          market_tam: businessIdea.marketSize,
+          competitors: businessIdea.competitors.join(', '),
+          mitsubishi_synergy: businessIdea.synergy,
+          risks: businessIdea.risks.join(', '),
+          roadmap: businessIdea.verification.join(', ')
+        },
+        html_content: JSON.stringify(finalReport), // 完全なレポートデータを保存
+        status: 'completed'
+      };
+
+      await createReport(reportInput);
+      console.log(`Report saved to database for user ${user.id}`);
+    } else {
+      console.log('No authenticated user - report not saved to database');
+    }
+  } catch (error) {
+    console.error('Failed to save report to database:', error);
+    // エラーが発生してもワークフローは続行
+  }
+
+  // 最終レポートをワークフロー状態に設定
+  state.final_report = finalReport;
   state.phase = 'completed';
   state.status = 'completed';
   state.progress_percentage = 100;
@@ -265,12 +307,182 @@ async function markWorkflowFailed(sessionId: string, error: any) {
   workflowStates.set(sessionId, state);
 }
 
-function generateMockFinalReport(sessionId: string) {
+function generateBusinessIdeaFromInput(userInput: string) {
+  // ユーザー入力からビジネスアイデアのキーワードを抽出
+  const input = userInput.toLowerCase();
+  
+  // キーワードマッピング
+  if (input.includes('ai') || input.includes('人工知能') || input.includes('機械学習')) {
+    return {
+      title: 'AI駆動型ビジネス最適化プラットフォーム',
+      domain: 'AI・機械学習',
+      description: 'AI技術を活用した業務プロセス最適化とデータ分析サービス',
+      target: '企業・中小企業経営者',
+      problem: '業務効率化の遅れと意思決定の精度不足',
+      solution: 'AI・機械学習による業務プロセス自動化と予測分析',
+      businessModel: 'SaaS型プラットフォーム + コンサルティング',
+      synergy: '三菱地所のデータ活用ノウハウとテナント企業との関係性',
+      marketSize: 'AI市場',
+      competitors: ['IBM Watson', 'Salesforce Einstein'],
+      advantage: ['業界特化AI', '実証済み効果'],
+      verification: ['POC実施', 'テナント企業での検証'],
+      risks: ['技術開発遅延', 'AI人材確保困難']
+    };
+  }
+  
+  if (input.includes('不動産') || input.includes('建設') || input.includes('建築')) {
+    return {
+      title: 'スマート不動産管理プラットフォーム',
+      domain: '不動産・建設',
+      description: 'IoTとAIを活用した次世代不動産管理・運営システム',
+      target: '不動産オーナー・管理会社',
+      problem: '不動産運営の非効率性と入居者満足度の向上課題',
+      solution: 'IoT・AI技術による統合不動産管理システム',
+      businessModel: 'SaaS型管理システム + 成果報酬',
+      synergy: '三菱地所の不動産管理実績と技術革新の融合',
+      marketSize: '不動産テック市場',
+      competitors: ['GA technologies', 'SpaceFinder'],
+      advantage: ['大規模管理実績', '総合不動産サービス'],
+      verification: ['自社物件での実証', 'テナント満足度調査'],
+      risks: ['システム導入コスト', '従来業務への抵抗']
+    };
+  }
+  
+  if (input.includes('ooh') || input.includes('広告') || input.includes('デジタルサイネージ')) {
+    return {
+      title: 'AI駆動型デジタル広告最適化プラットフォーム',
+      domain: 'デジタル広告・マーケティング',
+      description: 'リアルタイムデータ分析による最適化された屋外広告配信システム',
+      target: '広告代理店・小売・飲食チェーン',
+      problem: 'OOH広告の効果測定困難と配信最適化の課題',
+      solution: 'AI・データ分析による動的広告最適化システム',
+      businessModel: '広告配信手数料 + データ分析サービス',
+      synergy: '三菱地所の商業施設運営データと広告技術の融合',
+      marketSize: 'デジタルOOH広告市場',
+      competitors: ['電通デジタル', 'サイバーエージェント'],
+      advantage: ['リアル店舗データ', '立地優位性'],
+      verification: ['丸の内エリアでの実証', '効果測定システム構築'],
+      risks: ['プライバシー規制', '広告効果の証明困難']
+    };
+  }
+  
+  if (input.includes('ヘルスケア') || input.includes('医療') || input.includes('健康')) {
+    return {
+      title: 'AIヘルスケア予防診断プラットフォーム',
+      domain: 'ヘルスケア・医療',
+      description: 'AIによる早期診断と予防医療を支援するデジタルヘルスサービス',
+      target: '医療機関・健康保険組合・個人',
+      problem: '疾病の早期発見困難と予防医療の普及不足',
+      solution: 'AI画像診断と健康データ分析による予防医療システム',
+      businessModel: 'SaaS型診断支援 + 健康管理サービス',
+      synergy: '三菱地所の健康経営ノウハウとテナント従業員データ活用',
+      marketSize: 'ヘルステック市場',
+      competitors: ['メドレー', 'エムスリー'],
+      advantage: ['企業健康管理実績', '大規模データ'],
+      verification: ['従業員健康診断での検証', '医療機関との連携'],
+      risks: ['医療法規制', 'データセキュリティ']
+    };
+  }
+  
+  if (input.includes('教育') || input.includes('学習') || input.includes('edtech')) {
+    return {
+      title: 'AI個別学習最適化プラットフォーム',
+      domain: '教育・EdTech',
+      description: 'AI技術による個人最適化された学習体験とスキル開発支援',
+      target: '教育機関・企業研修・個人学習者',
+      problem: '画一的教育による学習効果の限界と個別最適化の困難',
+      solution: 'AI学習分析による個人最適化教育システム',
+      businessModel: 'SaaS型学習プラットフォーム + コンテンツ販売',
+      synergy: '三菱地所の人材育成ノウハウと学習空間提供',
+      marketSize: 'EdTech市場',
+      competitors: ['リクルート', 'ベネッセ'],
+      advantage: ['企業研修実績', '学習環境提供'],
+      verification: ['社内研修での実証', '学習効果測定'],
+      risks: ['教育効果の証明', 'コンテンツ品質維持']
+    };
+  }
+  
+  if (input.includes('金融') || input.includes('fintech') || input.includes('投資')) {
+    return {
+      title: 'AI金融リスク管理プラットフォーム',
+      domain: 'FinTech・金融',
+      description: 'AI分析による投資リスク評価と最適化ソリューション',
+      target: '金融機関・投資会社・個人投資家',
+      problem: '複雑化する金融リスクの評価困難と最適化の課題',
+      solution: 'AI・ビッグデータによるリスク分析・予測システム',
+      businessModel: 'SaaS型リスク管理 + 成果報酬',
+      synergy: '三菱UFJとの連携と不動産投資データ活用',
+      marketSize: 'FinTech市場',
+      competitors: ['野村證券', 'マネーフォワード'],
+      advantage: ['グループ金融ノウハウ', '不動産投資実績'],
+      verification: ['グループ内での実証', 'リスク予測精度検証'],
+      risks: ['金融規制', 'システム安定性']
+    };
+  }
+  
+  if (input.includes('物流') || input.includes('配送') || input.includes('サプライチェーン')) {
+    return {
+      title: 'AI物流最適化管理システム',
+      domain: '物流・サプライチェーン',
+      description: 'AI予測分析による効率的な物流ネットワーク最適化',
+      target: '物流会社・製造業・小売業',
+      problem: '物流コスト増大と配送効率化の課題',
+      solution: 'AI需要予測と最適化による統合物流管理システム',
+      businessModel: 'SaaS型物流管理 + 効率化成果報酬',
+      synergy: '三菱地所の商業施設物流ノウハウと最適化技術',
+      marketSize: '物流テック市場',
+      competitors: ['日本通運', 'ヤマト運輸'],
+      advantage: ['商業施設物流実績', '都市部配送網'],
+      verification: ['自社物流での実証', '配送効率測定'],
+      risks: ['システム導入コスト', '物流業界の抵抗']
+    };
+  }
+  
+  if (input.includes('環境') || input.includes('エネルギー') || input.includes('サステナビリティ')) {
+    return {
+      title: 'AIエネルギー最適化プラットフォーム',
+      domain: '環境・エネルギー',
+      description: 'AI技術による再生可能エネルギー管理と最適化システム',
+      target: 'エネルギー会社・企業・自治体',
+      problem: 'エネルギー効率化とカーボンニュートラル実現の課題',
+      solution: 'AI予測・制御による統合エネルギー管理システム',
+      businessModel: 'SaaS型エネルギー管理 + 省エネ成果報酬',
+      synergy: '三菱地所のビル管理実績とエネルギー最適化技術',
+      marketSize: '環境テック市場',
+      competitors: ['東京電力', 'ENEOS'],
+      advantage: ['大規模ビル管理実績', 'ESG経営ノウハウ'],
+      verification: ['自社ビルでの実証', 'エネルギー削減効果測定'],
+      risks: ['エネルギー政策変更', '技術標準化遅れ']
+    };
+  }
+  
+  // デフォルト（入力内容を反映）
+  return {
+    title: `${userInput}関連ビジネスプラットフォーム`,
+    domain: '新規事業領域',
+    description: `${userInput}の課題解決を目的とした革新的なデジタルソリューション`,
+    target: '関連業界の企業・組織',
+    problem: `${userInput}分野における効率化と最適化の課題`,
+    solution: `デジタル技術を活用した${userInput}の革新的ソリューション`,
+    businessModel: 'SaaS型プラットフォーム + コンサルティング',
+    synergy: `三菱地所の事業ノウハウと${userInput}分野の融合`,
+    marketSize: `${userInput}関連市場`,
+    competitors: ['業界大手企業', '新興テック企業'],
+    advantage: ['三菱地所ブランド', '実証実績'],
+    verification: ['POC実施', '効果測定'],
+    risks: ['市場変化', '技術革新']
+  };
+}
+
+function generateMockFinalReport(sessionId: string, userInput?: string) {
+  // ユーザー入力から適切なビジネスアイデアを生成
+  const businessIdea = generateBusinessIdeaFromInput(userInput || '');
+  
   return {
     reportData: {
       id: `report_${sessionId}`,
       session_id: sessionId,
-      title: 'AI-Powered Smart City Management Platform',
+      title: businessIdea.title,
       research_phase_result: [
         {
           id: 'research_1',
@@ -298,7 +510,7 @@ function generateMockFinalReport(sessionId: string) {
       ideation_phase_result: {
         selected_idea: {
           id: 'idea_smart_city',
-          title: 'AI-Powered Smart City Management Platform',
+          title: businessIdea.title,
           target_market: '地方自治体・都市開発事業者',
           problem_statement: '都市インフラの非効率な運営と住民サービスの質的課題',
           solution: 'AI・IoT・データ分析を統合したスマートシティプラットフォーム',
@@ -410,7 +622,7 @@ function generateMockFinalReport(sessionId: string) {
       },
       selected_business_idea: {
         id: 'idea_smart_city',
-        title: 'AI-Powered Smart City Management Platform',
+        title: businessIdea.title,
         target_market: '地方自治体・都市開発事業者',
         problem_statement: '都市インフラの非効率な運営と住民サービスの質的課題',
         solution: 'AI・IoT・データ分析を統合したスマートシティプラットフォーム',
@@ -432,19 +644,19 @@ function generateMockFinalReport(sessionId: string) {
           tab_name: '概要' as const,
           title: 'エグゼクティブサマリー',
           content: `
-            <h2>AI-Powered Smart City Management Platform</h2>
-            <p>本提案は、AI・IoT・データ分析技術を統合したスマートシティ管理プラットフォームの開発・提供事業です。</p>
+            <h2>${businessIdea.title}</h2>
+            <p>本提案は、${businessIdea.description}の開発・提供事業です。</p>
             
             <h3>事業概要</h3>
             <ul>
-              <li><strong>市場機会</strong>: グローバル8,000億円、国内800億円の成長市場</li>
-              <li><strong>ターゲット</strong>: 地方自治体・都市開発事業者</li>
-              <li><strong>競争優位性</strong>: 三菱地所の都市開発実績とローカル最適化</li>
+              <li><strong>市場機会</strong>: ${businessIdea.marketSize}における急成長機会</li>
+              <li><strong>ターゲット</strong>: ${businessIdea.target}</li>
+              <li><strong>競争優位性</strong>: ${businessIdea.advantage.join('、')}</li>
               <li><strong>収益予測</strong>: 5年目売上150億円、ROI 45%</li>
             </ul>
             
             <h3>投資ハイライト</h3>
-            <p>政府のスマートシティ政策と地方創生の追い風を受け、三菱地所の都市開発ノウハウを活かした差別化されたソリューションを提供します。</p>
+            <p>${businessIdea.synergy}により、差別化されたソリューションを提供します。</p>
           `,
           data_sources: ['市場調査結果', '競合分析', '財務予測'],
           confidence_level: 'high' as const,
@@ -460,33 +672,25 @@ function generateMockFinalReport(sessionId: string) {
             
             <h3>🎯 プライマリーターゲット</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>地方中核都市（人口10-50万人）の自治体</h4>
+              <h4>${businessIdea.target}</h4>
               <ul>
-                <li><strong>ペルソナ</strong>: 情報政策課長、都市計画部長</li>
-                <li><strong>予算規模</strong>: 年間IT予算5-20億円</li>
-                <li><strong>決裁権限</strong>: 1000万円以上は議会承認</li>
-                <li><strong>導入動機</strong>: 住民サービス向上、業務効率化、コスト削減</li>
+                <li><strong>業界</strong>: ${businessIdea.domain}</li>
+                <li><strong>主要課題</strong>: ${businessIdea.problem}</li>
+                <li><strong>求めるソリューション</strong>: ${businessIdea.solution}</li>
               </ul>
             </div>
 
-            <h3>🏢 セカンダリーターゲット</h3>
+            <h3>💼 ビジネスモデル</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>民間都市開発事業者</h4>
-              <ul>
-                <li><strong>対象</strong>: 大手デベロッパー、インフラ事業者</li>
-                <li><strong>ニーズ</strong>: スマートシティ機能の差別化</li>
-                <li><strong>予算</strong>: プロジェクト予算の2-5%</li>
-              </ul>
+              <h4>${businessIdea.businessModel}</h4>
+              <p>${businessIdea.synergy}</p>
             </div>
 
-            <h3>⚠️ 現在の課題</h3>
-            <ul>
-              <li><strong>データ分散</strong>: 各部署のシステムが独立、情報連携困難</li>
-              <li><strong>リアルタイム性の欠如</strong>: 手動集計による遅延</li>
-              <li><strong>予測分析不足</strong>: 過去データ活用が不十分</li>
-              <li><strong>住民接点の限界</strong>: デジタルサービスの普及率低下</li>
-              <li><strong>人材不足</strong>: IT専門人材の確保困難</li>
-            </ul>
+            <h3>⚠️ 解決すべき課題</h3>
+            <div style="background: #fef3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+              <p><strong>核心課題</strong>: ${businessIdea.problem}</p>
+              <p><strong>提案ソリューション</strong>: ${businessIdea.solution}</p>
+            </div>
           `,
           data_sources: ['自治体ヒアリング', 'ペルソナ分析'],
           confidence_level: 'high' as const,
@@ -498,39 +702,34 @@ function generateMockFinalReport(sessionId: string) {
           tab_name: 'ソリューション仮説・ビジネスモデル' as const,
           title: 'ソリューション仮説・ビジネスモデル',
           content: `
-            <h2>統合スマートシティプラットフォーム</h2>
+            <h2>${businessIdea.title}</h2>
             
             <h3>💡 ソリューション概要</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <p>AI・IoT・データ分析を統合したクラウドプラットフォームにより、都市インフラの最適化と住民サービスの向上を実現します。</p>
+              <p>${businessIdea.description}</p>
             </div>
 
-            <h3>🔧 主要機能</h3>
-            <ul>
-              <li><strong>統合ダッシュボード</strong>: 全庁データの可視化・分析</li>
-              <li><strong>予測分析エンジン</strong>: 交通量、エネルギー需要の予測</li>
-              <li><strong>自動アラート</strong>: 異常検知・早期警告システム</li>
-              <li><strong>住民アプリ</strong>: 行政サービスのデジタル化</li>
-              <li><strong>IoTセンサー連携</strong>: リアルタイムデータ収集</li>
-            </ul>
+            <h3>🔧 主要機能・特徴</h3>
+            <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+              <p><strong>核心技術：</strong> ${businessIdea.solution}</p>
+              <p><strong>対象課題：</strong> ${businessIdea.problem}</p>
+              <p><strong>提供価値：</strong> ${businessIdea.description}</p>
+            </div>
 
             <h3>💰 ビジネスモデル</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>SaaS型サブスクリプション + 成果報酬</h4>
-              <ul>
-                <li><strong>基本料金</strong>: 月額100-500万円（人口規模別）</li>
-                <li><strong>従量課金</strong>: データ処理量・API呼び出し数</li>
-                <li><strong>成果報酬</strong>: 省エネ・効率化による削減コストの一部</li>
-                <li><strong>カスタマイズ</strong>: 個別開発・導入支援</li>
-              </ul>
+              <h4>${businessIdea.businessModel}</h4>
+              <p><strong>収益構造：</strong> プラットフォーム利用料とデータ分析サービス</p>
+              <p><strong>価格戦略：</strong> 成果連動型で導入リスクを軽減</p>
+              <p><strong>拡張性：</strong> ${businessIdea.target}への段階的展開</p>
             </div>
 
             <h3>🎯 価値提案</h3>
             <ul>
-              <li><strong>運営コスト20%削減</strong>: 自動化・最適化による効率向上</li>
-              <li><strong>住民満足度向上</strong>: サービス品質・利便性の改善</li>
-              <li><strong>データドリブン意思決定</strong>: 根拠ある政策立案支援</li>
-              <li><strong>災害対応強化</strong>: リアルタイム監視・早期警告</li>
+              <li><strong>効率化実現：</strong> ${businessIdea.problem}の根本的解決</li>
+              <li><strong>競争優位性：</strong> ${businessIdea.advantage.join('、')}</li>
+              <li><strong>シナジー効果：</strong> ${businessIdea.synergy}</li>
+              <li><strong>スケーラビリティ：</strong> ${businessIdea.domain}全体への展開可能性</li>
             </ul>
           `,
           data_sources: ['技術仕様書', 'ビジネスモデル分析'],
@@ -545,58 +744,45 @@ function generateMockFinalReport(sessionId: string) {
           content: `
             <h2>市場規模分析</h2>
             
-            <h3>📊 TAM（総市場規模）</h3>
+            <h3>📊 市場規模分析</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>8,000億円（グローバル）</h4>
+              <h4>${businessIdea.marketSize}</h4>
               <ul>
-                <li>スマートシティ関連投資の急拡大</li>
-                <li>年平均成長率22%（2023-2028）</li>
-                <li>アジア太平洋地域が最大市場</li>
+                <li>急成長する${businessIdea.domain}分野</li>
+                <li>年平均成長率22%の高成長市場</li>
+                <li>デジタル変革による市場拡大</li>
               </ul>
             </div>
 
-            <h3>📈 SAM（獲得可能市場）</h3>
+            <h3>📈 ターゲット市場</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>800億円（日本国内）</h4>
+              <h4>${businessIdea.target}向け市場</h4>
               <ul>
-                <li>地方自治体のDX推進予算</li>
-                <li>スーパーシティ構想による政府支援</li>
-                <li>民間デベロッパーの投資増加</li>
+                <li>対象顧客: ${businessIdea.target}</li>
+                <li>市場ニーズ: ${businessIdea.problem}の解決</li>
+                <li>成長ドライバー: ${businessIdea.solution}への需要拡大</li>
               </ul>
-            </div>
-
-            <h3>🎯 SOM（獲得目標市場）</h3>
-            <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>80億円（5年目標）</h4>
-              <p>中核都市20団体での10%シェア獲得</p>
             </div>
 
             <h2>競合分析</h2>
             
-            <h3>🏢 主要競合</h3>
+            <h3>🏢 主要競合企業</h3>
+            ${businessIdea.competitors.map(competitor => `
             <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>IBM Smart City Solutions</h4>
+              <h4>${competitor}</h4>
               <ul>
-                <li><strong>強み</strong>: グローバル実績、AI技術Watson</li>
-                <li><strong>弱み</strong>: 高コスト、日本市場適応不足</li>
-                <li><strong>当社優位性</strong>: 地域密着、コスト競争力</li>
+                <li><strong>市場地位</strong>: ${businessIdea.domain}分野の既存プレイヤー</li>
+                <li><strong>当社優位性</strong>: ${businessIdea.advantage.join('、')}</li>
+                <li><strong>差別化要因</strong>: ${businessIdea.synergy}</li>
               </ul>
             </div>
-
-            <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>NEC Smart City Platform</h4>
-              <ul>
-                <li><strong>強み</strong>: 国内実績、官公庁との関係</li>
-                <li><strong>弱み</strong>: 従来型アプローチ、革新性不足</li>
-                <li><strong>当社優位性</strong>: 不動産ノウハウ、AI活用度</li>
-              </ul>
-            </div>
+            `).join('')}
 
             <h3>⚔️ 競争戦略</h3>
             <ul>
-              <li><strong>差別化要因</strong>: 三菱地所の都市開発実績活用</li>
-              <li><strong>参入障壁</strong>: 自治体との信頼関係構築</li>
-              <li><strong>価格戦略</strong>: 成果報酬による導入リスク軽減</li>
+              <li><strong>差別化要因</strong>: ${businessIdea.synergy}</li>
+              <li><strong>競争優位性</strong>: ${businessIdea.advantage.join('、')}</li>
+              <li><strong>価格戦略</strong>: ${businessIdea.businessModel}</li>
             </ul>
           `,
           data_sources: ['市場調査レポート', '競合分析'],
@@ -613,50 +799,50 @@ function generateMockFinalReport(sessionId: string) {
             
             <h3>🏢 既存事業とのシナジー</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>都市開発ノウハウの活用</h4>
+              <h4>${businessIdea.synergy}</h4>
               <ul>
-                <li><strong>丸の内エリア</strong>: 先進的都市機能の実証フィールド</li>
-                <li><strong>大手町・有楽町</strong>: スマートビル技術の蓄積</li>
-                <li><strong>地方開発</strong>: 地域特性への深い理解</li>
+                <li><strong>丸の内エリア</strong>: ${businessIdea.domain}分野での実証フィールド</li>
+                <li><strong>大手町・有楽町</strong>: 先進技術の蓄積と検証環境</li>
+                <li><strong>テナント企業</strong>: ${businessIdea.target}との直接的関係</li>
               </ul>
             </div>
 
             <h3>📊 データ資産の優位性</h3>
             <ul>
-              <li><strong>ビル管理データ</strong>: エネルギー、セキュリティ、利用状況</li>
-              <li><strong>テナント行動データ</strong>: 人流・商業活動パターン</li>
-              <li><strong>都市計画ノウハウ</strong>: 長期開発計画の策定経験</li>
+              <li><strong>運営データ</strong>: ${businessIdea.domain}関連の実績データ</li>
+              <li><strong>顧客行動データ</strong>: テナント・来訪者の活動パターン</li>
+              <li><strong>事業ノウハウ</strong>: ${businessIdea.target}との長期関係構築経験</li>
             </ul>
 
             <h3>🎯 成長戦略との整合性</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
               <h4>「Creating Shared Value」の具現化</h4>
               <ul>
-                <li><strong>社会課題解決</strong>: 地方創生・持続可能都市の実現</li>
-                <li><strong>新規事業創出</strong>: 不動産以外の収益源確立</li>
-                <li><strong>デジタル変革</strong>: DXによる競争優位性強化</li>
+                <li><strong>社会課題解決</strong>: ${businessIdea.problem}の解決による社会貢献</li>
+                <li><strong>新規事業創出</strong>: ${businessIdea.domain}分野での収益源確立</li>
+                <li><strong>デジタル変革</strong>: ${businessIdea.solution}による競争優位性強化</li>
               </ul>
             </div>
 
             <h3>🌟 独自の価値創造</h3>
             <ul>
-              <li><strong>実証環境の提供</strong>: 自社物件での技術検証</li>
-              <li><strong>総合的ソリューション</strong>: 開発から運営まで一貫対応</li>
-              <li><strong>長期パートナーシップ</strong>: 30年以上の関係構築</li>
-              <li><strong>金融機能活用</strong>: グループの金融ノウハウで資金調達支援</li>
+              <li><strong>実証環境の提供</strong>: 自社物件での${businessIdea.solution}検証</li>
+              <li><strong>総合的ソリューション</strong>: ${businessIdea.businessModel}の一貫提供</li>
+              <li><strong>長期パートナーシップ</strong>: ${businessIdea.target}との持続的関係</li>
+              <li><strong>グループシナジー</strong>: 三菱グループの総合力活用</li>
             </ul>
 
             <h3>💼 組織・人材面での優位性</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
               <ul>
-                <li><strong>ブランド力</strong>: 三菱地所の信頼性・安定性</li>
-                <li><strong>官民連携経験</strong>: 自治体との協働実績</li>
-                <li><strong>グローバルネットワーク</strong>: 海外展開のポテンシャル</li>
+                <li><strong>ブランド力</strong>: 三菱地所の信頼性による${businessIdea.target}への訴求力</li>
+                <li><strong>業界経験</strong>: ${businessIdea.domain}分野での実績とノウハウ</li>
+                <li><strong>グローバルネットワーク</strong>: 海外展開への発展可能性</li>
               </ul>
             </div>
 
             <h3>🚀 長期ビジョンへの貢献</h3>
-            <p>スマートシティ事業は、三菱地所が目指す「持続可能な都市」の実現において中核的役割を果たし、ESG経営の具体的成果として社会からの評価向上にも寄与します。</p>
+            <p>${businessIdea.title}事業は、三菱地所が目指す「持続可能な社会」の実現において重要な役割を果たし、${businessIdea.domain}分野でのESG経営の具体的成果として社会からの評価向上にも寄与します。</p>
           `,
           data_sources: ['企業戦略', '既存事業分析'],
           confidence_level: 'high' as const,
@@ -674,20 +860,20 @@ function generateMockFinalReport(sessionId: string) {
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
               <h4>MVP開発・実証実験</h4>
               <ul>
-                <li><strong>対象</strong>: 三菱地所保有ビル（大手町・丸の内）</li>
-                <li><strong>範囲</strong>: エネルギー管理・セキュリティ統合</li>
-                <li><strong>KPI</strong>: 20%のエネルギー効率改善</li>
+                <li><strong>検証内容</strong>: ${businessIdea.verification[0]}</li>
+                <li><strong>対象</strong>: ${businessIdea.target}との協力</li>
+                <li><strong>範囲</strong>: ${businessIdea.solution}の基本機能</li>
                 <li><strong>予算</strong>: 5000万円</li>
               </ul>
             </div>
 
-            <h3>🏙️ Phase 2: パイロット自治体（6ヶ月）</h3>
+            <h3>🏢 Phase 2: パイロット実証（6ヶ月）</h3>
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-              <h4>地方中核都市での実証</h4>
+              <h4>${businessIdea.target}での実証実験</h4>
               <ul>
-                <li><strong>候補</strong>: 岡山市、熊本市、仙台市</li>
-                <li><strong>範囲</strong>: 交通・防災・行政サービス</li>
-                <li><strong>KPI</strong>: 住民満足度10%向上</li>
+                <li><strong>実証内容</strong>: ${businessIdea.verification[1] || businessIdea.verification[0]}</li>
+                <li><strong>範囲</strong>: ${businessIdea.solution}の実用化</li>
+                <li><strong>KPI</strong>: ${businessIdea.problem}の解決効果測定</li>
                 <li><strong>予算</strong>: 2億円</li>
               </ul>
             </div>
@@ -696,8 +882,8 @@ function generateMockFinalReport(sessionId: string) {
             <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
               <h4>商用サービス開始</h4>
               <ul>
-                <li><strong>目標</strong>: 10自治体への導入</li>
-                <li><strong>機能</strong>: フルプラットフォーム</li>
+                <li><strong>目標</strong>: ${businessIdea.target}10社への導入</li>
+                <li><strong>機能</strong>: ${businessIdea.solution}フルバージョン</li>
                 <li><strong>売上目標</strong>: 年間5億円</li>
                 <li><strong>投資</strong>: 10億円</li>
               </ul>
@@ -750,7 +936,7 @@ function generateMockFinalReport(sessionId: string) {
             <h3>🔴 高リスク（要重点対策）</h3>
             
             <div style="background: #fee; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #dc2626;">
-              <h4>⚠️ 技術開発遅延</h4>
+              <h4>⚠️ ${businessIdea.risks[0]}</h4>
               <ul>
                 <li><strong>確率</strong>: 中（40%）</li>
                 <li><strong>影響</strong>: 高（市場投入遅れ）</li>
@@ -759,11 +945,11 @@ function generateMockFinalReport(sessionId: string) {
             </div>
 
             <div style="background: #fee; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #dc2626;">
-              <h4>⚠️ 自治体予算削減</h4>
+              <h4>⚠️ ${businessIdea.risks[1] || '市場環境変化'}</h4>
               <ul>
                 <li><strong>確率</strong>: 中（30%）</li>
                 <li><strong>影響</strong>: 高（売上減少）</li>
-                <li><strong>軽減策</strong>: 成果報酬モデル、国庫補助金活用支援、民間事業者向け展開</li>
+                <li><strong>軽減策</strong>: ${businessIdea.businessModel}、多角化戦略、継続的市場調査</li>
               </ul>
             </div>
 
