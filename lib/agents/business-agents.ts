@@ -287,6 +287,9 @@ export class ResearcherAgent extends BaseAgent {
   }
 }
 
+// Enhanced Critic Agent Import
+import { EnhancedCriticAgent, createEnhancedCritic } from './critic';
+
 // Enhanced Ideator Agent (本格実装統合版)
 export class IdeatorAgent extends BaseAgent {
   private enhancedIntegration: any = null;
@@ -355,6 +358,15 @@ export class IdeatorAgent extends BaseAgent {
         console.log(`✅ Enhanced Ideation completed in ${executionTime}ms`);
         console.log(`💡 Generated ${result.businessIdeas.length} ideas`);
         console.log(`🎯 Overall quality: ${result.qualityMetrics.overallQuality.toFixed(1)}/10`);
+        
+        // 🔍 Enhanced Ideator アウトプット詳細ログ
+        console.log('\n📋 === Enhanced Ideator アウトプット詳細 ===');
+        console.log('🔥 Business Ideas:', JSON.stringify(result.businessIdeas, null, 2));
+        console.log('📊 Quality Metrics:', JSON.stringify(result.qualityMetrics, null, 2));
+        console.log('📈 Summary:', JSON.stringify(result.summary, null, 2));
+        console.log('🎯 Recommendations:', JSON.stringify(result.recommendation || 'N/A', null, 2));
+        console.log('🔧 Enhanced Metadata:', JSON.stringify(result.enhancedMetadata, null, 2));
+        console.log('=== Enhanced Ideator アウトプット終了 ===\n');
         
         return {
           success: true,
@@ -641,12 +653,85 @@ export class WriterAgent extends BaseAgent {
   }
 }
 
-// 品質評価エージェント
+// Enhanced Critic Agent (本格実装統合版)
 export class CriticAgent extends BaseAgent {
+  private enhancedCritic: EnhancedCriticAgent | null = null;
+  
   constructor() {
     super('critic');
+    
+    // Enhanced Critic Agentの初期化を試行
+    try {
+      this.enhancedCritic = createEnhancedCritic({
+        // 本番用設定
+        profit_threshold: 10_000_000_000, // 10億円
+        enable_detailed_analysis: true,
+        enable_idea_comparisons: true,
+        enable_improvement_suggestions: true,
+        output_language: 'ja'
+      });
+      
+      console.log('✅ Enhanced Critic Agent initialized (comprehensive evaluation capabilities)');
+    } catch (error) {
+      console.warn('⚠️ Enhanced Critic initialization failed, using fallback:', error);
+      this.enhancedCritic = null;
+    }
   }
 
+  /**
+   * 複数のビジネスアイデアを評価して最優秀案を選定
+   */
+  async evaluateBusinessIdeas(
+    businessIdeas: any[],
+    sessionId: string,
+    researchResults?: any,
+    userId?: string
+  ): Promise<AgentResult> {
+    const startTime = Date.now();
+    
+    console.log('🎯 Enhanced Critic Agent: Starting comprehensive idea evaluation...');
+    console.log(`📊 Ideas to evaluate: ${businessIdeas.length}`);
+    
+    // Enhanced Criticが利用可能な場合は使用
+    if (this.enhancedCritic && businessIdeas.length > 0) {
+      try {
+        console.log('⚡ Using Enhanced Critic capabilities');
+        const result = await this.enhancedCritic.evaluateBusinessIdeas({
+          session_id: sessionId,
+          business_ideas: businessIdeas,
+          research_results: researchResults,
+          user_preferences: {
+            prioritize_high_synergy: true,
+            minimum_profit_requirement: 70 // 70% of max profit score
+          }
+        });
+        
+        const executionTime = Date.now() - startTime;
+        console.log(`✅ Enhanced Critic evaluation completed in ${executionTime}ms`);
+        console.log(`🏆 Selected idea: ${result.selected_idea_for_next_phase.idea_title}`);
+        console.log(`📈 Top score: ${result.evaluation_summary.top_score}/100`);
+        
+        return {
+          success: true,
+          data: result,
+          executionTime,
+          tokensUsed: 0 // Enhanced Critic doesn't use external LLM calls
+        };
+        
+      } catch (enhancedError) {
+        console.warn('⚠️ Enhanced Critic evaluation failed, falling back to mock:', enhancedError);
+        // Fall through to mock implementation
+      }
+    }
+    
+    // フォールバック: 従来のレポート評価ロジック
+    console.log('🎭 Using fallback critic evaluation');
+    return this.evaluateReport(businessIdeas, userId, sessionId);
+  }
+
+  /**
+   * 従来のレポート評価機能（後方互換性のため維持）
+   */
   async evaluateReport(
     generatedReport: any,
     userId?: string,
@@ -728,21 +813,46 @@ export class BusinessWorkflowOrchestrator {
       results.ideas = ideationResult.data;
       
       // Enhanced Ideator のレスポンス形式に対応
-      // Enhanced Ideator は ideas 配列を直接返すため、構造を調整
       const enhancedIdeas = results.ideas;
+      const businessIdeas = enhancedIdeas.businessIdeas || enhancedIdeas.ideas || [];
+      
+      progressCallback?.('ideation', 50);
+
+      // Phase 2.5: Enhanced Critic Evaluation (NEW)
+      progressCallback?.('evaluation', 52);
+      console.log('Starting enhanced critic evaluation phase...');
+      
+      const criticResult = await this.critic.evaluateBusinessIdeas(
+        businessIdeas,
+        sessionId || 'default_session',
+        results.research,
+        userId
+      );
+      
+      if (!criticResult.success) {
+        throw new Error(`Critic evaluation failed: ${criticResult.error}`);
+      }
+      
+      // Enhanced Critic が選定した最優秀アイデアを使用
+      const criticData = criticResult.data;
+      results.selectedIdea = criticData.selected_idea_for_next_phase;
       results.ideas = {
-        business_ideas: enhancedIdeas.ideas || enhancedIdeas || [],
-        recommendation: enhancedIdeas.recommendation || {
-          top_choice: enhancedIdeas.ideas?.[0]?.id || 'idea_1',
-          reasoning: 'Enhanced Ideator による総合評価結果'
-        }
+        business_ideas: businessIdeas,
+        recommendation: {
+          top_choice: results.selectedIdea.idea_id,
+          reasoning: criticData.portfolio_evaluation.recommendation_reasoning
+        },
+        critic_evaluation: criticData.portfolio_evaluation
       };
       
-      // Select the top recommended idea
-      results.selectedIdea = results.ideas.business_ideas.find(
-        (idea: any) => idea.id === results.ideas.recommendation.top_choice
-      ) || results.ideas.business_ideas[0];
-      progressCallback?.('ideation', 50);
+      // 🔍 Enhanced Critic → Analyst への引き渡しデータログ
+      console.log('\n📋 === Enhanced Critic → Analyst 引き渡しデータ ===');
+      console.log('🏆 Selected Idea:', JSON.stringify(results.selectedIdea, null, 2));
+      console.log('📊 Critic Evaluation Summary:', JSON.stringify(criticData.evaluation_summary, null, 2));
+      console.log('🔬 Research Data to Analyst:', JSON.stringify(results.research, null, 2));
+      console.log('=== 引き渡しデータ終了 ===\n');
+      
+      progressCallback?.('evaluation', 55);
 
       // Phase 3: Analysis
       progressCallback?.('analysis', 55);
