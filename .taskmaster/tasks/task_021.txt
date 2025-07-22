@@ -1,6 +1,6 @@
 # Task ID: 21
 # Title: Implement Advanced Planner Agent for Detailed Research Planning
-# Status: pending
+# Status: completed
 # Dependencies: 20
 # Priority: high
 # Description: 選定されたビジネスアイデアに特化した詳細調査計画を立案するAdvanced PlannerAgentを実装。市場詳細、技術仕様、競合分析、規制要件など、実行に必要な具体的情報の調査計画を策定。
@@ -11,19 +11,19 @@
 計画の網羅性と実行可能性を評価。調査項目の漏れや重複を確認。優先順位付けの妥当性を検証。
 
 # Subtasks:
-## 1. 事業実行要件分析システム [pending]
+## 1. 事業実行要件分析システム [completed]
 ### Dependencies: None
 ### Description: 選定されたビジネスアイデアの実行に必要な詳細要件（技術、市場、規制、財務、パートナー）を体系的に分析するシステムを構築
 ### Details:
 ビジネスモデル別の要件テンプレート、必要情報の網羅的チェックリスト、実行段階別の情報ニーズマッピング機能。
 
-## 2. 優先順位付き調査計画生成システム [pending]
+## 2. 優先順位付き調査計画生成システム [completed]
 ### Dependencies: 21.1
 ### Description: 情報の重要度、取得難易度、実行への影響度を考慮して、最適化された調査計画を生成するシステムを実装
 ### Details:
 重要度マトリクス、調査コスト・時間推定、依存関係分析による調査順序最適化。クリティカルパス分析機能。
 
-## 3. 動的計画調整・更新システム [pending]
+## 3. 動的計画調整・更新システム [completed]
 ### Dependencies: 21.2
 ### Description: 調査進行中に得られた新情報に基づいて、調査計画を動的に調整・更新するシステムを実装
 ### Details:

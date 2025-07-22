@@ -426,6 +426,8 @@ function getAgentForPhase(phase: string): string {
   const agentMap: Record<string, string> = {
     'research': 'enhanced_researcher',
     'ideation': 'enhanced_ideator',
+    'evaluation': 'enhanced_critic',
+    'planning': 'advanced_planner',
     'analysis': 'analyst',
     'report': 'writer',
     'completed': 'coordinator'

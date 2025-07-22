@@ -10,6 +10,7 @@ import { createLog } from '@/lib/database/queries';
 // Enhanced Agents Import
 import { EnhancedResearcherAgent, createEnhancedResearcher } from './research/enhanced-index';
 import { EnhancedIdeatorAgent, createEnhancedIdeator } from './ideation/enhanced-ideator-index';
+import { AdvancedPlannerAgent, createAdvancedPlanner, PlannerIntegration } from './planner/index';
 
 // 基底エージェントクラス
 abstract class BaseAgent {
@@ -492,6 +493,7 @@ export class BusinessWorkflowOrchestrator {
   private analyst: AnalystAgent;
   private writer: WriterAgent;
   private critic: CriticAgent;
+  private planner: PlannerIntegration;
 
   constructor() {
     this.researcher = new ResearcherAgent();
@@ -499,6 +501,7 @@ export class BusinessWorkflowOrchestrator {
     this.analyst = new AnalystAgent();
     this.writer = new WriterAgent();
     this.critic = new CriticAgent();
+    this.planner = new PlannerIntegration();
   }
 
   async executeFullWorkflow(
@@ -511,6 +514,7 @@ export class BusinessWorkflowOrchestrator {
       research: null,
       ideas: null,
       selectedIdea: null,
+      researchPlan: null,
       analysis: null,
       report: null,
       qualityAssessment: null
@@ -594,17 +598,67 @@ export class BusinessWorkflowOrchestrator {
         };
       }
       
-      // 🔍 Enhanced Critic → Analyst への引き渡しデータログ
-      console.log('\n📋 === Enhanced Critic → Analyst 引き渡しデータ ===');
+      progressCallback?.('evaluation', 55);
+
+      // Phase 2.7: Advanced Planner (NEW)
+      progressCallback?.('planning', 58);
+      console.log('Starting advanced planning phase...');
+      console.log('📋 Advanced Planner Agent: Creating detailed research plan...');
+      
+      let plannerData: any = null;
+      
+      try {
+        // Prepare Planner input from Critic output
+        const plannerInput = PlannerIntegration.fromCriticOutput(
+          { selectedIdea: results.selectedIdea },
+          {
+            researcherCapabilities: ['web_search', 'database_query', 'analysis'],
+            availableDataSources: ['Google Search', 'Market Database', 'Industry Reports'],
+            maxTimeWeeks: 6,
+            maxBudget: 1500000,
+            restrictedSources: [],
+            complianceRequirements: []
+          }
+        );
+
+        console.log('📋 Planner Input:', JSON.stringify(plannerInput, null, 2));
+
+        // Create research plan
+        const plannerResult = await this.planner.planner.createResearchPlan(plannerInput);
+        
+        if (plannerResult) {
+          plannerData = plannerResult;
+          results.researchPlan = plannerData;
+          console.log('✅ Advanced Planner completed successfully');
+          console.log(`   Research items: ${plannerResult.researchPlan.executionOrder.length}`);
+          console.log(`   Estimated time: ${plannerResult.researchPlan.totalEstimatedTime} hours`);
+          console.log(`   Categories covered: ${Object.keys(plannerResult.researchPlan.categories).length}`);
+        } else {
+          throw new Error('Planner returned no result');
+        }
+      } catch (plannerError) {
+        console.error('❌ Advanced Planner failed:', plannerError);
+        console.warn('⚠️ Proceeding without detailed research plan');
+        // Continue without planner - this is acceptable
+      }
+      
+      // 🔍 Enhanced Critic → Advanced Planner → Analyst への引き渡しデータログ
+      console.log('\n📋 === Enhanced Critic → Advanced Planner → Analyst 引き渡しデータ ===');
       console.log('🏆 Selected Idea:', JSON.stringify(results.selectedIdea, null, 2));
       console.log('📊 Critic Evaluation Summary:', criticData ? JSON.stringify(criticData.evaluation_summary, null, 2) : 'No evaluation data');
+      console.log('📋 Research Plan Summary:', plannerData ? JSON.stringify({
+        totalItems: plannerData.researchPlan.executionOrder.length,
+        categories: Object.keys(plannerData.researchPlan.categories),
+        estimatedTime: plannerData.researchPlan.totalEstimatedTime,
+        nextSteps: plannerData.nextSteps
+      }, null, 2) : 'No research plan generated');
       console.log('🔬 Research Data to Analyst:', JSON.stringify(results.research, null, 2));
       console.log('=== 引き渡しデータ終了 ===\n');
       
-      progressCallback?.('evaluation', 55);
+      progressCallback?.('planning', 60);
 
       // Phase 3: Analysis
-      progressCallback?.('analysis', 55);
+      progressCallback?.('analysis', 60);
       console.log('Starting analysis phase...');
       const analysisResult = await this.analyst.analyzeBusinessIdea(
         results.selectedIdea,
