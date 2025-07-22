@@ -95,7 +95,7 @@ export const DATA_SOURCE_CONFIGS: Record<string, DataSourceConfig> = {
     rateLimit: 100, // per minute
     timeout: 10000,
     reliability: 'high',
-    isEnabled: true,
+    isEnabled: false, // API key required - disabled temporarily
     cost: 10 // yen per request
   },
   'yahoo_news_jp': {
@@ -181,7 +181,7 @@ export const DATA_SOURCE_CONFIGS: Record<string, DataSourceConfig> = {
     rateLimit: 60,
     timeout: 10000,
     reliability: 'medium',
-    isEnabled: true,
+    isEnabled: false, // API setup required - disabled temporarily
     cost: 0 // free API
   },
   'twitter_search': {

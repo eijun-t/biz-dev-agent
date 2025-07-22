@@ -1,11 +1,15 @@
 /**
  * Business Intelligence Agents
- * 実際のLLMを使用したビジネス分析エージェント
+ * Enhanced Agents統合版 - 高度なMulti-Agent Orchestration
  */
 
 import { createChatOpenAI } from '@/lib/config/llm-config';
 import { generatePrompt, AgentResult } from '@/lib/prompts/agent-prompts';
 import { createLog } from '@/lib/database/queries';
+
+// Enhanced Agents Import
+import { EnhancedResearcherAgent, createEnhancedResearcher } from './research/enhanced-index';
+import { EnhancedIdeatorAgent, createEnhancedIdeator } from './ideation/enhanced-ideator-index';
 
 // 基底エージェントクラス
 abstract class BaseAgent {
@@ -152,11 +156,42 @@ abstract class BaseAgent {
   }
 }
 
-// Enhanced Mock研究者エージェント（シンプル版）
+// Enhanced Researcher Agent (本格実装統合版)
 export class ResearcherAgent extends BaseAgent {
+  private enhancedAgent: EnhancedResearcherAgent | null = null;
+  
   constructor() {
     super('researcher');
-    console.log('✅ Enhanced Mock Researcher initialized (no external dependencies)');
+    
+    // Enhanced Agentの初期化
+    const apiKeys = {
+      serper: process.env.SERPER_API_KEY || '',
+      openai: process.env.OPENAI_API_KEY || '',
+      estat: process.env.ESTAT_API_KEY || ''
+    };
+    
+    console.log('🔧 Enhanced Researcher initialization with API keys:', {
+      serper: apiKeys.serper ? 'SET' : 'MISSING',
+      openai: apiKeys.openai ? 'SET' : 'MISSING',
+      estat: apiKeys.estat ? 'SET' : 'MISSING'
+    });
+    
+    try {
+      this.enhancedAgent = createEnhancedResearcher(apiKeys, {
+        // 本番用設定
+        costConfig: {
+          monthlyBudget: 2000, // 2000円
+          alertThreshold: 0.8,
+          enforceLimit: true
+        },
+        maxParallelRequests: 3
+      });
+      
+      console.log('✅ Enhanced Researcher Agent initialized (full capabilities)');
+    } catch (initError) {
+      console.error('❌ Enhanced Researcher Agent initialization failed:', initError);
+      throw new Error(`Enhanced Researcher Agent initialization failed: ${initError instanceof Error ? initError.message : 'Unknown error'}`);
+    }
   }
 
   async conductMarketResearch(
@@ -166,73 +201,57 @@ export class ResearcherAgent extends BaseAgent {
   ): Promise<AgentResult> {
     const startTime = Date.now();
     
-    console.log('🔬 Enhanced Mock Researcher: Starting market research...');
+    console.log('🔬 Enhanced Researcher Agent: Starting comprehensive market research...');
     console.log(`📊 Research input: "${userInput}"`);
     
-    // シミュレートされた処理時間（1-3秒）
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-    
-    // 常にモックデータを返す（エラーなし）
-    const mockResult = {
-      knowledgeBase: {
-        market_trends: [{
-          title: 'AI・IoT・DX市場の急速成長',
-          summary: userInput.includes('AI') || userInput.includes('IoT') || userInput.includes('DX') ? 
-            'AI・IoT・DX技術の市場は2025年に向けて急速な成長を続けており、特に不動産・建設業界での導入が加速している' :
-            '指定された分野での市場成長が期待されており、デジタル化の波が各業界に浸透している',
-          confidence: 0.85,
-          source: 'Enhanced Mock Market Research',
-          key_insights: ['市場規模の大幅拡大', '企業のDX投資増加', '規制緩和による新規参入']
-        }],
-        technology_trends: [{
-          title: '次世代技術の実用化進展',
-          summary: 'デジタルトランスフォーメーション技術、AI・機械学習、IoTセンサー技術が実用レベルで各業界に導入され始めている',
-          confidence: 0.8,
-          source: 'Enhanced Mock Technology Research',
-          key_insights: ['実装コストの低下', '技術成熟度の向上', 'クラウド基盤の充実']
-        }],
-        competitive_landscape: [{
-          title: '競合環境と差別化機会',
-          summary: '市場には既存プレイヤーが存在するものの、三菱地所のような不動産大手の参入により新たな価値創造が可能',
-          confidence: 0.75,
-          source: 'Enhanced Mock Competitive Analysis',
-          key_insights: ['既存企業との差別化ポイント', '三菱地所ブランドの優位性', '総合デベロッパーとしての強み']
-        }],
-        mitsubishi_synergy: [{
-          title: '三菱地所との事業シナジー',
-          summary: '既存の不動産ポートフォリオ、開発ノウハウ、顧客基盤を活用した新規事業展開が可能',
-          confidence: 0.9,
-          source: 'Enhanced Mock Synergy Analysis',
-          key_insights: ['既存アセットでの実証実験', '顧客ネットワークの活用', 'ブランド力による信頼獲得']
-        }]
-      },
-      metrics: {
-        totalSources: 4,
-        averageConfidence: 0.825,
-        executionTime: Date.now() - startTime,
-        categoriesAnalyzed: 4
-      }
-    };
+    // Enhanced Agentが利用可能な場合は使用
+    if (!this.enhancedAgent) {
+      throw new Error('❌ Enhanced Researcher Agent is not initialized. Check API keys and configuration.');
+    }
+
+    console.log('⚡ Using Enhanced Researcher capabilities');
+    const result = await this.enhancedAgent.executeComprehensiveResearch(
+      userInput,
+      ['market_trends', 'technology', 'competition', 'macroeconomics'],
+      'ja',
+      'japan',
+      8 // 最大8件の詳細調査
+    );
     
     const executionTime = Date.now() - startTime;
-    
-    console.log('✅ Enhanced Mock Researcher completed successfully');
-    console.log(`⏱️  Execution time: ${executionTime}ms`);
+    console.log(`✅ Enhanced Research completed in ${executionTime}ms`);
+    console.log(`📊 Data quality: ${result.averageDataQuality}/10`);
+    console.log(`🏢 Mitsubishi fit: ${result.mitsubishiStrategicFit}/10`);
     
     return {
       success: true,
-      data: mockResult,
+      data: result,
       executionTime,
-      tokensUsed: 0
+      tokensUsed: result.totalDataPoints || 0
     };
   }
 }
 
-// Enhanced Mock アイデア生成エージェント（シンプル版）
+// Enhanced Critic Agent Import
+import { EnhancedCriticAgent, createEnhancedCritic } from './critic/index';
+
+// Enhanced Ideator Agent (本格実装統合版)
 export class IdeatorAgent extends BaseAgent {
+  private enhancedIntegration: any = null;
+  
   constructor() {
     super('ideator');
-    console.log('✅ Enhanced Mock Ideator initialized (no external dependencies)');
+    
+    // Enhanced Agentの初期化
+    const llmConfig = {
+      apiKey: process.env.OPENAI_API_KEY || ''
+    };
+    
+    this.enhancedIntegration = createEnhancedIdeator(llmConfig, {
+      // 本番用設定は enhanced-ideator-config.ts の DEFAULT_IDEATOR_CONFIG を使用
+    });
+    
+    console.log('✅ Enhanced Ideator Integration initialized (full capabilities)');
   }
 
   async generateBusinessIdeas(
@@ -243,212 +262,66 @@ export class IdeatorAgent extends BaseAgent {
   ): Promise<AgentResult> {
     const startTime = Date.now();
     
-    console.log('💡 Enhanced Mock Ideator: Starting idea generation...');
+    console.log('💡 Enhanced Ideator Agent: Starting comprehensive idea generation...');
     console.log(`📝 Ideation input: "${userInput}"`);
     console.log(`📊 Research data available: ${!!researchResults}`);
     
-    // シミュレートされた処理時間（2-4秒）
-    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
-    
-    // 入力に基づいて動的にアイデアを生成
-    const isAIDX = userInput.includes('AI') || userInput.includes('IoT') || userInput.includes('DX');
-    const isAdvertising = userInput.includes('広告') || userInput.includes('マーケティング') || userInput.includes('プロモーション');
-    const isRealEstate = userInput.includes('不動産') || userInput.includes('建設') || userInput.includes('開発');
-    
-    console.log(`🔍 Input analysis: AI/DX=${isAIDX}, Advertisement=${isAdvertising}, RealEstate=${isRealEstate}`);
-    
-    // 入力に基づいてアイデアを生成
-    let ideas;
-    
-    if (isAdvertising) {
-      // 広告領域のアイデア
-      ideas = [
-        {
-          id: 'idea_1',
-          title: 'デジタルサイネージ統合広告プラットフォーム',
-          description: '三菱地所の商業施設・オフィスビル内のデジタルサイネージを統合し、AI による最適な広告配信とリアルタイム効果測定を実現。来場者の属性・行動データに基づくターゲティング広告で収益を最大化。',
-          target_market: '広告主企業・広告代理店・小売チェーン',
-          revenue_model: '広告掲載料（月額10万円〜/画面）+ 広告効果分析サービス + プレミアム枠料金',
-          competitive_advantage: '丸の内・大手町等の一等地での圧倒的な広告露出機会と、来場者データの豊富さ',
-          mitsubishi_synergy: '既存の商業施設200箇所以上での即座な展開、高品質な顧客層へのアクセス',
-          market_size: '国内デジタルサイネージ広告市場1,800億円',
-          implementation_difficulty: 'medium',
-          financial_projection: {
-            year1_revenue: '12億円',
-            year3_revenue: '45億円',
-            break_even_timeline: '14ヶ月',
-            initial_investment: '30億円',
-            roi_5year: '380%'
-          },
-          risk_assessment: {
-            technical_risk: 'low',
-            market_risk: 'low',
-            regulatory_risk: 'medium',
-            competitive_risk: 'medium'
+    // Enhanced Integrationが利用可能な場合は使用
+    if (this.enhancedIntegration) {
+      try {
+        console.log('⚡ Using Enhanced Ideator capabilities');
+        const result = await this.enhancedIntegration.generateBusinessIdeas(
+          userInput,
+          researchResults,
+          {
+            riskBalance: {
+              conservative: 0.25,
+              balanced: 0.50,
+              challenging: 0.20,
+              disruptive: 0.05
+            },
+            businessScales: ['mid_market', 'enterprise'],
+            timeHorizon: 'medium_term',
+            innovationLevel: 'breakthrough',
+            prioritizeSynergy: true,
+            minProfitJPY: 10_000_000_000,
+            maxTimeToMarket: '3年以内',
+            requiredSynergyScore: 6,
+            language: 'ja',
+            region: 'japan',
+            enableEnhancedProcessing: true,
+            enableValidation: true
           }
-        },
-        {
-          id: 'idea_2',
-          title: 'リテールメディア・データドリブン広告',
-          description: '商業施設での購買データと来店データを活用したリテールメディア事業。店舗内の購買行動を分析し、個別最適化された広告・クーポン配信で売上向上とブランド価値を同時実現。',
-          target_market: 'CPG企業・小売ブランド・EC事業者',
-          revenue_model: 'リテールメディア広告料 + データ販売 + マーケティング支援サービス',
-          competitive_advantage: 'オフライン購買データとオンライン行動データの統合分析力',
-          mitsubishi_synergy: 'アクアシティお台場、ダイバーシティ東京等での顧客データ活用',
-          market_size: '国内リテールメディア市場500億円（急成長中）',
-          implementation_difficulty: 'high',
-          financial_projection: {
-            year1_revenue: '6億円',
-            year3_revenue: '28億円',
-            break_even_timeline: '20ヶ月',
-            initial_investment: '22億円',
-            roi_5year: '340%'
-          },
-          risk_assessment: {
-            technical_risk: 'high',
-            market_risk: 'medium',
-            regulatory_risk: 'high',
-            competitive_risk: 'high'
-          }
-        }
-      ];
-    } else if (isAIDX) {
-      // AI・DX領域のアイデア
-      ideas = [
-        {
-          id: 'idea_1',
-          title: 'AI・IoTスマートビル管理システム',
-          description: 'AI技術とIoTセンサーを活用した次世代ビル管理システム。エネルギー効率と居住者満足度を最大化し、運営コストを30%削減。',
-          target_market: '不動産管理会社・オフィスビル・商業施設',
-          revenue_model: 'SaaS月額料金（月額50万円〜）+ 導入コンサルティング + 保守サービス',
-          competitive_advantage: '三菱地所の不動産ノウハウと最新技術の組み合わせによる圧倒的な業界知見',
-          mitsubishi_synergy: '既存の丸の内・大手町エリアでの実証実験、顧客ネットワークの活用が可能',
-          market_size: '国内市場1,200億円、アジア展開で3,000億円規模',
-          implementation_difficulty: 'medium',
-          financial_projection: {
-            year1_revenue: '8億円',
-            year3_revenue: '35億円',
-            break_even_timeline: '18ヶ月',
-            initial_investment: '25億円',
-            roi_5year: '320%'
-          },
-          risk_assessment: {
-            technical_risk: 'medium',
-            market_risk: 'low',
-            regulatory_risk: 'low',
-            competitive_risk: 'medium'
-          }
-        },
-        {
-          id: 'idea_2',
-          title: 'DXデジタルツイン不動産プラットフォーム',
-          description: 'デジタルツイン技術で不動産を完全デジタル化。設計・建設・運営・売却まで全ライフサイクルを最適化。',
-          target_market: '不動産投資家・開発業者・REIT',
-          revenue_model: 'プラットフォーム利用料（月額100万円〜）+ データ分析サービス + API利用料',
-          competitive_advantage: 'リアルタイム市場データと予測分析、三菱地所の開発実績による信頼性',
-          mitsubishi_synergy: '70年超の開発実績データの活用、グループ会社との連携強化',
-          market_size: '国内800億円、グローバル展開で2,500億円規模',
-          implementation_difficulty: 'high',
-          financial_projection: {
-            year1_revenue: '4億円',
-            year3_revenue: '22億円',
-            break_even_timeline: '24ヶ月',
-            initial_investment: '18億円',
-            roi_5year: '280%'
-          },
-          risk_assessment: {
-            technical_risk: 'high',
-            market_risk: 'medium',
-            regulatory_risk: 'low',
-            competitive_risk: 'high'
-          }
-        }
-      ];
-    } else {
-      // 汎用的なアイデア（入力内容を反映）
-      ideas = [
-        {
-          id: 'idea_1',
-          title: `${userInput}を活用した新規事業プラットフォーム`,
-          description: `${userInput}領域における市場機会を捉えた革新的なビジネスプラットフォーム。三菱地所の既存アセットと顧客基盤を活用し、新しい価値創造を実現。`,
-          target_market: `${userInput}関連企業・事業者`,
-          revenue_model: 'プラットフォーム利用料 + 付加価値サービス + コンサルティング',
-          competitive_advantage: '三菱地所のブランド力と不動産ノウハウの組み合わせ',
-          mitsubishi_synergy: '既存の不動産ポートフォリオと顧客ネットワークの活用',
-          market_size: '推定市場規模800-1,500億円',
-          implementation_difficulty: 'medium',
-          financial_projection: {
-            year1_revenue: '5億円',
-            year3_revenue: '25億円',
-            break_even_timeline: '20ヶ月',
-            initial_investment: '20億円',
-            roi_5year: '300%'
-          },
-          risk_assessment: {
-            technical_risk: 'medium',
-            market_risk: 'medium',
-            regulatory_risk: 'medium',
-            competitive_risk: 'medium'
-          }
-        },
-        {
-          id: 'idea_2',
-          title: `統合型${userInput}ソリューション`,
-          description: `${userInput}領域での包括的なソリューション提供により、顧客の課題解決と新たな価値創造を同時実現。`,
-          target_market: `${userInput}業界の事業者・関連企業`,
-          revenue_model: 'ソリューション提供料 + 運営サービス + データ分析',
-          competitive_advantage: '業界特化型の深い専門知識とワンストップサービス',
-          mitsubishi_synergy: 'グループ会社との連携による総合力の発揮',
-          market_size: '推定市場規模500-1,000億円',
-          implementation_difficulty: 'medium',
-          financial_projection: {
-            year1_revenue: '3億円',
-            year3_revenue: '18億円',
-            break_even_timeline: '24ヶ月',
-            initial_investment: '15億円',
-            roi_5year: '250%'
-          },
-          risk_assessment: {
-            technical_risk: 'medium',
-            market_risk: 'medium',
-            regulatory_risk: 'medium',
-            competitive_risk: 'high'
-          }
-        }
-      ];
-    }
-    
-    const mockResult = {
-      ideas,
-      recommendation: {
-        top_choice: 'idea_1',
-        reasoning: isAdvertising ? 
-          'デジタルサイネージ統合広告プラットフォームは三菱地所の既存商業施設での即座な展開が可能で、一等地での広告価値は極めて高い。初期投資に対するROIが優秀で、安定的な収益が期待できる。' :
-          isAIDX ?
-            'AI・IoTスマートビル管理システムは既存の三菱地所アセットで即座に実証でき、確実な市場ニーズがある。技術的リスクも相対的に低く、早期収益化が期待できる。' :
-            `${userInput}領域での新規事業は市場機会が大きく、三菱地所の既存の強みを最大限活用できる戦略的優位性がある。`
-      },
-      analysis_summary: {
-        total_ideas_evaluated: 2,
-        market_opportunity_score: 0.85,
-        technical_feasibility_score: 0.78,
-        synergy_score: 0.92,
-        overall_recommendation_confidence: 0.88
+        );
+        
+        const executionTime = Date.now() - startTime;
+        console.log(`✅ Enhanced Ideation completed in ${executionTime}ms`);
+        console.log(`💡 Generated ${result.businessIdeas.length} ideas`);
+        console.log(`🎯 Overall quality: ${result.qualityMetrics.overallQuality.toFixed(1)}/10`);
+        
+        // 🔍 Enhanced Ideator アウトプット詳細ログ
+        console.log('\n📋 === Enhanced Ideator アウトプット詳細 ===');
+        console.log('🔥 Business Ideas:', JSON.stringify(result.businessIdeas, null, 2));
+        console.log('📊 Quality Metrics:', JSON.stringify(result.qualityMetrics, null, 2));
+        console.log('📈 Summary:', JSON.stringify(result.summary, null, 2));
+        console.log('🎯 Recommendations:', JSON.stringify(result.recommendation || 'N/A', null, 2));
+        console.log('🔧 Enhanced Metadata:', JSON.stringify(result.enhancedMetadata, null, 2));
+        console.log('=== Enhanced Ideator アウトプット終了 ===\n');
+        
+        return {
+          success: true,
+          data: result,
+          executionTime,
+          tokensUsed: result.enhancedMetadata?.totalTokens || 0
+        };
+        
+      } catch (enhancedError) {
+        console.error('❌ Enhanced Ideation failed:', enhancedError);
+        throw new Error(`Enhanced Ideator Agent execution failed: ${enhancedError instanceof Error ? enhancedError.message : 'Unknown error'}`);
       }
-    };
-    
-    const executionTime = Date.now() - startTime;
-    
-    console.log('✅ Enhanced Mock Ideator completed successfully');
-    console.log(`💰 Top recommendation: ${mockResult.recommendation.top_choice}`);
-    console.log(`⏱️  Execution time: ${executionTime}ms`);
-    
-    return {
-      success: true,
-      data: mockResult,
-      executionTime,
-      tokensUsed: 0
-    };
+    } else {
+      throw new Error('❌ Enhanced Ideator Agent is not initialized. Check API keys and configuration.');
+    }
   }
 }
 
@@ -518,12 +391,76 @@ export class WriterAgent extends BaseAgent {
   }
 }
 
-// 品質評価エージェント
+// Enhanced Critic Agent (本格実装統合版)
 export class CriticAgent extends BaseAgent {
+  private enhancedCritic: EnhancedCriticAgent | null = null;
+  
   constructor() {
     super('critic');
+    
+    // Enhanced Critic Agentの初期化
+    this.enhancedCritic = createEnhancedCritic({
+      // 本番用設定
+      profit_threshold: 10_000_000_000, // 10億円
+      enable_detailed_analysis: true,
+      enable_idea_comparisons: true,
+      enable_improvement_suggestions: true,
+      output_language: 'ja'
+    });
+    
+    console.log('✅ Enhanced Critic Agent initialized (comprehensive evaluation capabilities)');
   }
 
+  /**
+   * 複数のビジネスアイデアを評価して最優秀案を選定
+   */
+  async evaluateBusinessIdeas(
+    businessIdeas: any[],
+    sessionId: string,
+    researchResults?: any,
+    userId?: string
+  ): Promise<AgentResult> {
+    const startTime = Date.now();
+    
+    console.log('🎯 Enhanced Critic Agent: Starting comprehensive idea evaluation...');
+    console.log(`📊 Ideas to evaluate: ${businessIdeas.length}`);
+    
+    // Enhanced Criticが利用可能でない場合はエラー
+    if (!this.enhancedCritic) {
+      throw new Error('❌ Enhanced Critic Agent is not initialized. Check API keys and configuration.');
+    }
+
+    if (businessIdeas.length === 0) {
+      throw new Error('❌ No business ideas provided for evaluation.');
+    }
+
+    console.log('⚡ Using Enhanced Critic capabilities');
+    const result = await this.enhancedCritic.evaluateBusinessIdeas({
+      session_id: sessionId,
+      business_ideas: businessIdeas,
+      research_results: researchResults,
+      user_preferences: {
+        prioritize_high_synergy: true,
+        minimum_profit_requirement: 70 // 70% of max profit score
+      }
+    });
+    
+    const executionTime = Date.now() - startTime;
+    console.log(`✅ Enhanced Critic evaluation completed in ${executionTime}ms`);
+    console.log(`🏆 Selected idea: ${result.selected_idea_for_next_phase.idea_title}`);
+    console.log(`📈 Top score: ${result.evaluation_summary.top_score}/100`);
+    
+    return {
+      success: true,
+      data: result,
+      executionTime,
+      tokensUsed: 0 // Enhanced Critic doesn't use external LLM calls
+    };
+  }
+
+  /**
+   * 従来のレポート評価機能（後方互換性のため維持）
+   */
   async evaluateReport(
     generatedReport: any,
     userId?: string,
@@ -605,21 +542,66 @@ export class BusinessWorkflowOrchestrator {
       results.ideas = ideationResult.data;
       
       // Enhanced Ideator のレスポンス形式に対応
-      // Enhanced Ideator は ideas 配列を直接返すため、構造を調整
       const enhancedIdeas = results.ideas;
-      results.ideas = {
-        business_ideas: enhancedIdeas.ideas || enhancedIdeas || [],
-        recommendation: enhancedIdeas.recommendation || {
-          top_choice: enhancedIdeas.ideas?.[0]?.id || 'idea_1',
-          reasoning: 'Enhanced Ideator による総合評価結果'
-        }
-      };
+      const businessIdeas = enhancedIdeas.businessIdeas || enhancedIdeas.ideas || [];
       
-      // Select the top recommended idea
-      results.selectedIdea = results.ideas.business_ideas.find(
-        (idea: any) => idea.id === results.ideas.recommendation.top_choice
-      ) || results.ideas.business_ideas[0];
       progressCallback?.('ideation', 50);
+
+      // Phase 2.5: Enhanced Critic Evaluation (NEW)
+      progressCallback?.('evaluation', 52);
+      console.log('Starting enhanced critic evaluation phase...');
+      console.log('💾 Business Ideas to evaluate:', JSON.stringify(businessIdeas, null, 2));
+      
+      let criticData: any = null;
+      
+      try {
+        const criticResult = await this.critic.evaluateBusinessIdeas(
+          businessIdeas,
+          sessionId || 'default_session',
+          results.research,
+          userId
+        );
+        
+        console.log('🔍 Critic Result:', JSON.stringify(criticResult, null, 2));
+        
+        if (criticResult.success && criticResult.data) {
+          // Enhanced Critic が選定した最優秀アイデアを使用
+          criticData = criticResult.data;
+          results.selectedIdea = criticData.selected_idea_for_next_phase || businessIdeas[0];
+          results.ideas = {
+            business_ideas: businessIdeas,
+            recommendation: {
+              top_choice: results.selectedIdea.idea_id || results.selectedIdea.id,
+              reasoning: criticData.portfolio_evaluation?.recommendation_reasoning || 'Enhanced Critic による評価結果'
+            },
+            critic_evaluation: criticData.portfolio_evaluation
+          };
+          console.log('✅ Enhanced Critic evaluation completed successfully');
+        } else {
+          throw new Error(`Critic evaluation failed: ${criticResult.error || 'Unknown error'}`);
+        }
+      } catch (criticError) {
+        console.error('❌ Enhanced Critic evaluation detailed error:', criticError);
+        console.warn('⚠️ Enhanced Critic evaluation failed, using fallback selection:', criticError);
+        // フォールバック: 最初のアイデアを選択
+        results.selectedIdea = businessIdeas[0] || {};
+        results.ideas = {
+          business_ideas: businessIdeas,
+          recommendation: {
+            top_choice: results.selectedIdea.id || 'idea_1',
+            reasoning: 'Critic評価失敗のため最初のアイデアを選択（フォールバック）'
+          }
+        };
+      }
+      
+      // 🔍 Enhanced Critic → Analyst への引き渡しデータログ
+      console.log('\n📋 === Enhanced Critic → Analyst 引き渡しデータ ===');
+      console.log('🏆 Selected Idea:', JSON.stringify(results.selectedIdea, null, 2));
+      console.log('📊 Critic Evaluation Summary:', criticData ? JSON.stringify(criticData.evaluation_summary, null, 2) : 'No evaluation data');
+      console.log('🔬 Research Data to Analyst:', JSON.stringify(results.research, null, 2));
+      console.log('=== 引き渡しデータ終了 ===\n');
+      
+      progressCallback?.('evaluation', 55);
 
       // Phase 3: Analysis
       progressCallback?.('analysis', 55);
