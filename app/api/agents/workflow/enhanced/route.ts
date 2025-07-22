@@ -1,12 +1,9 @@
 /**
- * Production Workflow Endpoint
- * 実際のLLMエージェントを使用したビジネスレポート生成
+ * Enhanced Workflow Endpoint - Development Testing
+ * 認証なしでEnhanced Agentsをテストするためのエンドポイント
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { createReport } from '@/lib/database/queries';
-import { CreateReportInput } from '@/lib/database/types';
 import BusinessWorkflowOrchestrator from '@/lib/agents/business-agents';
 
 interface WorkflowStep {
@@ -29,7 +26,6 @@ interface WorkflowState {
   error?: string;
   userInput?: string;
   final_report?: any;
-  user_id?: string;
 }
 
 // In-memory storage for workflow states
@@ -40,7 +36,7 @@ export async function POST(request: NextRequest) {
     const { action, session_id, user_input } = await request.json();
 
     if (action === 'start') {
-      return startProductionWorkflow(session_id, user_input || '');
+      return startEnhancedWorkflow(session_id, user_input || '');
     } else if (action === 'status') {
       return getWorkflowStatus(session_id);
     }
@@ -51,10 +47,10 @@ export async function POST(request: NextRequest) {
     }, { status: 400 });
 
   } catch (error) {
-    console.error('Production workflow error:', error);
+    console.error('Enhanced workflow error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Workflow execution failed',
+      error: 'Enhanced workflow execution failed',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
@@ -74,7 +70,7 @@ export async function GET(request: NextRequest) {
 
     return getWorkflowStatus(sessionId);
   } catch (error) {
-    console.error('Workflow status error:', error);
+    console.error('Enhanced workflow status error:', error);
     return NextResponse.json({
       success: false,
       error: 'Status fetch failed'
@@ -82,49 +78,27 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function startProductionWorkflow(sessionId: string, userInput: string) {
-  // Get authenticated user (skip in development)
-  let user = null;
-  let userId = 'dev_user';
-  
-  if (process.env.NODE_ENV === 'production') {
-    const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    
-    if (!authUser) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
-      }, { status: 401 });
-    }
-    
-    user = authUser;
-    userId = authUser.id;
-  } else {
-    console.log('Development mode: Skipping authentication');
-  }
-
+async function startEnhancedWorkflow(sessionId: string, userInput: string) {
   // Initialize workflow state
   const workflowState: WorkflowState = {
     phase: 'research',
-    current_step: 'workflow_initialization',
+    current_step: 'enhanced_workflow_initialization',
     steps: [],
     session_id: sessionId,
     progress_percentage: 5,
     status: 'running',
-    userInput: userInput,
-    user_id: userId
+    userInput: userInput
   };
 
   workflowStates.set(sessionId, workflowState);
 
-  // Start actual workflow execution
-  executeProductionWorkflow(sessionId, userInput, userId);
+  // Start enhanced workflow execution
+  executeEnhancedWorkflow(sessionId, userInput);
 
   return NextResponse.json({
     success: true,
     session_id: sessionId,
-    message: '本格的なAIワークフローが開始されました'
+    message: '🚀 Enhanced AI Workflowが開始されました (開発モード)'
   });
 }
 
@@ -150,7 +124,7 @@ function getWorkflowStatus(sessionId: string) {
   });
 }
 
-async function executeProductionWorkflow(sessionId: string, userInput: string, userId: string) {
+async function executeEnhancedWorkflow(sessionId: string, userInput: string) {
   const orchestrator = new BusinessWorkflowOrchestrator();
   
   try {
@@ -162,32 +136,38 @@ async function executeProductionWorkflow(sessionId: string, userInput: string, u
     // Add initial step
     await addWorkflowStep(sessionId, {
       agent: 'coordinator',
-      action: 'ワークフロー初期化完了',
+      action: '🚀 Enhanced Workflow初期化完了',
       status: 'completed'
     });
 
-    // Execute the full workflow with real LLM agents
-    console.log(`Starting production workflow for session ${sessionId}`);
+    // Execute the full workflow with Enhanced LLM agents
+    console.log(`🔥 Starting Enhanced workflow for session ${sessionId}`);
+    console.log(`📝 Input: "${userInput}"`);
     
-    const finalReport = await orchestrator.executeFullWorkflow(
-      userInput,
-      userId,
-      sessionId,
-      progressCallback
-    );
-
-    // Save to database (skip in development)
-    if (process.env.NODE_ENV === 'production') {
-      await saveReportToDatabase(finalReport, userId, userInput);
-    } else {
-      console.log('Development mode: Skipping database save');
+    let finalReport;
+    try {
+      finalReport = await orchestrator.executeFullWorkflow(
+        userInput,
+        'dev_user', // Development user ID
+        sessionId,
+        progressCallback
+      );
+      console.log('✅ Enhanced workflow completed successfully');
+    } catch (workflowError) {
+      console.error('💥 Workflow execution error details:', {
+        message: workflowError.message,
+        stack: workflowError.stack,
+        sessionId: sessionId,
+        userInput: userInput
+      });
+      throw workflowError;
     }
 
     // Complete workflow
-    await completeProductionWorkflow(sessionId, finalReport);
+    await completeEnhancedWorkflow(sessionId, finalReport);
 
   } catch (error) {
-    console.error('Production workflow execution failed:', error);
+    console.error('❌ Enhanced workflow execution failed:', error);
     await markWorkflowFailed(sessionId, error);
   }
 }
@@ -216,19 +196,24 @@ async function addWorkflowStep(sessionId: string, stepData: {
 }
 
 async function updateWorkflowProgress(sessionId: string, phase: string, progress: number) {
+  console.log(`📈 Workflow Progress Update: ${sessionId} - ${phase} (${progress}%)`);
+  
   const state = workflowStates.get(sessionId);
-  if (!state) return;
+  if (!state) {
+    console.warn(`⚠️  No workflow state found for session: ${sessionId}`);
+    return;
+  }
 
   state.phase = phase as any;
   state.progress_percentage = progress;
 
-  // Add progress step
+  // Add progress step with enhanced descriptions
   const phaseDescriptions: Record<string, string> = {
-    'research': '市場調査・技術トレンド分析',
-    'ideation': 'ビジネスアイデア生成・評価',
-    'analysis': '詳細分析・事業性評価',
-    'report': '包括的レポート生成',
-    'completed': 'ワークフロー完了'
+    'research': '🔍 Enhanced Research - 包括的市場調査実行中',
+    'ideation': '💡 Enhanced Ideation - 高度なアイデア生成・評価',
+    'analysis': '📊 詳細分析・事業性評価',
+    'report': '📄 最終レポート生成',
+    'completed': '✅ Enhanced Workflow完了'
   };
 
   await addWorkflowStep(sessionId, {
@@ -238,12 +223,13 @@ async function updateWorkflowProgress(sessionId: string, phase: string, progress
   });
 
   workflowStates.set(sessionId, state);
+  console.log(`✅ Progress updated successfully: ${phase} (${progress}%)`);
 }
 
 function getAgentForPhase(phase: string): string {
   const agentMap: Record<string, string> = {
-    'research': 'researcher',
-    'ideation': 'ideator',
+    'research': 'enhanced_researcher',
+    'ideation': 'enhanced_ideator',
     'analysis': 'analyst',
     'report': 'writer',
     'completed': 'coordinator'
@@ -251,41 +237,13 @@ function getAgentForPhase(phase: string): string {
   return agentMap[phase] || 'coordinator';
 }
 
-async function saveReportToDatabase(finalReport: any, userId: string, userInput: string) {
-  try {
-    const reportInput: CreateReportInput = {
-      user_id: userId,
-      title: finalReport.reportData.title,
-      content: {
-        idea_title: finalReport.reportData.selected_business_idea?.title || '',
-        target: finalReport.reportData.selected_business_idea?.target_market || '',
-        challenges: finalReport.reportData.research_phase_result?.market_analysis?.key_drivers?.join(', ') || '',
-        monetization: finalReport.reportData.selected_business_idea?.revenue_model || '',
-        market_tam: finalReport.reportData.research_phase_result?.market_analysis?.market_size || '',
-        competitors: finalReport.reportData.research_phase_result?.competitive_landscape?.major_players?.join(', ') || '',
-        mitsubishi_synergy: finalReport.reportData.selected_business_idea?.mitsubishi_synergy || '',
-        risks: finalReport.reportData.analysis_results?.risk_analysis?.high_risks?.map((r: any) => r.risk)?.join(', ') || '',
-        roadmap: 'AI生成による段階的実行計画'
-      },
-      html_content: JSON.stringify(finalReport),
-      status: 'completed'
-    };
-
-    await createReport(reportInput);
-    console.log(`Production report saved to database for user ${userId}`);
-  } catch (error) {
-    console.error('Failed to save production report to database:', error);
-    throw error; // Re-throw to handle in workflow
-  }
-}
-
-async function completeProductionWorkflow(sessionId: string, finalReport: any) {
+async function completeEnhancedWorkflow(sessionId: string, finalReport: any) {
   const state = workflowStates.get(sessionId);
   if (!state) return;
 
   await addWorkflowStep(sessionId, {
     agent: 'coordinator',
-    action: 'AIレポート生成完了',
+    action: '🎉 Enhanced AI レポート生成完了',
     status: 'completed'
   });
 
@@ -303,7 +261,7 @@ async function markWorkflowFailed(sessionId: string, error: any) {
 
   await addWorkflowStep(sessionId, {
     agent: 'coordinator',
-    action: 'ワークフロー実行失敗',
+    action: '❌ Enhanced Workflow実行失敗',
     status: 'failed',
     details: error instanceof Error ? error.message : 'Unknown error'
   });

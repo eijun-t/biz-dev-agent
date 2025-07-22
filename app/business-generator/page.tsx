@@ -57,7 +57,7 @@ export default function BusinessGeneratorPage() {
     });
 
     try {
-      const response = await fetch('/api/agents/workflow/test', {
+      const response = await fetch('/api/agents/workflow/enhanced', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -86,7 +86,7 @@ export default function BusinessGeneratorPage() {
   const startPolling = (sessionId: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(`/api/agents/workflow/test?session_id=${sessionId}`);
+        const response = await fetch(`/api/agents/workflow/enhanced?session_id=${sessionId}`);
         if (!response.ok) return;
 
         const status = await response.json();

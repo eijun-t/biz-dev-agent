@@ -11,21 +11,33 @@ Researcherエージェントを拡張し、以下の情報を体系的に収集�
 様々なビジネス領域で情報収集をテストし、収集データの網羅性、品質、構造化度を評価。情報の重複排除と要約品質を確認。
 
 # Subtasks:
-## 1. 多元的データソース統合システムの構築 [pending]
+## 1. Design Modular Data Collection Framework [pending]
 ### Dependencies: None
-### Description: ニュースAPI、統計データベース、学術論文、業界レポート、特許データベースなど複数のデータソースからの情報収集機能を実装
+### Description: Define a modular architecture for the enhanced Researcher Agent, specifying interfaces for each information category (market trends, technology, investment, regulation, consumer needs, competition, macroeconomics).
 ### Details:
-Google News API、統計局API、arXiv、業界データベース、特許庁データなどの統合。APIレート制限とコスト管理を含む。
+Create a clear module structure for each research domain. Specify input/output formats, error handling (fail-fast), and language switching logic. Ensure the framework supports adding/removing data sources and categories easily. Document the architecture and module responsibilities.
 
-## 2. 情報カテゴリ分類と優先度付けシステム [pending]
+## 2. Implement Multi-Source Data Acquisition Modules [pending]
 ### Dependencies: 18.1
-### Description: 収集した情報を7つのカテゴリに自動分類し、ビジネス関連性に基づいて優先度を設定するシステムを構築
+### Description: Develop scraping and API integration modules for each information category, targeting free and scrape-friendly sources (Google News, Yahoo News, government stats, Wikipedia, Reddit, Hacker News, etc.).
 ### Details:
-LLMベースの分類器で市場動向、技術、投資、規制、消費者、競合、マクロ経済に分類。関連性スコアリング機能付き。
+Use BeautifulSoup4 (Python) or Cheerio (Node.js) for web scraping. Integrate with available RSS feeds and free APIs. For each category, collect 3-5 key data points per run. Implement robust error handling to immediately report failures. Ensure modules can be triggered independently and support both Japanese and English as needed.
 
-## 3. 階層的情報要約と構造化システム [pending]
+## 3. Develop Lightweight Caching and Real-Time Update Logic [pending]
 ### Dependencies: 18.2
-### Description: 大量の生情報を段階的に要約し、構造化されたナレッジベースとして保存するシステムを実装
+### Description: Create a caching system to store collected data, supporting hybrid update frequency (real-time for critical info, daily for others) and minimizing redundant requests.
 ### Details:
-エグゼクティブサマリー、詳細要約、生データの3階層構造。重要度に基づく自動要約とキーインサイト抽出。
+Implement a lightweight cache (e.g., in-memory or file-based) with TTL (time-to-live) per category. Real-time data (e.g., breaking news) bypasses cache; other data uses daily refresh. Ensure cache invalidation and update logic is configurable. Log cache hits/misses for monitoring.
+
+## 4. Integrate Cost Monitoring and Language Switching Features [pending]
+### Dependencies: 18.3
+### Description: Add cost tracking for API usage (e.g., Serper.dev) and implement logic for dynamic language support (Japanese/English) based on research phase.
+### Details:
+Track API calls and estimate monthly costs, alerting if nearing the 2000 yen budget. Implement phase-based language logic: support both languages in ideation, restrict to Japanese for market research. Ensure all modules respect language settings and cost constraints.
+
+## 5. Aggregate, Structure, and Output Knowledge Base [pending]
+### Dependencies: 18.4
+### Description: Aggregate collected data into a structured knowledge base, deduplicate and summarize key findings, and provide output in a standardized format for downstream agents.
+### Details:
+Design a schema for the knowledge base (e.g., JSON with category, source, summary, timestamp). Implement deduplication and concise summarization per category. Output the structured data for use by other agents (e.g., Ideator, Analyst). Include metadata for traceability and quality checks.
 

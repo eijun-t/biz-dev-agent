@@ -16,6 +16,6 @@ export const config = {
      * - test-simple (test endpoints)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|api/agents/research/test-simple|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/agents/research/test-simple|api/agents/workflow/enhanced|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

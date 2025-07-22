@@ -801,35 +801,63 @@
         "details": "Researcherエージェントを拡張し、以下の情報を体系的に収集：1)市場動向・規模データ、2)新興技術・イノベーション、3)投資・資金調達トレンド、4)規制・政策変化、5)消費者行動・ニーズ変化、6)競合動向・M&A活動、7)マクロ経済要因。複数のデータソース（ニュース、統計、レポート、学術論文）から情報を収集し、構造化されたナレッジベースを構築する。",
         "testStrategy": "様々なビジネス領域で情報収集をテストし、収集データの網羅性、品質、構造化度を評価。情報の重複排除と要約品質を確認。",
         "priority": "high",
-        "dependencies": [11],
+        "dependencies": [
+          11
+        ],
         "status": "pending",
         "subtasks": [
           {
             "id": 1,
-            "title": "多元的データソース統合システムの構築",
-            "description": "ニュースAPI、統計データベース、学術論文、業界レポート、特許データベースなど複数のデータソースからの情報収集機能を実装",
+            "title": "Design Modular Data Collection Framework",
+            "description": "Define a modular architecture for the enhanced Researcher Agent, specifying interfaces for each information category (market trends, technology, investment, regulation, consumer needs, competition, macroeconomics).",
             "dependencies": [],
-            "details": "Google News API、統計局API、arXiv、業界データベース、特許庁データなどの統合。APIレート制限とコスト管理を含む。",
+            "details": "Create a clear module structure for each research domain. Specify input/output formats, error handling (fail-fast), and language switching logic. Ensure the framework supports adding/removing data sources and categories easily. Document the architecture and module responsibilities.",
             "status": "pending",
-            "testStrategy": "各データソースからの情報取得と品質検証。レート制限遵守の確認。"
+            "testStrategy": "Review architecture for extensibility and clarity. Validate that each module can be independently mocked and tested."
           },
           {
             "id": 2,
-            "title": "情報カテゴリ分類と優先度付けシステム",
-            "description": "収集した情報を7つのカテゴリに自動分類し、ビジネス関連性に基づいて優先度を設定するシステムを構築",
-            "dependencies": [1],
-            "details": "LLMベースの分類器で市場動向、技術、投資、規制、消費者、競合、マクロ経済に分類。関連性スコアリング機能付き。",
+            "title": "Implement Multi-Source Data Acquisition Modules",
+            "description": "Develop scraping and API integration modules for each information category, targeting free and scrape-friendly sources (Google News, Yahoo News, government stats, Wikipedia, Reddit, Hacker News, etc.).",
+            "dependencies": [
+              1
+            ],
+            "details": "Use BeautifulSoup4 (Python) or Cheerio (Node.js) for web scraping. Integrate with available RSS feeds and free APIs. For each category, collect 3-5 key data points per run. Implement robust error handling to immediately report failures. Ensure modules can be triggered independently and support both Japanese and English as needed.",
             "status": "pending",
-            "testStrategy": "分類精度とスコアリングの妥当性を評価。異なる業界での分類結果を検証。"
+            "testStrategy": "Run each module against test sources. Confirm correct extraction of sample data and proper error reporting on failure."
           },
           {
             "id": 3,
-            "title": "階層的情報要約と構造化システム",
-            "description": "大量の生情報を段階的に要約し、構造化されたナレッジベースとして保存するシステムを実装",
-            "dependencies": [2],
-            "details": "エグゼクティブサマリー、詳細要約、生データの3階層構造。重要度に基づく自動要約とキーインサイト抽出。",
+            "title": "Develop Lightweight Caching and Real-Time Update Logic",
+            "description": "Create a caching system to store collected data, supporting hybrid update frequency (real-time for critical info, daily for others) and minimizing redundant requests.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement a lightweight cache (e.g., in-memory or file-based) with TTL (time-to-live) per category. Real-time data (e.g., breaking news) bypasses cache; other data uses daily refresh. Ensure cache invalidation and update logic is configurable. Log cache hits/misses for monitoring.",
             "status": "pending",
-            "testStrategy": "要約の品質と情報損失を評価。階層間の一貫性確認。"
+            "testStrategy": "Simulate repeated queries and verify cache usage, TTL expiration, and correct fallback to fresh data acquisition."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Cost Monitoring and Language Switching Features",
+            "description": "Add cost tracking for API usage (e.g., Serper.dev) and implement logic for dynamic language support (Japanese/English) based on research phase.",
+            "dependencies": [
+              3
+            ],
+            "details": "Track API calls and estimate monthly costs, alerting if nearing the 2000 yen budget. Implement phase-based language logic: support both languages in ideation, restrict to Japanese for market research. Ensure all modules respect language settings and cost constraints.",
+            "status": "pending",
+            "testStrategy": "Simulate high API usage and phase transitions. Verify cost alerts trigger and language restrictions are enforced."
+          },
+          {
+            "id": 5,
+            "title": "Aggregate, Structure, and Output Knowledge Base",
+            "description": "Aggregate collected data into a structured knowledge base, deduplicate and summarize key findings, and provide output in a standardized format for downstream agents.",
+            "dependencies": [
+              4
+            ],
+            "details": "Design a schema for the knowledge base (e.g., JSON with category, source, summary, timestamp). Implement deduplication and concise summarization per category. Output the structured data for use by other agents (e.g., Ideator, Analyst). Include metadata for traceability and quality checks.",
+            "status": "pending",
+            "testStrategy": "Collect sample data, verify correct aggregation, deduplication, and summarization. Validate output format and completeness for all categories."
           }
         ]
       },
@@ -840,35 +868,55 @@
         "details": "Enhanced Researcherからのリッチなデータセットを活用し、5-8個の多様なビジネスアイデアを生成。各アイデアは詳細なビジネスモデル、価値提案、市場ポジショニング、技術要件、実装ロードマップを含む。三菱地所の既存アセット（不動産、テナントネットワーク、ブランド力）との具体的なシナジーを明示。",
         "testStrategy": "生成されたアイデアの独創性、実現可能性、シナジー効果を評価。異なる調査データセットでの一貫性を確認。",
         "priority": "high",
-        "dependencies": [18],
+        "dependencies": [
+          18
+        ],
         "status": "pending",
         "subtasks": [
           {
             "id": 1,
-            "title": "三菱地所アセット・シナジー分析エンジン",
-            "description": "三菱地所の既存アセット（物件、テナント、ネットワーク）と潜在的ビジネス機会のシナジー効果を分析するエンジンを構築",
+            "title": "Define Enhanced Ideator Agent Roles and Requirements",
+            "description": "Clarify the specific roles, goals, and functional requirements of the Enhanced Ideator Agent, ensuring alignment with Mitsubishi Estate's strengths, synergy targets, and user requirements.",
             "dependencies": [],
-            "details": "丸の内・大手町・有楽町エリアの物件データ、主要テナント情報、保有資産リストと新規事業アイデアのマッチング分析。シナジー効果の定量化機能。",
+            "details": "Document the agent's purpose, expected outputs (5-8 diverse business ideas), and required attributes for each idea (business model, value proposition, market positioning, technical requirements, roadmap, synergy with Mitsubishi Estate assets). Incorporate risk balance, business scale, and competitive analysis requirements. Use configuration files to manage Mitsubishi Estate information and ensure all user requirements are explicitly mapped to agent capabilities.",
             "status": "pending",
-            "testStrategy": "既存物件との具体的シナジー提案の妥当性と実現可能性を評価。"
+            "testStrategy": "Review requirements documentation for completeness and alignment with project and user needs."
           },
           {
             "id": 2,
-            "title": "多様性保証付きアイデア生成システム",
-            "description": "市場セグメント、技術領域、ビジネスモデルの多様性を保証しながら、高品質なビジネスアイデアを生成するシステムを実装",
-            "dependencies": [1],
-            "details": "制約充足アルゴリズムで多様性を確保。B2B/B2C、ハード/ソフト、短期/長期の組み合わせでバランス取り。各アイデアに独自性スコア付与。",
+            "title": "Design Ideation Workflow and Filtering Logic",
+            "description": "Design the step-by-step workflow for idea generation, risk balancing, profitability validation, and Mitsubishi Estate fit filtering, ensuring each stage is clearly defined and automatable.",
+            "dependencies": [],
+            "details": "Map out the ideation process: (1) ingest research data, (2) generate a diverse set of ideas across balanced domains and risk levels, (3) filter for business scale (≥10B JPY profit), (4) assess and maximize synergy with Mitsubishi Estate assets, (5) ensure competitive differentiation. Define logic for risk balance control and filtering criteria as modular, testable functions.",
             "status": "pending",
-            "testStrategy": "生成アイデアの多様性指標と独創性スコアを評価。重複や類似性の排除確認。"
+            "testStrategy": "Simulate workflow with sample data and verify correct filtering and risk balancing at each stage."
           },
           {
             "id": 3,
-            "title": "詳細ビジネスモデル設計システム",
-            "description": "各ビジネスアイデアに対して詳細なビジネスモデル（価値提案、収益構造、コスト構造、パートナーシップ）を自動設計するシステムを構築",
-            "dependencies": [2],
-            "details": "Business Model Canvasベースの詳細設計。市場調査データから導出される価値提案とマネタイゼーション戦略。実装難易度と投資要件の算出。",
+            "title": "Implement Enhanced Ideator Agent Core Logic",
+            "description": "Develop the core agent logic to generate multiple high-quality business ideas using the enhanced research dataset and the designed workflow.",
+            "dependencies": [],
+            "details": "Code the agent to process input datasets, apply the workflow, and output 5-8 business ideas. For each idea, generate detailed business model, value proposition, market positioning, technical requirements (summary), and a three-stage implementation roadmap. Integrate configuration-driven Mitsubishi Estate asset data and ensure synergy analysis is included in each output.",
             "status": "pending",
-            "testStrategy": "ビジネスモデルの論理的整合性と市場データとの整合性を評価。"
+            "testStrategy": "Run the agent with test datasets and verify that outputs meet all specified criteria and include required details."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Competitive Analysis and Risk Balancing Mechanisms",
+            "description": "Embed logic for basic competitive analysis (3-5 main competitors per idea) and ensure each idea set includes a mix of conservative, balanced, and challenging concepts.",
+            "dependencies": [],
+            "details": "For each generated idea, automatically identify and summarize key competitors using available research data. Implement a mechanism to classify and balance ideas by risk level, ensuring the final set meets the required distribution. Validate that each idea's competitive positioning and risk profile are clearly documented.",
+            "status": "pending",
+            "testStrategy": "Check that each idea includes competitor summaries and that the overall set reflects the required risk balance."
+          },
+          {
+            "id": 5,
+            "title": "Validate Output Quality and Consistency Across Datasets",
+            "description": "Develop and execute tests to evaluate the originality, feasibility, synergy, and consistency of generated ideas using different research datasets.",
+            "dependencies": [],
+            "details": "Create test cases with varied research inputs. Assess each output for originality, business feasibility, explicit synergy with Mitsubishi Estate assets, and adherence to all requirements. Compare outputs across datasets to ensure consistent quality and adaptability. Document findings and refine logic as needed.",
+            "status": "pending",
+            "testStrategy": "Systematically review outputs against a checklist of requirements and perform cross-dataset consistency checks."
           }
         ]
       },
@@ -879,7 +927,9 @@
         "details": "5-8個のビジネスアイデアを15-20の詳細な評価基準で分析。市場魅力度（規模、成長率、競合強度）、実現可能性（技術、規制、資金）、三菱地所適合性（シナジー、戦略整合性）、リスク要因（市場、技術、財務、規制）を定量評価。重み付けスコアリングで最優秀案を選定し、改善提案も生成。",
         "testStrategy": "評価基準の妥当性と一貫性を確認。人間の判断との相関性を検証。選定理由の論理性を評価。",
         "priority": "high",
-        "dependencies": [19],
+        "dependencies": [
+          19
+        ],
         "status": "pending",
         "subtasks": [
           {
@@ -895,7 +945,9 @@
             "id": 2,
             "title": "定量的スコアリングと比較分析システム",
             "description": "複数アイデアの定量的比較とランキング生成、強み・弱み分析、改善提案生成を行うシステムを実装",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "正規化スコアリング、相対比較マトリクス、強み・弱み・機会・脅威（SWOT）分析の自動生成。改善提案ロジックの実装。",
             "status": "pending",
             "testStrategy": "スコアリングの安定性と比較結果の妥当性を評価。改善提案の具体性と実行可能性を確認。"
@@ -904,7 +956,9 @@
             "id": 3,
             "title": "説明可能AI（XAI）機能による透明性確保",
             "description": "評価結果と選定理由を詳細に説明し、意思決定プロセスの透明性を確保するシステムを実装",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "各評価基準のスコア根拠、選定理由の詳細説明、代替案との比較ポイント、リスク・機会の明確化機能。",
             "status": "pending",
             "testStrategy": "説明の理解しやすさと論理性を評価。評価プロセスの再現可能性を確認。"
@@ -918,7 +972,9 @@
         "details": "選定されたビジネスアイデアの実行に必要な詳細情報を特定し、優先順位付きの調査計画を策定。市場セグメント詳細、技術仕様・特許状況、競合企業分析、規制・法的要件、パートナー候補、リスク要因、財務・投資情報など、実装段階で必要となる具体的情報項目を整理。調査方法と情報源も指定。",
         "testStrategy": "計画の網羅性と実行可能性を評価。調査項目の漏れや重複を確認。優先順位付けの妥当性を検証。",
         "priority": "high",
-        "dependencies": [20],
+        "dependencies": [
+          20
+        ],
         "status": "pending",
         "subtasks": [
           {
@@ -934,7 +990,9 @@
             "id": 2,
             "title": "優先順位付き調査計画生成システム",
             "description": "情報の重要度、取得難易度、実行への影響度を考慮して、最適化された調査計画を生成するシステムを実装",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "重要度マトリクス、調査コスト・時間推定、依存関係分析による調査順序最適化。クリティカルパス分析機能。",
             "status": "pending",
             "testStrategy": "計画の実行効率と情報価値最大化を評価。調査順序の論理性を確認。"
@@ -943,7 +1001,9 @@
             "id": 3,
             "title": "動的計画調整・更新システム",
             "description": "調査進行中に得られた新情報に基づいて、調査計画を動的に調整・更新するシステムを実装",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "新情報による計画見直しトリガー、調査項目の追加・削除・変更ロジック、リソース再配分機能。適応的計画管理。",
             "status": "pending",
             "testStrategy": "計画調整の適切性と効率性を評価。動的更新による計画改善効果を確認。"
@@ -957,7 +1017,9 @@
         "details": "計画された調査項目について、専門的で詳細な情報収集を実行。技術仕様・特許調査、市場セグメント詳細分析、個別競合企業の深掘り調査、規制・法的要件の詳細確認、潜在的パートナー企業の調査、詳細リスク分析、財務・投資情報の収集。各調査項目に対して複数の一次・二次情報源を使用し、信頼性の高い詳細情報を収集。",
         "testStrategy": "収集情報の詳細度と信頼性を評価。専門的情報の正確性を確認。情報源の多様性と質を検証。",
         "priority": "high",
-        "dependencies": [21],
+        "dependencies": [
+          21
+        ],
         "status": "pending",
         "subtasks": [
           {
@@ -973,7 +1035,9 @@
             "id": 2,
             "title": "多段階検証・クロスチェック機能",
             "description": "収集した情報の信頼性を確保するため、複数情報源での検証とクロスチェック機能を実装",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "情報源信頼性評価、矛盾検出機能、複数ソースでの事実確認、不確実性・信頼度スコアリング機能。",
             "status": "pending",
             "testStrategy": "情報検証の精度と信頼性評価の妥当性を確認。矛盾検出機能の性能を評価。"
@@ -982,7 +1046,9 @@
             "id": 3,
             "title": "構造化レポート生成・統合システム",
             "description": "収集した詳細情報を構造化されたレポート形式に整理し、意思決定に活用可能な形式で統合するシステムを実装",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "調査結果の自動構造化、キーファインディング抽出、実行への示唆導出、不足情報の特定機能。エグゼクティブサマリー生成。",
             "status": "pending",
             "testStrategy": "レポート構造の論理性と完成度を評価。キーファインディングの重要性と実行可能性を確認。"
@@ -996,7 +1062,9 @@
         "details": "Specialized Researcherからの詳細情報を統合し、経営陣向けの高品質レポートを生成。各セクション（概要、ターゲット・課題、ソリューション、市場・競合、三菱地所の意義、検証計画、リスク）に1000-2000文字の詳細内容。データ視覚化、財務モデル、実装ロードマップ、リスク軽減策など具体的で実行可能な内容を含む。論理的一貫性と説得力を重視。",
         "testStrategy": "レポート品質と詳細度を評価。各セクション間の論理的整合性を確認。経営陣による理解しやすさと説得力を検証。",
         "priority": "high",
-        "dependencies": [22],
+        "dependencies": [
+          22
+        ],
         "status": "pending",
         "subtasks": [
           {
@@ -1012,7 +1080,9 @@
             "id": 2,
             "title": "データ視覚化・モデル統合システム",
             "description": "収集データを効果的な図表、財務モデル、ロードマップとして視覚化し、レポートに統合するシステムを実装",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "市場データのグラフ化、財務予測モデル、競合比較表、リスクマトリクス、実装タイムライン等の自動生成機能。",
             "status": "pending",
             "testStrategy": "視覚化の効果性と正確性を評価。財務モデルの論理性と実現可能性を確認。"
@@ -1021,7 +1091,9 @@
             "id": 3,
             "title": "論理一貫性・品質保証システム",
             "description": "レポート全体の論理的整合性、事実の一貫性、表現の品質を自動チェックし、経営陣レベルの品質を保証するシステムを実装",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "論理整合性チェック、数値の一貫性確認、文章品質評価、セクション間の矛盾検出、改善提案生成機能。",
             "status": "pending",
             "testStrategy": "品質チェック機能の精度と効果性を評価。改善提案の具体性と実行可能性を確認。"
@@ -1035,7 +1107,9 @@
         "details": "完成レポートに対して最高レベルの品質評価を実行。論理的一貫性、事実の正確性、表現の適切性、意思決定への有用性を多面的に評価。品質スコアが基準（85点）を下回る場合は、具体的な改善指示を生成してWriterAgentに修正を依頼。最大2回の改善サイクルを実行し、最終的に経営陣プレゼンテーション品質を保証。",
         "testStrategy": "QA評価の厳密性と改善指示の具体性を確認。改善サイクルによる品質向上効果を検証。最終品質の一貫性を評価。",
         "priority": "high",
-        "dependencies": [23],
+        "dependencies": [
+          23
+        ],
         "status": "pending",
         "subtasks": [
           {
@@ -1051,7 +1125,9 @@
             "id": 2,
             "title": "具体的改善指示生成システム",
             "description": "品質評価結果から具体的で実行可能な改善指示を生成し、WriterAgentが効果的に修正を行えるシステムを実装",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "問題箇所の特定、改善方向性の提示、具体的修正提案、追加必要情報の特定機能。改善優先順位付け。",
             "status": "pending",
             "testStrategy": "改善指示の具体性と実行可能性を評価。修正後の品質向上効果を確認。"
@@ -1060,7 +1136,9 @@
             "id": 3,
             "title": "改善サイクル管理・最終承認システム",
             "description": "最大2回の改善サイクルを管理し、最終的な品質承認と配信準備を行うシステムを実装",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "改善サイクル追跡、品質向上測定、最終承認ロジック、配信フォーマット準備、品質保証証明書生成機能。",
             "status": "pending",
             "testStrategy": "改善サイクルの効率性と最終品質の一貫性を評価。承認プロセスの信頼性を確認。"
@@ -1074,7 +1152,15 @@
         "details": "Enhanced Researcher → Enhanced Ideator → Enhanced Critic → Advanced Planner → Specialized Researcher → Advanced Writer → Final QA の完全なワークフローを実行。各段階での品質チェック、エラー処理、前段階への戻り処理、並列実行可能部分の最適化、プログレス追跡、ユーザーへのリアルタイム更新を実装。全体実行時間15-25分での高品質レポート生成を目標。",
         "testStrategy": "エンドツーエンドワークフローの実行安定性と効率性を評価。エラー処理と回復機能を検証。品質と実行時間のバランスを確認。",
         "priority": "high",
-        "dependencies": [18, 19, 20, 21, 22, 23, 24],
+        "dependencies": [
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24
+        ],
         "status": "pending",
         "subtasks": [
           {
@@ -1090,7 +1176,9 @@
             "id": 2,
             "title": "高度なエラー処理・回復システム",
             "description": "各段階でのエラー検出、分類、回復処理を行い、ワークフロー全体の信頼性を確保するシステムを実装",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "エラー分類、自動回復、前段階戻り、代替処理、エスカレーション、ログ記録、障害分析機能。",
             "status": "pending",
             "testStrategy": "エラー処理の網羅性と回復効果を評価。システム全体の安定性を確認。"
@@ -1099,7 +1187,9 @@
             "id": 3,
             "title": "リアルタイム監視・フィードバックシステム",
             "description": "ワークフロー実行状況をリアルタイムで監視し、ユーザーに進捗とクオリティ情報を提供するシステムを実装",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "進捗追跡、品質メトリクス、推定完了時間、段階別ステータス、パフォーマンス監視、ユーザーダッシュボード機能。",
             "status": "pending",
             "testStrategy": "監視精度とユーザー体験の向上効果を評価。リアルタイム更新の正確性を確認。"
