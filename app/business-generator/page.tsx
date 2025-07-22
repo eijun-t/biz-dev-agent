@@ -120,8 +120,12 @@ export default function BusinessGeneratorPage() {
     const icons = {
       'planner': '🧠',
       'researcher': '🔍',
+      'enhanced_researcher': '🔬',
       'ideator': '💡',
+      'enhanced_ideator': '🚀',
       'critic': '📝',
+      'enhanced_critic': '⚖️',
+      'advanced_planner': '📋',
       'analyst': '📊',
       'writer': '✍️',
       'coordinator': '🎯'
