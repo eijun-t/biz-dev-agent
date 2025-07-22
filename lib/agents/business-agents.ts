@@ -1,11 +1,15 @@
 /**
  * Business Intelligence Agents
- * 実際のLLMを使用したビジネス分析エージェント
+ * Enhanced Agents統合版 - 高度なMulti-Agent Orchestration
  */
 
 import { createChatOpenAI } from '@/lib/config/llm-config';
 import { generatePrompt, AgentResult } from '@/lib/prompts/agent-prompts';
 import { createLog } from '@/lib/database/queries';
+
+// Enhanced Agents Import
+import { EnhancedResearcherAgent, createEnhancedResearcher } from './research/enhanced-index';
+import { EnhancedIdeatorAgent, createEnhancedIdeator } from './ideation/enhanced-ideator-index';
 
 // 基底エージェントクラス
 abstract class BaseAgent {
@@ -152,11 +156,36 @@ abstract class BaseAgent {
   }
 }
 
-// Enhanced Mock研究者エージェント（シンプル版）
+// Enhanced Researcher Agent (本格実装統合版)
 export class ResearcherAgent extends BaseAgent {
+  private enhancedAgent: EnhancedResearcherAgent | null = null;
+  
   constructor() {
     super('researcher');
-    console.log('✅ Enhanced Mock Researcher initialized (no external dependencies)');
+    
+    // Enhanced Agentの初期化を試行
+    try {
+      const apiKeys = {
+        serper: process.env.SERPER_API_KEY || '',
+        openai: process.env.OPENAI_API_KEY || '',
+        estat: process.env.ESTAT_API_KEY || ''
+      };
+      
+      this.enhancedAgent = createEnhancedResearcher(apiKeys, {
+        // 本番用設定
+        costConfig: {
+          monthlyBudget: 2000, // 2000円
+          alertThreshold: 0.8,
+          enforceLimit: true
+        },
+        maxParallelRequests: 3
+      });
+      
+      console.log('✅ Enhanced Researcher Agent initialized (full capabilities)');
+    } catch (error) {
+      console.warn('⚠️ Enhanced Researcher initialization failed, using fallback:', error);
+      this.enhancedAgent = null;
+    }
   }
 
   async conductMarketResearch(
@@ -166,13 +195,43 @@ export class ResearcherAgent extends BaseAgent {
   ): Promise<AgentResult> {
     const startTime = Date.now();
     
-    console.log('🔬 Enhanced Mock Researcher: Starting market research...');
+    console.log('🔬 Enhanced Researcher Agent: Starting comprehensive market research...');
     console.log(`📊 Research input: "${userInput}"`);
     
-    // シミュレートされた処理時間（1-3秒）
+    // Enhanced Agentが利用可能な場合は使用
+    if (this.enhancedAgent) {
+      try {
+        console.log('⚡ Using Enhanced Researcher capabilities');
+        const result = await this.enhancedAgent.executeComprehensiveResearch(
+          userInput,
+          ['market_trends', 'technology', 'competition', 'macroeconomics'],
+          'ja',
+          'japan',
+          8 // 最大8件の詳細調査
+        );
+        
+        const executionTime = Date.now() - startTime;
+        console.log(`✅ Enhanced Research completed in ${executionTime}ms`);
+        console.log(`📊 Data quality: ${result.averageDataQuality}/10`);
+        console.log(`🏢 Mitsubishi fit: ${result.mitsubishiStrategicFit}/10`);
+        
+        return {
+          success: true,
+          data: result,
+          executionTime,
+          tokensUsed: result.totalDataPoints || 0
+        };
+        
+      } catch (enhancedError) {
+        console.warn('⚠️ Enhanced Research failed, falling back to mock:', enhancedError);
+        // Fall through to mock implementation
+      }
+    }
+    
+    // フォールバック: モックデータを返す
+    console.log('🎭 Using fallback mock research');
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
     
-    // 常にモックデータを返す（エラーなし）
     const mockResult = {
       knowledgeBase: {
         market_trends: [{
@@ -228,11 +287,28 @@ export class ResearcherAgent extends BaseAgent {
   }
 }
 
-// Enhanced Mock アイデア生成エージェント（シンプル版）
+// Enhanced Ideator Agent (本格実装統合版)
 export class IdeatorAgent extends BaseAgent {
+  private enhancedIntegration: any = null;
+  
   constructor() {
     super('ideator');
-    console.log('✅ Enhanced Mock Ideator initialized (no external dependencies)');
+    
+    // Enhanced Agentの初期化を試行
+    try {
+      const llmConfig = {
+        apiKey: process.env.OPENAI_API_KEY || ''
+      };
+      
+      this.enhancedIntegration = createEnhancedIdeator(llmConfig, {
+        // 本番用設定は enhanced-ideator-config.ts の DEFAULT_IDEATOR_CONFIG を使用
+      });
+      
+      console.log('✅ Enhanced Ideator Integration initialized (full capabilities)');
+    } catch (error) {
+      console.warn('⚠️ Enhanced Ideator initialization failed, using fallback:', error);
+      this.enhancedIntegration = null;
+    }
   }
 
   async generateBusinessIdeas(
@@ -243,11 +319,58 @@ export class IdeatorAgent extends BaseAgent {
   ): Promise<AgentResult> {
     const startTime = Date.now();
     
-    console.log('💡 Enhanced Mock Ideator: Starting idea generation...');
+    console.log('💡 Enhanced Ideator Agent: Starting comprehensive idea generation...');
     console.log(`📝 Ideation input: "${userInput}"`);
     console.log(`📊 Research data available: ${!!researchResults}`);
     
-    // シミュレートされた処理時間（2-4秒）
+    // Enhanced Integrationが利用可能な場合は使用
+    if (this.enhancedIntegration) {
+      try {
+        console.log('⚡ Using Enhanced Ideator capabilities');
+        const result = await this.enhancedIntegration.generateBusinessIdeas(
+          userInput,
+          researchResults,
+          {
+            riskBalance: {
+              conservative: 0.25,
+              balanced: 0.50,
+              challenging: 0.20,
+              disruptive: 0.05
+            },
+            businessScales: ['mid_market', 'enterprise'],
+            timeHorizon: 'medium_term',
+            innovationLevel: 'breakthrough',
+            prioritizeSynergy: true,
+            minProfitJPY: 10_000_000_000,
+            maxTimeToMarket: '3年以内',
+            requiredSynergyScore: 6,
+            language: 'ja',
+            region: 'japan',
+            enableEnhancedProcessing: true,
+            enableValidation: true
+          }
+        );
+        
+        const executionTime = Date.now() - startTime;
+        console.log(`✅ Enhanced Ideation completed in ${executionTime}ms`);
+        console.log(`💡 Generated ${result.businessIdeas.length} ideas`);
+        console.log(`🎯 Overall quality: ${result.qualityMetrics.overallQuality.toFixed(1)}/10`);
+        
+        return {
+          success: true,
+          data: result,
+          executionTime,
+          tokensUsed: result.enhancedMetadata?.totalTokens || 0
+        };
+        
+      } catch (enhancedError) {
+        console.warn('⚠️ Enhanced Ideation failed, falling back to mock:', enhancedError);
+        // Fall through to mock implementation
+      }
+    }
+    
+    // フォールバック: モックデータを返す
+    console.log('🎭 Using fallback mock ideation');
     await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
     
     // 入力に基づいて動的にアイデアを生成
