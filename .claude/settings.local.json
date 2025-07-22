@@ -23,7 +23,9 @@
       "Bash(npm cache clean:*)",
       "Bash(sudo rm:*)",
       "Bash(OPENAI_API_KEY=dummy_key npx playwright test tests/enhanced-vs-basic-analysis.test.ts --reporter=line)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
