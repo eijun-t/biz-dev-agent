@@ -288,7 +288,7 @@ export class ResearcherAgent extends BaseAgent {
 }
 
 // Enhanced Critic Agent Import
-import { EnhancedCriticAgent, createEnhancedCritic } from './critic';
+import { EnhancedCriticAgent, createEnhancedCritic } from './critic/index';
 
 // Enhanced Ideator Agent (本格実装統合版)
 export class IdeatorAgent extends BaseAgent {
@@ -822,28 +822,42 @@ export class BusinessWorkflowOrchestrator {
       progressCallback?.('evaluation', 52);
       console.log('Starting enhanced critic evaluation phase...');
       
-      const criticResult = await this.critic.evaluateBusinessIdeas(
-        businessIdeas,
-        sessionId || 'default_session',
-        results.research,
-        userId
-      );
-      
-      if (!criticResult.success) {
-        throw new Error(`Critic evaluation failed: ${criticResult.error}`);
+      try {
+        const criticResult = await this.critic.evaluateBusinessIdeas(
+          businessIdeas,
+          sessionId || 'default_session',
+          results.research,
+          userId
+        );
+        
+        if (criticResult.success && criticResult.data) {
+          // Enhanced Critic が選定した最優秀アイデアを使用
+          const criticData = criticResult.data;
+          results.selectedIdea = criticData.selected_idea_for_next_phase || businessIdeas[0];
+          results.ideas = {
+            business_ideas: businessIdeas,
+            recommendation: {
+              top_choice: results.selectedIdea.idea_id || results.selectedIdea.id,
+              reasoning: criticData.portfolio_evaluation?.recommendation_reasoning || 'Enhanced Critic による評価結果'
+            },
+            critic_evaluation: criticData.portfolio_evaluation
+          };
+          console.log('✅ Enhanced Critic evaluation completed successfully');
+        } else {
+          throw new Error(`Critic evaluation failed: ${criticResult.error || 'Unknown error'}`);
+        }
+      } catch (criticError) {
+        console.warn('⚠️ Enhanced Critic evaluation failed, using fallback selection:', criticError);
+        // フォールバック: 最初のアイデアを選択
+        results.selectedIdea = businessIdeas[0] || {};
+        results.ideas = {
+          business_ideas: businessIdeas,
+          recommendation: {
+            top_choice: results.selectedIdea.id || 'idea_1',
+            reasoning: 'Critic評価失敗のため最初のアイデアを選択（フォールバック）'
+          }
+        };
       }
-      
-      // Enhanced Critic が選定した最優秀アイデアを使用
-      const criticData = criticResult.data;
-      results.selectedIdea = criticData.selected_idea_for_next_phase;
-      results.ideas = {
-        business_ideas: businessIdeas,
-        recommendation: {
-          top_choice: results.selectedIdea.idea_id,
-          reasoning: criticData.portfolio_evaluation.recommendation_reasoning
-        },
-        critic_evaluation: criticData.portfolio_evaluation
-      };
       
       // 🔍 Enhanced Critic → Analyst への引き渡しデータログ
       console.log('\n📋 === Enhanced Critic → Analyst 引き渡しデータ ===');

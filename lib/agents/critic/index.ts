@@ -3,10 +3,11 @@
  * Enhanced Critic Agent のメインエクスポートインデックス
  */
 
-export { EnhancedCriticAgent } from './enhanced-critic';
-export { CapabilityAnalyzer } from './capability-analyzer';
-export { EvaluationFramework } from './evaluation-framework';
+import { EnhancedCriticAgent } from './enhanced-critic';
+import { CapabilityAnalyzer } from './capability-analyzer';
+import { EvaluationFramework } from './evaluation-framework';
 
+export { EnhancedCriticAgent, CapabilityAnalyzer, EvaluationFramework };
 export * from './types';
 
 // Factory function for easy integration
