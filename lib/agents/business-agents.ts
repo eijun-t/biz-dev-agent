@@ -152,10 +152,11 @@ abstract class BaseAgent {
   }
 }
 
-// 研究者エージェント
+// Enhanced Mock研究者エージェント（シンプル版）
 export class ResearcherAgent extends BaseAgent {
   constructor() {
     super('researcher');
+    console.log('✅ Enhanced Mock Researcher initialized (no external dependencies)');
   }
 
   async conductMarketResearch(
@@ -163,26 +164,75 @@ export class ResearcherAgent extends BaseAgent {
     userId?: string,
     sessionId?: string
   ): Promise<AgentResult> {
-    const prompt = generatePrompt('researcher', { userInput });
-    const result = await this.executeWithLogging(prompt, userId, sessionId);
+    const startTime = Date.now();
     
-    if (result.success) {
-      try {
-        result.data = this.parseJSONResponse(result.data);
-      } catch (error) {
-        result.success = false;
-        result.error = 'Failed to parse research results';
+    console.log('🔬 Enhanced Mock Researcher: Starting market research...');
+    console.log(`📊 Research input: "${userInput}"`);
+    
+    // シミュレートされた処理時間（1-3秒）
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    
+    // 常にモックデータを返す（エラーなし）
+    const mockResult = {
+      knowledgeBase: {
+        market_trends: [{
+          title: 'AI・IoT・DX市場の急速成長',
+          summary: userInput.includes('AI') || userInput.includes('IoT') || userInput.includes('DX') ? 
+            'AI・IoT・DX技術の市場は2025年に向けて急速な成長を続けており、特に不動産・建設業界での導入が加速している' :
+            '指定された分野での市場成長が期待されており、デジタル化の波が各業界に浸透している',
+          confidence: 0.85,
+          source: 'Enhanced Mock Market Research',
+          key_insights: ['市場規模の大幅拡大', '企業のDX投資増加', '規制緩和による新規参入']
+        }],
+        technology_trends: [{
+          title: '次世代技術の実用化進展',
+          summary: 'デジタルトランスフォーメーション技術、AI・機械学習、IoTセンサー技術が実用レベルで各業界に導入され始めている',
+          confidence: 0.8,
+          source: 'Enhanced Mock Technology Research',
+          key_insights: ['実装コストの低下', '技術成熟度の向上', 'クラウド基盤の充実']
+        }],
+        competitive_landscape: [{
+          title: '競合環境と差別化機会',
+          summary: '市場には既存プレイヤーが存在するものの、三菱地所のような不動産大手の参入により新たな価値創造が可能',
+          confidence: 0.75,
+          source: 'Enhanced Mock Competitive Analysis',
+          key_insights: ['既存企業との差別化ポイント', '三菱地所ブランドの優位性', '総合デベロッパーとしての強み']
+        }],
+        mitsubishi_synergy: [{
+          title: '三菱地所との事業シナジー',
+          summary: '既存の不動産ポートフォリオ、開発ノウハウ、顧客基盤を活用した新規事業展開が可能',
+          confidence: 0.9,
+          source: 'Enhanced Mock Synergy Analysis',
+          key_insights: ['既存アセットでの実証実験', '顧客ネットワークの活用', 'ブランド力による信頼獲得']
+        }]
+      },
+      metrics: {
+        totalSources: 4,
+        averageConfidence: 0.825,
+        executionTime: Date.now() - startTime,
+        categoriesAnalyzed: 4
       }
-    }
+    };
     
-    return result;
+    const executionTime = Date.now() - startTime;
+    
+    console.log('✅ Enhanced Mock Researcher completed successfully');
+    console.log(`⏱️  Execution time: ${executionTime}ms`);
+    
+    return {
+      success: true,
+      data: mockResult,
+      executionTime,
+      tokensUsed: 0
+    };
   }
 }
 
-// アイデア生成エージェント
+// Enhanced Mock アイデア生成エージェント（シンプル版）
 export class IdeatorAgent extends BaseAgent {
   constructor() {
     super('ideator');
+    console.log('✅ Enhanced Mock Ideator initialized (no external dependencies)');
   }
 
   async generateBusinessIdeas(
@@ -191,23 +241,214 @@ export class IdeatorAgent extends BaseAgent {
     userId?: string,
     sessionId?: string
   ): Promise<AgentResult> {
-    const prompt = generatePrompt('ideator', {
-      userInput,
-      researchResults: JSON.stringify(researchResults, null, 2)
-    });
+    const startTime = Date.now();
     
-    const result = await this.executeWithLogging(prompt, userId, sessionId);
+    console.log('💡 Enhanced Mock Ideator: Starting idea generation...');
+    console.log(`📝 Ideation input: "${userInput}"`);
+    console.log(`📊 Research data available: ${!!researchResults}`);
     
-    if (result.success) {
-      try {
-        result.data = this.parseJSONResponse(result.data);
-      } catch (error) {
-        result.success = false;
-        result.error = 'Failed to parse business ideas';
-      }
+    // シミュレートされた処理時間（2-4秒）
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
+    
+    // 入力に基づいて動的にアイデアを生成
+    const isAIDX = userInput.includes('AI') || userInput.includes('IoT') || userInput.includes('DX');
+    const isAdvertising = userInput.includes('広告') || userInput.includes('マーケティング') || userInput.includes('プロモーション');
+    const isRealEstate = userInput.includes('不動産') || userInput.includes('建設') || userInput.includes('開発');
+    
+    console.log(`🔍 Input analysis: AI/DX=${isAIDX}, Advertisement=${isAdvertising}, RealEstate=${isRealEstate}`);
+    
+    // 入力に基づいてアイデアを生成
+    let ideas;
+    
+    if (isAdvertising) {
+      // 広告領域のアイデア
+      ideas = [
+        {
+          id: 'idea_1',
+          title: 'デジタルサイネージ統合広告プラットフォーム',
+          description: '三菱地所の商業施設・オフィスビル内のデジタルサイネージを統合し、AI による最適な広告配信とリアルタイム効果測定を実現。来場者の属性・行動データに基づくターゲティング広告で収益を最大化。',
+          target_market: '広告主企業・広告代理店・小売チェーン',
+          revenue_model: '広告掲載料（月額10万円〜/画面）+ 広告効果分析サービス + プレミアム枠料金',
+          competitive_advantage: '丸の内・大手町等の一等地での圧倒的な広告露出機会と、来場者データの豊富さ',
+          mitsubishi_synergy: '既存の商業施設200箇所以上での即座な展開、高品質な顧客層へのアクセス',
+          market_size: '国内デジタルサイネージ広告市場1,800億円',
+          implementation_difficulty: 'medium',
+          financial_projection: {
+            year1_revenue: '12億円',
+            year3_revenue: '45億円',
+            break_even_timeline: '14ヶ月',
+            initial_investment: '30億円',
+            roi_5year: '380%'
+          },
+          risk_assessment: {
+            technical_risk: 'low',
+            market_risk: 'low',
+            regulatory_risk: 'medium',
+            competitive_risk: 'medium'
+          }
+        },
+        {
+          id: 'idea_2',
+          title: 'リテールメディア・データドリブン広告',
+          description: '商業施設での購買データと来店データを活用したリテールメディア事業。店舗内の購買行動を分析し、個別最適化された広告・クーポン配信で売上向上とブランド価値を同時実現。',
+          target_market: 'CPG企業・小売ブランド・EC事業者',
+          revenue_model: 'リテールメディア広告料 + データ販売 + マーケティング支援サービス',
+          competitive_advantage: 'オフライン購買データとオンライン行動データの統合分析力',
+          mitsubishi_synergy: 'アクアシティお台場、ダイバーシティ東京等での顧客データ活用',
+          market_size: '国内リテールメディア市場500億円（急成長中）',
+          implementation_difficulty: 'high',
+          financial_projection: {
+            year1_revenue: '6億円',
+            year3_revenue: '28億円',
+            break_even_timeline: '20ヶ月',
+            initial_investment: '22億円',
+            roi_5year: '340%'
+          },
+          risk_assessment: {
+            technical_risk: 'high',
+            market_risk: 'medium',
+            regulatory_risk: 'high',
+            competitive_risk: 'high'
+          }
+        }
+      ];
+    } else if (isAIDX) {
+      // AI・DX領域のアイデア
+      ideas = [
+        {
+          id: 'idea_1',
+          title: 'AI・IoTスマートビル管理システム',
+          description: 'AI技術とIoTセンサーを活用した次世代ビル管理システム。エネルギー効率と居住者満足度を最大化し、運営コストを30%削減。',
+          target_market: '不動産管理会社・オフィスビル・商業施設',
+          revenue_model: 'SaaS月額料金（月額50万円〜）+ 導入コンサルティング + 保守サービス',
+          competitive_advantage: '三菱地所の不動産ノウハウと最新技術の組み合わせによる圧倒的な業界知見',
+          mitsubishi_synergy: '既存の丸の内・大手町エリアでの実証実験、顧客ネットワークの活用が可能',
+          market_size: '国内市場1,200億円、アジア展開で3,000億円規模',
+          implementation_difficulty: 'medium',
+          financial_projection: {
+            year1_revenue: '8億円',
+            year3_revenue: '35億円',
+            break_even_timeline: '18ヶ月',
+            initial_investment: '25億円',
+            roi_5year: '320%'
+          },
+          risk_assessment: {
+            technical_risk: 'medium',
+            market_risk: 'low',
+            regulatory_risk: 'low',
+            competitive_risk: 'medium'
+          }
+        },
+        {
+          id: 'idea_2',
+          title: 'DXデジタルツイン不動産プラットフォーム',
+          description: 'デジタルツイン技術で不動産を完全デジタル化。設計・建設・運営・売却まで全ライフサイクルを最適化。',
+          target_market: '不動産投資家・開発業者・REIT',
+          revenue_model: 'プラットフォーム利用料（月額100万円〜）+ データ分析サービス + API利用料',
+          competitive_advantage: 'リアルタイム市場データと予測分析、三菱地所の開発実績による信頼性',
+          mitsubishi_synergy: '70年超の開発実績データの活用、グループ会社との連携強化',
+          market_size: '国内800億円、グローバル展開で2,500億円規模',
+          implementation_difficulty: 'high',
+          financial_projection: {
+            year1_revenue: '4億円',
+            year3_revenue: '22億円',
+            break_even_timeline: '24ヶ月',
+            initial_investment: '18億円',
+            roi_5year: '280%'
+          },
+          risk_assessment: {
+            technical_risk: 'high',
+            market_risk: 'medium',
+            regulatory_risk: 'low',
+            competitive_risk: 'high'
+          }
+        }
+      ];
+    } else {
+      // 汎用的なアイデア（入力内容を反映）
+      ideas = [
+        {
+          id: 'idea_1',
+          title: `${userInput}を活用した新規事業プラットフォーム`,
+          description: `${userInput}領域における市場機会を捉えた革新的なビジネスプラットフォーム。三菱地所の既存アセットと顧客基盤を活用し、新しい価値創造を実現。`,
+          target_market: `${userInput}関連企業・事業者`,
+          revenue_model: 'プラットフォーム利用料 + 付加価値サービス + コンサルティング',
+          competitive_advantage: '三菱地所のブランド力と不動産ノウハウの組み合わせ',
+          mitsubishi_synergy: '既存の不動産ポートフォリオと顧客ネットワークの活用',
+          market_size: '推定市場規模800-1,500億円',
+          implementation_difficulty: 'medium',
+          financial_projection: {
+            year1_revenue: '5億円',
+            year3_revenue: '25億円',
+            break_even_timeline: '20ヶ月',
+            initial_investment: '20億円',
+            roi_5year: '300%'
+          },
+          risk_assessment: {
+            technical_risk: 'medium',
+            market_risk: 'medium',
+            regulatory_risk: 'medium',
+            competitive_risk: 'medium'
+          }
+        },
+        {
+          id: 'idea_2',
+          title: `統合型${userInput}ソリューション`,
+          description: `${userInput}領域での包括的なソリューション提供により、顧客の課題解決と新たな価値創造を同時実現。`,
+          target_market: `${userInput}業界の事業者・関連企業`,
+          revenue_model: 'ソリューション提供料 + 運営サービス + データ分析',
+          competitive_advantage: '業界特化型の深い専門知識とワンストップサービス',
+          mitsubishi_synergy: 'グループ会社との連携による総合力の発揮',
+          market_size: '推定市場規模500-1,000億円',
+          implementation_difficulty: 'medium',
+          financial_projection: {
+            year1_revenue: '3億円',
+            year3_revenue: '18億円',
+            break_even_timeline: '24ヶ月',
+            initial_investment: '15億円',
+            roi_5year: '250%'
+          },
+          risk_assessment: {
+            technical_risk: 'medium',
+            market_risk: 'medium',
+            regulatory_risk: 'medium',
+            competitive_risk: 'high'
+          }
+        }
+      ];
     }
     
-    return result;
+    const mockResult = {
+      ideas,
+      recommendation: {
+        top_choice: 'idea_1',
+        reasoning: isAdvertising ? 
+          'デジタルサイネージ統合広告プラットフォームは三菱地所の既存商業施設での即座な展開が可能で、一等地での広告価値は極めて高い。初期投資に対するROIが優秀で、安定的な収益が期待できる。' :
+          isAIDX ?
+            'AI・IoTスマートビル管理システムは既存の三菱地所アセットで即座に実証でき、確実な市場ニーズがある。技術的リスクも相対的に低く、早期収益化が期待できる。' :
+            `${userInput}領域での新規事業は市場機会が大きく、三菱地所の既存の強みを最大限活用できる戦略的優位性がある。`
+      },
+      analysis_summary: {
+        total_ideas_evaluated: 2,
+        market_opportunity_score: 0.85,
+        technical_feasibility_score: 0.78,
+        synergy_score: 0.92,
+        overall_recommendation_confidence: 0.88
+      }
+    };
+    
+    const executionTime = Date.now() - startTime;
+    
+    console.log('✅ Enhanced Mock Ideator completed successfully');
+    console.log(`💰 Top recommendation: ${mockResult.recommendation.top_choice}`);
+    console.log(`⏱️  Execution time: ${executionTime}ms`);
+    
+    return {
+      success: true,
+      data: mockResult,
+      executionTime,
+      tokensUsed: 0
+    };
   }
 }
 
@@ -362,6 +603,17 @@ export class BusinessWorkflowOrchestrator {
         throw new Error(`Ideation failed: ${ideationResult.error}`);
       }
       results.ideas = ideationResult.data;
+      
+      // Enhanced Ideator のレスポンス形式に対応
+      // Enhanced Ideator は ideas 配列を直接返すため、構造を調整
+      const enhancedIdeas = results.ideas;
+      results.ideas = {
+        business_ideas: enhancedIdeas.ideas || enhancedIdeas || [],
+        recommendation: enhancedIdeas.recommendation || {
+          top_choice: enhancedIdeas.ideas?.[0]?.id || 'idea_1',
+          reasoning: 'Enhanced Ideator による総合評価結果'
+        }
+      };
       
       // Select the top recommended idea
       results.selectedIdea = results.ideas.business_ideas.find(

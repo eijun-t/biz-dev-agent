@@ -11,21 +11,33 @@ Enhanced Researcherからのリッチなデータセットを活用し、5-8個�
 生成されたアイデアの独創性、実現可能性、シナジー効果を評価。異なる調査データセットでの一貫性を確認。
 
 # Subtasks:
-## 1. 三菱地所アセット・シナジー分析エンジン [pending]
+## 1. Define Enhanced Ideator Agent Roles and Requirements [pending]
 ### Dependencies: None
-### Description: 三菱地所の既存アセット（物件、テナント、ネットワーク）と潜在的ビジネス機会のシナジー効果を分析するエンジンを構築
+### Description: Clarify the specific roles, goals, and functional requirements of the Enhanced Ideator Agent, ensuring alignment with Mitsubishi Estate's strengths, synergy targets, and user requirements.
 ### Details:
-丸の内・大手町・有楽町エリアの物件データ、主要テナント情報、保有資産リストと新規事業アイデアのマッチング分析。シナジー効果の定量化機能。
+Document the agent's purpose, expected outputs (5-8 diverse business ideas), and required attributes for each idea (business model, value proposition, market positioning, technical requirements, roadmap, synergy with Mitsubishi Estate assets). Incorporate risk balance, business scale, and competitive analysis requirements. Use configuration files to manage Mitsubishi Estate information and ensure all user requirements are explicitly mapped to agent capabilities.
 
-## 2. 多様性保証付きアイデア生成システム [pending]
-### Dependencies: 19.1
-### Description: 市場セグメント、技術領域、ビジネスモデルの多様性を保証しながら、高品質なビジネスアイデアを生成するシステムを実装
+## 2. Design Ideation Workflow and Filtering Logic [pending]
+### Dependencies: None
+### Description: Design the step-by-step workflow for idea generation, risk balancing, profitability validation, and Mitsubishi Estate fit filtering, ensuring each stage is clearly defined and automatable.
 ### Details:
-制約充足アルゴリズムで多様性を確保。B2B/B2C、ハード/ソフト、短期/長期の組み合わせでバランス取り。各アイデアに独自性スコア付与。
+Map out the ideation process: (1) ingest research data, (2) generate a diverse set of ideas across balanced domains and risk levels, (3) filter for business scale (≥10B JPY profit), (4) assess and maximize synergy with Mitsubishi Estate assets, (5) ensure competitive differentiation. Define logic for risk balance control and filtering criteria as modular, testable functions.
 
-## 3. 詳細ビジネスモデル設計システム [pending]
-### Dependencies: 19.2
-### Description: 各ビジネスアイデアに対して詳細なビジネスモデル（価値提案、収益構造、コスト構造、パートナーシップ）を自動設計するシステムを構築
+## 3. Implement Enhanced Ideator Agent Core Logic [pending]
+### Dependencies: None
+### Description: Develop the core agent logic to generate multiple high-quality business ideas using the enhanced research dataset and the designed workflow.
 ### Details:
-Business Model Canvasベースの詳細設計。市場調査データから導出される価値提案とマネタイゼーション戦略。実装難易度と投資要件の算出。
+Code the agent to process input datasets, apply the workflow, and output 5-8 business ideas. For each idea, generate detailed business model, value proposition, market positioning, technical requirements (summary), and a three-stage implementation roadmap. Integrate configuration-driven Mitsubishi Estate asset data and ensure synergy analysis is included in each output.
+
+## 4. Integrate Competitive Analysis and Risk Balancing Mechanisms [pending]
+### Dependencies: None
+### Description: Embed logic for basic competitive analysis (3-5 main competitors per idea) and ensure each idea set includes a mix of conservative, balanced, and challenging concepts.
+### Details:
+For each generated idea, automatically identify and summarize key competitors using available research data. Implement a mechanism to classify and balance ideas by risk level, ensuring the final set meets the required distribution. Validate that each idea's competitive positioning and risk profile are clearly documented.
+
+## 5. Validate Output Quality and Consistency Across Datasets [pending]
+### Dependencies: None
+### Description: Develop and execute tests to evaluate the originality, feasibility, synergy, and consistency of generated ideas using different research datasets.
+### Details:
+Create test cases with varied research inputs. Assess each output for originality, business feasibility, explicit synergy with Mitsubishi Estate assets, and adherence to all requirements. Compare outputs across datasets to ensure consistent quality and adaptability. Document findings and refine logic as needed.
 

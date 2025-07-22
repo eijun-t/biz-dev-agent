@@ -1,8 +1,8 @@
 import { AgentState, AgentStage } from "./types";
 import { AgentCoordinator } from "./coordinator";
 import { ResearcherAgent } from "./researcher";
-import { IdeatorAgent } from "./ideator";
-import { CriticAgent } from "./critic";
+import { IdeatorAgent } from "./ideation/ideator";
+import { CriticAgent } from "./ideation/critic";
 import { AnalystAgent } from "./analyst";
 import { WriterAgent } from "./writer";
 
