@@ -103,11 +103,11 @@ async function testPlannerOnly(
   coordinator: ResearchCoordinator,
   userInput: string,
   targetItems: number = 10
-): Promise<any> {
+): Promise<unknown> {
   console.log('🎯 プランナーテスト開始');
   
   try {
-    // @ts-ignore - プライベートメソッドにアクセス
+    // @ts-expect-error - プライベートメソッドにアクセス
     const plan = await coordinator.planner.generateResearchPlan(userInput, targetItems);
     
     const planQuality = coordinator.planner.evaluatePlanQuality(plan);
@@ -143,7 +143,7 @@ async function testPlannerOnly(
 async function testResearcherOnly(
   coordinator: ResearchCoordinator,
   userInput: string
-): Promise<any> {
+): Promise<unknown> {
   console.log('🔍 リサーチャーテスト開始');
   
   try {
@@ -159,7 +159,7 @@ async function testResearcherOnly(
       estimated_effort: 15
     };
 
-    // @ts-ignore - プライベートメソッドにアクセス
+    // @ts-expect-error - プライベートメソッドにアクセス
     const result = await coordinator.researcher.executeResearch(testItem);
     
     return {
@@ -196,7 +196,7 @@ async function testResearcherOnly(
 async function testFullIntegration(
   coordinator: ResearchCoordinator,
   userInput: string
-): Promise<any> {
+): Promise<unknown> {
   console.log('🚀 完全統合テスト開始');
   
   try {
@@ -248,7 +248,7 @@ async function testFullIntegration(
 async function testPerformance(
   coordinator: ResearchCoordinator,
   userInput: string
-): Promise<any> {
+): Promise<unknown> {
   console.log('⚡ パフォーマンステスト開始');
   
   try {
@@ -263,7 +263,7 @@ async function testPerformance(
     for (const test of tests) {
       const startTime = Date.now();
       
-      // @ts-ignore - プライベートメソッドにアクセス
+      // @ts-expect-error - プライベートメソッドにアクセス
       const plan = await coordinator.planner.generateResearchPlan(userInput, test.items);
       
       const planTime = Date.now() - startTime;
