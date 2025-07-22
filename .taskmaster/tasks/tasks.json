@@ -703,7 +703,7 @@
             "id": 5,
             "title": "Validate Model Switching and Cost Optimization in Development and Testing",
             "description": "Test the ability to switch models and temperature settings via environment variables, and verify cost optimization strategies are respected.",
-        "status": "pending",
+            "status": "pending",
             "dependencies": [
               4
             ],
@@ -930,7 +930,7 @@
         "dependencies": [
           19
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -938,7 +938,7 @@
             "description": "市場性、実現可能性、シナジー効果、リスクの4大領域15-20基準からなる包括的評価フレームワークを設計・実装",
             "dependencies": [],
             "details": "各基準の定義、測定方法、重み付けロジックを設計。業界別・事業規模別の重み調整機能。評価基準間の相関分析と重複排除。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "評価基準の網羅性と独立性を確認。重み付けの妥当性を検証。"
           },
           {
@@ -949,7 +949,7 @@
               1
             ],
             "details": "正規化スコアリング、相対比較マトリクス、強み・弱み・機会・脅威（SWOT）分析の自動生成。改善提案ロジックの実装。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "スコアリングの安定性と比較結果の妥当性を評価。改善提案の具体性と実行可能性を確認。"
           },
           {
@@ -960,7 +960,7 @@
               2
             ],
             "details": "各評価基準のスコア根拠、選定理由の詳細説明、代替案との比較ポイント、リスク・機会の明確化機能。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "説明の理解しやすさと論理性を評価。評価プロセスの再現可能性を確認。"
           }
         ]
@@ -1199,7 +1199,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T14:25:14.652Z",
-      "updated": "2025-07-20T17:45:00.000Z",
+      "updated": "2025-07-22T13:38:00.064Z",
       "description": "Tasks for master context"
     }
   }

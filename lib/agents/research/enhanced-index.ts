@@ -4,7 +4,8 @@
  */
 
 // メインクラス
-export { EnhancedResearcherAgent } from './enhanced-researcher';
+import { EnhancedResearcherAgent } from './enhanced-researcher';
+export { EnhancedResearcherAgent };
 
 // 型定義
 export type {

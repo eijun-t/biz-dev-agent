@@ -1,6 +1,6 @@
 # Task ID: 20
 # Title: Implement Enhanced Critic Agent for Comprehensive Idea Evaluation
-# Status: pending
+# Status: done
 # Dependencies: 19
 # Priority: high
 # Description: Enhanced CriticAgentを実装し、複数のビジネスアイデアを多面的に評価して最優秀案を選定する。市場性、実現可能性、シナジー効果、リスクなど包括的な評価基準を使用。
@@ -11,19 +11,19 @@
 評価基準の妥当性と一貫性を確認。人間の判断との相関性を検証。選定理由の論理性を評価。
 
 # Subtasks:
-## 1. 多次元評価フレームワークの設計 [pending]
+## 1. 多次元評価フレームワークの設計 [done]
 ### Dependencies: None
 ### Description: 市場性、実現可能性、シナジー効果、リスクの4大領域15-20基準からなる包括的評価フレームワークを設計・実装
 ### Details:
 各基準の定義、測定方法、重み付けロジックを設計。業界別・事業規模別の重み調整機能。評価基準間の相関分析と重複排除。
 
-## 2. 定量的スコアリングと比較分析システム [pending]
+## 2. 定量的スコアリングと比較分析システム [done]
 ### Dependencies: 20.1
 ### Description: 複数アイデアの定量的比較とランキング生成、強み・弱み分析、改善提案生成を行うシステムを実装
 ### Details:
 正規化スコアリング、相対比較マトリクス、強み・弱み・機会・脅威（SWOT）分析の自動生成。改善提案ロジックの実装。
 
-## 3. 説明可能AI（XAI）機能による透明性確保 [pending]
+## 3. 説明可能AI（XAI）機能による透明性確保 [done]
 ### Dependencies: 20.2
 ### Description: 評価結果と選定理由を詳細に説明し、意思決定プロセスの透明性を確保するシステムを実装
 ### Details:

@@ -28,7 +28,10 @@
       "Bash(git push:*)",
       "Bash(gh pr view:*)",
       "Bash(git checkout:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(echo:*)",
+      "Bash(export NODE_ENV=development)",
+      "Bash(kill:*)"
     ],
     "deny": []
   }

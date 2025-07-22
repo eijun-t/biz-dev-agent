@@ -50,21 +50,29 @@ export class EnhancedCriticAgent {
     console.log('🎯 Enhanced Critic Agent: Starting comprehensive evaluation...');
     console.log(`   Session ID: ${input.session_id}`);
     console.log(`   Ideas to evaluate: ${input.business_ideas.length}`);
+    console.log('📋 Input details:', JSON.stringify(input, null, 2));
 
     try {
+      console.log('🔍 Step 1: Starting individual idea evaluation...');
       // Step 1: Individual idea evaluation
       const evaluatedIdeas = await this.evaluateIndividualIdeas(input.business_ideas);
+      console.log(`✅ Step 1 completed: ${evaluatedIdeas.length} ideas evaluated`);
       
+      console.log('📊 Step 2: Starting portfolio analysis...');
       // Step 2: Portfolio analysis
       const portfolioEvaluation = await this.analyzePortfolio(
         input.session_id,
         evaluatedIdeas,
         input.user_preferences
       );
+      console.log('✅ Step 2 completed: Portfolio analysis done');
 
+      console.log('📝 Step 3: Generating writer recommendations...');
       // Step 3: Generate recommendations for Writer Agent
       const writerRecommendations = this.generateWriterRecommendations(portfolioEvaluation);
+      console.log('✅ Step 3 completed: Writer recommendations generated');
 
+      console.log('🔧 Step 4: Creating final output...');
       // Step 4: Create final output
       const executionTime = Date.now() - startTime;
       const result = this.createCriticOutput(
@@ -72,6 +80,7 @@ export class EnhancedCriticAgent {
         writerRecommendations,
         executionTime
       );
+      console.log('✅ Step 4 completed: Final output created');
 
       console.log('✅ Enhanced Critic Agent evaluation completed');
       console.log(`   Top score: ${result.evaluation_summary.top_score}/100`);
@@ -82,6 +91,7 @@ export class EnhancedCriticAgent {
 
     } catch (error) {
       console.error('❌ Enhanced Critic Agent evaluation failed:', error);
+      console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       throw error;
     }
   }
