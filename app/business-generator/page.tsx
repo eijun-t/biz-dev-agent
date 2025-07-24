@@ -18,7 +18,7 @@ interface WorkflowStep {
 }
 
 interface WorkflowState {
-  phase: 'input' | 'research' | 'ideation' | 'analysis' | 'report' | 'completed';
+  phase: 'input' | 'research' | 'ideation' | 'evaluation' | 'planning' | 'specialized_research' | 'analysis' | 'report' | 'completed';
   current_step: string;
   steps: WorkflowStep[];
   session_id: string;
@@ -126,6 +126,7 @@ export default function BusinessGeneratorPage() {
       'critic': '📝',
       'enhanced_critic': '⚖️',
       'advanced_planner': '📋',
+      'specialized_researcher': '🔬',
       'analyst': '📊',
       'writer': '✍️',
       'coordinator': '🎯'
@@ -147,6 +148,9 @@ export default function BusinessGeneratorPage() {
     const descriptions = {
       'research': '🔍 市場調査・技術トレンド分析',
       'ideation': '💡 ビジネスアイデア生成・評価',
+      'evaluation': '🎯 ビジネスアイデア総合評価',
+      'planning': '📋 詳細調査計画の策定',
+      'specialized_research': '🔬 専門分野別深掘り調査',
       'analysis': '📊 詳細分析・市場規模算出',
       'report': '📄 最終レポート生成',
       'completed': '✅ 完了'
@@ -211,8 +215,10 @@ export default function BusinessGeneratorPage() {
                 <h3 className="font-medium text-blue-900 mb-2">🔄 自動実行プロセス</h3>
                 <div className="text-sm text-blue-700 space-y-1">
                   <div>• 📊 市場調査・技術トレンド分析</div>
-                  <div>• 💡 ビジネスアイデア生成・評価</div>
-                  <div>• 📈 詳細分析・競合調査</div>
+                  <div>• 💡 ビジネスアイデア生成・評価・選定</div>
+                  <div>• 📋 詳細調査計画の策定</div>
+                  <div>• 🔬 専門分野別深掘り調査（市場・競合・技術・規制・財務）</div>
+                  <div>• 📈 統合分析・市場規模算出</div>
                   <div>• 📄 包括的レポート生成</div>
                 </div>
               </div>

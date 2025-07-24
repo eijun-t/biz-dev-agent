@@ -11,6 +11,8 @@ import { createLog } from '@/lib/database/queries';
 import { EnhancedResearcherAgent, createEnhancedResearcher } from './research/enhanced-index';
 import { EnhancedIdeatorAgent, createEnhancedIdeator } from './ideation/enhanced-ideator-index';
 import { AdvancedPlannerAgent, createAdvancedPlanner, PlannerIntegration } from './planner/index';
+import { SpecializedResearcherAgent, SpecializedResearchRequest } from './specialized-researcher';
+import { EnhancedAnalystAgent, AnalystInput } from './enhanced-analyst';
 
 // 基底エージェントクラス
 abstract class BaseAgent {
@@ -365,6 +367,7 @@ export class WriterAgent extends BaseAgent {
   }
 
   async generateReport(
+    userInput: string,
     businessIdea: any,
     researchResults: any,
     analysisResults: any,
@@ -372,6 +375,7 @@ export class WriterAgent extends BaseAgent {
     sessionId?: string
   ): Promise<AgentResult> {
     const prompt = generatePrompt('writer', {
+      userInput: userInput,
       businessIdea: JSON.stringify(businessIdea, null, 2),
       researchResults: JSON.stringify(researchResults, null, 2),
       analysisResults: JSON.stringify(analysisResults, null, 2)
@@ -491,17 +495,46 @@ export class BusinessWorkflowOrchestrator {
   private researcher: ResearcherAgent;
   private ideator: IdeatorAgent;
   private analyst: AnalystAgent;
+  private enhancedAnalyst: EnhancedAnalystAgent;
   private writer: WriterAgent;
   private critic: CriticAgent;
   private planner: PlannerIntegration;
+  private specializedResearcher: SpecializedResearcherAgent;
 
   constructor() {
     this.researcher = new ResearcherAgent();
     this.ideator = new IdeatorAgent();
     this.analyst = new AnalystAgent();
+    this.enhancedAnalyst = new EnhancedAnalystAgent({
+      analysis: {
+        depth: 'detailed',
+        includeQuantitativeAnalysis: true,
+        includeScenarioPlanning: true
+      },
+      output: {
+        includeConfidenceScores: true,
+        detailLevel: 'detailed'
+      },
+      validation: {
+        requireMinDataPoints: 1, // More lenient requirement
+        enforceDataQuality: true, // Force use of real data
+        flagInconsistencies: true
+      }
+    });
     this.writer = new WriterAgent();
     this.critic = new CriticAgent();
     this.planner = new PlannerIntegration();
+    this.specializedResearcher = new SpecializedResearcherAgent({
+      execution: {
+        parallel: true,
+        maxConcurrentDomains: 3,
+        failureStrategy: 'continue_on_error'
+      },
+      output: {
+        includeRawData: false,
+        summaryDepth: 'detailed'
+      }
+    });
   }
 
   async executeFullWorkflow(
@@ -515,6 +548,7 @@ export class BusinessWorkflowOrchestrator {
       ideas: null,
       selectedIdea: null,
       researchPlan: null,
+      specializedResearch: null,
       analysis: null,
       report: null,
       qualityAssessment: null
@@ -642,8 +676,48 @@ export class BusinessWorkflowOrchestrator {
         // Continue without planner - this is acceptable
       }
       
-      // 🔍 Enhanced Critic → Advanced Planner → Analyst への引き渡しデータログ
-      console.log('\n📋 === Enhanced Critic → Advanced Planner → Analyst 引き渡しデータ ===');
+      progressCallback?.('planning', 60);
+
+      // Phase 2.8: Specialized Research (NEW)
+      progressCallback?.('specialized_research', 62);
+      console.log('Starting specialized research phase...');
+      console.log('🔬 Specialized Research Agent: Executing detailed domain investigations...');
+      
+      let specializedResearchData: any = null;
+      
+      if (plannerData?.researchPlan) {
+        try {
+          const specializedRequest: SpecializedResearchRequest = {
+            researchPlan: plannerData.researchPlan,
+            priorityOverrides: {
+              market: true,
+              competitor: true
+            }
+          };
+
+          const specializedResult = await this.specializedResearcher.executeResearch(specializedRequest);
+          
+          if (specializedResult) {
+            specializedResearchData = specializedResult;
+            results.specializedResearch = specializedResearchData;
+            console.log('✅ Specialized Research completed successfully');
+            console.log(`   Domains completed: ${specializedResult.performance.domainsCompleted}`);
+            console.log(`   Data points collected: ${specializedResult.performance.dataPointsCollected}`);
+            console.log(`   Confidence level: ${(specializedResult.performance.confidence * 100).toFixed(0)}%`);
+          } else {
+            throw new Error('Specialized Research returned no result');
+          }
+        } catch (specializedError) {
+          console.error('❌ Specialized Research failed:', specializedError);
+          console.warn('⚠️ Proceeding without specialized research data');
+          // Continue without specialized research - analysis can still proceed
+        }
+      } else {
+        console.warn('⚠️ No research plan available, skipping specialized research');
+      }
+      
+      // 🔍 Enhanced Critic → Advanced Planner → Specialized Research → Analyst への引き渡しデータログ
+      console.log('\n📋 === Enhanced Critic → Advanced Planner → Specialized Research → Analyst 引き渡しデータ ===');
       console.log('🏆 Selected Idea:', JSON.stringify(results.selectedIdea, null, 2));
       console.log('📊 Critic Evaluation Summary:', criticData ? JSON.stringify(criticData.evaluation_summary, null, 2) : 'No evaluation data');
       console.log('📋 Research Plan Summary:', plannerData ? JSON.stringify({
@@ -652,32 +726,103 @@ export class BusinessWorkflowOrchestrator {
         estimatedTime: plannerData.researchPlan.totalEstimatedTime,
         nextSteps: plannerData.nextSteps
       }, null, 2) : 'No research plan generated');
-      console.log('🔬 Research Data to Analyst:', JSON.stringify(results.research, null, 2));
+      console.log('🔬 Specialized Research Summary:', specializedResearchData ? JSON.stringify({
+        status: specializedResearchData.status,
+        keyFindings: specializedResearchData.summary.keyFindings,
+        majorOpportunities: specializedResearchData.summary.majorOpportunities,
+        criticalRisks: specializedResearchData.summary.criticalRisks
+      }, null, 2) : 'No specialized research data');
+      console.log('🔬 Original Research Data to Analyst:', JSON.stringify(results.research, null, 2));
       console.log('=== 引き渡しデータ終了 ===\n');
       
-      progressCallback?.('planning', 60);
+      progressCallback?.('specialized_research', 65);
 
-      // Phase 3: Analysis
-      progressCallback?.('analysis', 60);
-      console.log('Starting analysis phase...');
-      const analysisResult = await this.analyst.analyzeBusinessIdea(
-        results.selectedIdea,
-        results.research,
-        userId,
-        sessionId
-      );
-      if (!analysisResult.success) {
-        throw new Error(`Analysis failed: ${analysisResult.error}`);
+      // Phase 3: Enhanced Analysis
+      progressCallback?.('analysis', 70);
+      console.log('Starting enhanced analysis phase...');
+      console.log('🧠 Enhanced Analyst: Generating Writer-ready report sections...');
+      
+      try {
+        // Prepare input for Enhanced Analyst
+        const analystInput: AnalystInput = {
+          userInput: userInput, // ユーザーの元の要求を追加
+          selectedIdea: results.selectedIdea,
+          originalResearch: results.research,
+          specializedResearch: results.specializedResearch
+        };
+        
+        // Execute Enhanced Analysis
+        const enhancedAnalysisResult = await this.enhancedAnalyst.analyzeBusinessIdea(analystInput);
+        
+        results.analysis = enhancedAnalysisResult;
+        
+        // ReportViewer互換性のため、selected_business_ideaフィールドを追加
+        if (!results.analysis.selected_business_idea) {
+          results.analysis.selected_business_idea = {
+            title: results.selectedIdea.title || results.selectedIdea.name || enhancedAnalysisResult.businessIdeaTitle || 'ビジネスアイデア',
+            description: results.selectedIdea.description || results.selectedIdea.shortDescription || '',
+            ...results.selectedIdea
+          };
+        }
+        
+        console.log('✅ Enhanced Analysis completed successfully');
+        console.log(`   Data quality: ${(enhancedAnalysisResult.dataQuality.completeness * 100).toFixed(0)}%`);
+        console.log(`   Confidence: ${(enhancedAnalysisResult.dataQuality.confidence * 100).toFixed(0)}%`);
+        
+      } catch (enhancedAnalysisError) {
+        console.error('❌ Enhanced Analysis failed:', enhancedAnalysisError);
+        console.warn('⚠️ Falling back to basic analysis...');
+        
+        // Fallback to basic analyst
+        const combinedResearchData = {
+          originalResearch: results.research,
+          specializedResearch: results.specializedResearch
+        };
+        
+        const basicAnalysisResult = await this.analyst.analyzeBusinessIdea(
+          results.selectedIdea,
+          combinedResearchData,
+          userId,
+          sessionId
+        );
+        
+        if (!basicAnalysisResult.success) {
+          throw new Error(`Both enhanced and basic analysis failed: ${basicAnalysisResult.error}`);
+        }
+        
+        // Wrap basic analysis in enhanced format for Writer compatibility
+        results.analysis = {
+          id: `fallback_${Date.now()}`,
+          businessIdeaTitle: results.selectedIdea.title || 'Business Idea',
+          analyzedAt: new Date().toISOString(),
+          executiveSummary: { businessConcept: 'Fallback analysis - enhanced analysis failed' },
+          dataQuality: { completeness: 0.3, confidence: 0.5, dataGaps: ['Enhanced analysis unavailable'], recommendations: ['Retry with complete data'] },
+          processingMetadata: { originalResearchUsed: true, specializedResearchUsed: !!results.specializedResearch, analysisDepth: 'basic', processingTime: 0 },
+          basicAnalysisData: basicAnalysisResult.data, // Include basic analysis data for Writer
+          selected_business_idea: {
+            title: results.selectedIdea.title || results.selectedIdea.name || 'ビジネスアイデア',
+            description: results.selectedIdea.description || results.selectedIdea.shortDescription || '',
+            ...results.selectedIdea
+          }
+        };
       }
-      results.analysis = analysisResult.data;
-      progressCallback?.('analysis', 75);
+      
+      progressCallback?.('analysis', 85);
 
       // Phase 4: Report Generation
-      progressCallback?.('report', 80);
+      progressCallback?.('report', 90);
       console.log('Starting report generation phase...');
+      
+      // Prepare combined research data for Writer
+      const combinedResearchDataForWriter = {
+        originalResearch: results.research,
+        specializedResearch: results.specializedResearch
+      };
+      
       const reportResult = await this.writer.generateReport(
+        userInput, // ユーザーの元の要求を追加
         results.selectedIdea,
-        results.research,
+        combinedResearchDataForWriter,
         results.analysis,
         userId,
         sessionId
