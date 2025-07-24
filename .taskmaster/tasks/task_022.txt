@@ -3,29 +3,52 @@
 # Status: pending
 # Dependencies: 21
 # Priority: high
-# Description: Advanced Plannerの計画に基づき、選定されたビジネスアイデアに関する詳細で専門的な調査を実行するSpecialized ResearcherAgentを実装。技術詳細、市場セグメント、競合企業、規制環境などの深掘り調査を実行。
+# Description: SYSTEM_ARCHITECTURE.mdの第5段階「立案された計画に基づく調査の実施（Specialized Research）」を実装する。Enhanced Plannerが作成した調査計画に基づいて実行し、各専門ドメインモジュールが担当分野の詳細調査を実施する。
+
 # Details:
-計画された調査項目について、専門的で詳細な情報収集を実行。技術仕様・特許調査、市場セグメント詳細分析、個別競合企業の深掘り調査、規制・法的要件の詳細確認、潜在的パートナー企業の調査、詳細リスク分析、財務・投資情報の収集。各調査項目に対して複数の一次・二次情報源を使用し、信頼性の高い詳細情報を収集。
+**システム位置づけ**: Enhanced Critic → Enhanced Planner → **Specialized Research** → Analyst のパイプライン第5段階
+
+**主要機能**:
+- Enhanced Plannerが作成した調査計画に基づいて実行
+- 各専門ドメインモジュールが担当分野の詳細調査を実施
+- 各モジュールはEnhanced Researcherを使用して実データを取得
+- 取得したデータを各専門分野の構造化された調査結果に変換
+
+**実装する5つの専門ドメインモジュール**:
+1. **Technology Investigator**: 技術・特許・実装事例の調査
+2. **Market Investigator**: 市場規模・セグメント・動向の調査  
+3. **Competitor Investigator**: 直接・間接競合の分析
+4. **Regulatory Investigator**: 規制・法的要件の調査
+5. **Financial Investigator**: 資金調達・収益性・投資環境の調査
+
+**Enhanced Researcherとの関係**:
+- 各モジュールはEnhanced Researcherを使用して実データを取得
+- Enhanced Researcherをベースとして、専門分野に特化した調査を実行
+
+**入力**: Enhanced Plannerが生成した調査計画
+**出力**: 各専門分野の構造化された調査結果
+
+**実装場所**: lib/agents/specialized-researcher/
 
 # Test Strategy:
-収集情報の詳細度と信頼性を評価。専門的情報の正確性を確認。情報源の多様性と質を検証。
+Enhanced Plannerの調査計画を入力として、各専門ドメインモジュールが適切に詳細調査を実行し、構造化された調査結果を出力することを確認。Enhanced Researcherを使用した実データ取得と、専門分野への変換処理の正確性を検証。
 
 # Subtasks:
-## 1. 専門領域別調査モジュールの構築 [pending]
+## 1. 5つの専門ドメインモジュールの実装 [pending]
 ### Dependencies: None
-### Description: 技術、市場、競合、規制、財務など専門領域別に最適化された調査モジュールを構築し、領域特有の情報源と調査手法を実装
+### Description: Technology、Market、Competitor、Regulatory、Financial の5つの専門ドメインモジュールを実装し、Enhanced Researcherを使用した実データ取得機能を構築
 ### Details:
-特許データベース、技術論文、市場調査レポート、企業財務情報、規制文書など領域別データソースの統合。専門用語辞書と文脈理解機能。
+各専門ドメインモジュールの基本構造、Enhanced Researcherとの連携機能、専門分野に特化した調査ロジックの実装。domain-modules/配下に各モジュールを配置。
 
-## 2. 多段階検証・クロスチェック機能 [pending]
+## 2. 調査計画に基づく実行エンジン [pending]
 ### Dependencies: 22.1
-### Description: 収集した情報の信頼性を確保するため、複数情報源での検証とクロスチェック機能を実装
+### Description: Enhanced Plannerの調査計画を解析し、適切な専門ドメインモジュールに調査タスクを振り分けて実行するメインエンジンを実装
 ### Details:
-情報源信頼性評価、矛盾検出機能、複数ソースでの事実確認、不確実性・信頼度スコアリング機能。
+調査計画の解析機能、ドメインモジュールへのタスク振り分け、並行実行制御、専門ドメインモジュール間の連携機能。specialized-researcher.tsとして実装。
 
-## 3. 構造化レポート生成・統合システム [pending]
+## 3. データ変換・構造化システム [pending]
 ### Dependencies: 22.2
-### Description: 収集した詳細情報を構造化されたレポート形式に整理し、意思決定に活用可能な形式で統合するシステムを実装
+### Description: Enhanced Researcherから取得した実データを各専門分野の構造化された調査結果に変換するシステムを実装
 ### Details:
-調査結果の自動構造化、キーファインディング抽出、実行への示唆導出、不足情報の特定機能。エグゼクティブサマリー生成。
+実データから専門調査結果への変換ロジック、データ品質評価、構造化フォーマットの標準化、次段階（Analyst）への出力形式の定義。verification/配下に実装。
 

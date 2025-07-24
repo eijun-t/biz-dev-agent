@@ -17,7 +17,7 @@ interface WorkflowStep {
 }
 
 interface WorkflowState {
-  phase: 'input' | 'research' | 'ideation' | 'analysis' | 'report' | 'completed';
+  phase: 'input' | 'research' | 'ideation' | 'evaluation' | 'planning' | 'specialized_research' | 'analysis' | 'report' | 'completed';
   current_step: string;
   steps: WorkflowStep[];
   session_id: string;
@@ -407,7 +407,10 @@ async function updateWorkflowProgress(sessionId: string, phase: string, progress
   const phaseDescriptions: Record<string, string> = {
     'research': '🔍 Enhanced Research - 包括的市場調査実行中',
     'ideation': '💡 Enhanced Ideation - 高度なアイデア生成・評価',
-    'analysis': '📊 詳細分析・事業性評価',
+    'evaluation': '⚖️ Enhanced Critic - ビジネスアイデア総合評価',
+    'planning': '📋 Advanced Planner - 詳細調査計画策定',
+    'specialized_research': '🔬 Specialized Research - 専門分野別深掘り調査',
+    'analysis': '🧠 Enhanced Analysis - Writer向けセクション生成',
     'report': '📄 最終レポート生成',
     'completed': '✅ Enhanced Workflow完了'
   };
@@ -428,7 +431,8 @@ function getAgentForPhase(phase: string): string {
     'ideation': 'enhanced_ideator',
     'evaluation': 'enhanced_critic',
     'planning': 'advanced_planner',
-    'analysis': 'analyst',
+    'specialized_research': 'specialized_researcher',
+    'analysis': 'enhanced_analyst',
     'report': 'writer',
     'completed': 'coordinator'
   };

@@ -22,7 +22,7 @@ export default function ReportChat({
     {
       id: '1',
       type: 'assistant',
-      content: `こんにちは！「${reportData.selected_business_idea.title}」のレポートについて何でもお聞きください。現在「${currentSection}」セクションを表示しています。`,
+      content: `こんにちは！「${reportData?.selected_business_idea?.title || reportData?.businessIdeaTitle || 'ビジネスアイデア'}」のレポートについて何でもお聞きください。現在「${currentSection}」セクションを表示しています。`,
       timestamp: new Date().toISOString()
     }
   ]);

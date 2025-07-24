@@ -98,7 +98,7 @@ export default function ReportViewer({
                 ビジネスアイデア分析レポート
               </h1>
               <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight">
-                {reportData.selected_business_idea.title}
+                {reportData?.selected_business_idea?.title || reportData?.businessIdeaTitle || 'ビジネスアイデア'}
               </h2>
             </div>
             

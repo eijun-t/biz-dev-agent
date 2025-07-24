@@ -28,9 +28,31 @@ export default function ProcessVisualization({
       'writer': '📝',
       'critic': '🔍',
       'researcher': '🔬',
-      'analyst': '📊'
+      'analyst': '📊',
+      'enhanced_analyst': '🧠',
+      'enhanced_researcher': '🔍',
+      'enhanced_ideator': '💡',
+      'enhanced_critic': '⚖️',
+      'advanced_planner': '📋',
+      'specialized_researcher': '🔬'
     };
     return icons[agent as keyof typeof icons] || '🤖';
+  };
+
+  const getAgentDisplayName = (agent: string) => {
+    const names = {
+      'writer': 'Writerエージェント',
+      'critic': 'Criticエージェント',
+      'researcher': 'Researcherエージェント',
+      'analyst': 'Analystエージェント',
+      'enhanced_analyst': 'Enhanced Analystエージェント',
+      'enhanced_researcher': 'Enhanced Researcherエージェント',
+      'enhanced_ideator': 'Enhanced Ideatorエージェント',
+      'enhanced_critic': 'Enhanced Criticエージェント',
+      'advanced_planner': 'Advanced Plannerエージェント',
+      'specialized_researcher': 'Specialized Researcherエージェント'
+    };
+    return names[agent as keyof typeof names] || `${agent}エージェント`;
   };
 
   const getStatusColor = (status: string) => {
@@ -136,9 +158,15 @@ export default function ProcessVisualization({
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-600 mt-1">
-                  {process.description}
-                </p>
+                <div className="flex items-center space-x-2 mt-1">
+                  <p className="text-sm text-gray-600">
+                    {getAgentDisplayName(process.agent)}
+                  </p>
+                  <span className="text-xs text-gray-400">•</span>
+                  <p className="text-sm text-gray-500">
+                    {process.description}
+                  </p>
+                </div>
 
                 {/* 進捗バー（実行中の場合） */}
                 {process.status === 'in_progress' && (
